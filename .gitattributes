@@ -1,0 +1,11 @@
+# Keep LF line endings in the repo and in working copies on every OS.
+# Files mounted or copied into Linux containers (SQL init scripts, shell
+# scripts, Dockerfiles) break with Windows CRLF endings.
+* text=auto eol=lf
+
+# Binary files: never touch.
+*.ico binary
+*.png binary
+*.jpg binary
+*.pdf binary
+*.docx binary
