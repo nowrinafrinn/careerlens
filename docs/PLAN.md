@@ -490,8 +490,17 @@ cd frontend && npm install && npm run dev
   bank, combined filters, re-attempt with then-and-now comparison, verified solution, history entry.
 
 ### Day 3 — Learning, preparation, dashboard
-- [ ] **M9 Skill gaps + tasks + attempts + reassessments.**
+- [x] **M9 Skill gaps + tasks + attempts + reassessments.**
   ✅ Tests: gap from requirement requires self_report=`do_not_have`/`learning` or explicit action; same skill from two jobs → one gap, two evidence rows; reassessment history ordered and retrievable.
+  *Done 2026-10-25.* Migration 0008: skill_gaps (one per skill per user via a functional unique
+  index on lower(skill_name). Autogenerate first produced `lower('skill_name')`, a constant, which
+  would have allowed one gap per user; caught and tested), gap_evidence (requirement / question /
+  journal / note + basis), gap_reassessments (append-only, cite task or question attempts), tasks
+  (learning + preparation in one table, linked to gap/requirement/application/round/question),
+  task_attempts. Gap type is the candidate's own diagnosis; status changes only via reassessment.
+  Plan order: active first, then priority, importance, open before improving, evidence count.
+  Analysis and question pages link to the gap they feed. 14 new tests (196 total); the
+  "not found ≠ gap" test confirmed to fail when the rule is removed. Browser-verified end to end.
 - [ ] **M10 Preparation:** rule-based suggestions from requirements/gaps/projects, labelled "practice question", user saves selected ones to a round.
 - [ ] **M11 Dashboard + insights:** upcoming/overdue/pending/follow-ups; insights with observation counts and "not enough data" (< 3 observations) state.
   ✅ Tests: insight with 1 observation reports insufficient data; every insight returns source refs.

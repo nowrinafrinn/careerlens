@@ -15,12 +15,13 @@ from app.schemas.analysis import (
 )
 from app.schemas.cv import CVVersionRef
 from app.services import analyses as service
+from app.services import learning as learning_service
 from app.services.applications import get_application
 
 router = APIRouter(tags=["analysis"])
 
 
-def _requirement(requirement: JobRequirement) -> RequirementRead:
+def _requirement(requirement: JobRequirement, skill_gap_id: uuid.UUID | None = None) -> RequirementRead:
     evidence = [
         EvidenceRead(
             passage_id=link.passage.id,
@@ -34,8 +35,10 @@ def _requirement(requirement: JobRequirement) -> RequirementRead:
         )
         for link in requirement.evidence
     ]
-    fields = {name: getattr(requirement, name) for name in RequirementRead.model_fields if name != "evidence"}
-    return RequirementRead(**fields, evidence=evidence)
+    fields = {
+        name: getattr(requirement, name) for name in RequirementRead.model_fields if name not in {"evidence", "skill_gap_id"}
+    }
+    return RequirementRead(**fields, evidence=evidence, skill_gap_id=skill_gap_id)
 
 
 def _summary(analysis: RequirementAnalysis) -> dict:
@@ -52,11 +55,12 @@ def _summary(analysis: RequirementAnalysis) -> dict:
 def _read(db: DbSession, user: CurrentUser, analysis: RequirementAnalysis) -> AnalysisRead:
     application = get_application(db, user, analysis.application_id)
     reasons = service.stale_reasons(analysis, application)
+    gaps = learning_service.gap_ids_for_requirements(db, user, analysis.requirements)
     return AnalysisRead(
         **_summary(analysis),
         is_stale=bool(reasons),
         stale_reasons=reasons,
-        requirements=[_requirement(r) for r in analysis.requirements],
+        requirements=[_requirement(r, gaps.get(r.id)) for r in analysis.requirements],
     )
 
 
@@ -91,4 +95,6 @@ def update_requirement(requirement_id: uuid.UUID, body: RequirementUpdate, user:
 
     The self-report is stored next to the CV verdict and never replaces it.
     """
-    return _requirement(service.update_requirement(db, user, requirement_id, body.changes()))
+    requirement = service.update_requirement(db, user, requirement_id, body.changes())
+    gaps = learning_service.gap_ids_for_requirements(db, user, [requirement])
+    return _requirement(requirement, gaps.get(requirement.id))

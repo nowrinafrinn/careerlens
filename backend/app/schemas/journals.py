@@ -130,6 +130,7 @@ class QuestionRead(BaseModel):
 
 class QuestionDetail(QuestionRead):
     attempts: list[AttemptRead]
+    skill_gap_id: uuid.UUID | None = None  # the learning-plan gap this question is evidence for, if any
 
 
 class QuestionFacets(BaseModel):

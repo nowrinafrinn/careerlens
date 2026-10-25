@@ -4,6 +4,7 @@ import type { Category, EvidenceStatus, Importance, Relevance, SelfReport } from
 import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/lib/applications";
 import type { ParseStatus, SectionType } from "@/lib/cvs";
 import type { Difficulty, PracticeStatus, ResponseQuality } from "@/lib/journals";
+import type { AttemptOutcome, EvidenceBasis, GapStatus, GapType, Level, TaskStatus } from "@/lib/learning";
 import type { ChangeType, RecommendationKind } from "@/lib/recommendations";
 
 type Tone = "neutral" | "info" | "progress" | "positive" | "negative" | "muted";
@@ -162,6 +163,46 @@ export const CONFIDENCE_LABELS: Record<number, string> = {
   3: "3 · Somewhat",
   4: "4 · Fairly",
   5: "5 · Very",
+};
+
+export const GAP_TYPE: Record<GapType, { label: string; description: string }> = {
+  unclassified: { label: "Not classified yet", description: "Decide what kind of gap this is once you've looked at the evidence." },
+  knowledge: { label: "Knowledge", description: "The underlying concept isn't understood yet." },
+  application: { label: "Application", description: "You understand it but find it hard to apply." },
+  speed: { label: "Speed", description: "You can solve it, but it takes too long." },
+  recall: { label: "Recall", description: "You know it but can't retrieve it under pressure." },
+  preparation: { label: "Preparation", description: "You need structured practice." },
+  communication: { label: "Communication", description: "You find it hard to explain an answer or experience clearly." },
+};
+
+export const GAP_STATUS: Record<GapStatus, { label: string; tone: Tone }> = {
+  open: { label: "Open", tone: "progress" },
+  improving: { label: "Improving", tone: "info" },
+  resolved: { label: "Resolved", tone: "positive" },
+  dismissed: { label: "Dismissed", tone: "muted" },
+};
+
+export const LEVEL: Record<Level, string> = { low: "Low", medium: "Medium", high: "High" };
+
+export const EVIDENCE_BASIS: Record<EvidenceBasis, string> = {
+  user_confirmed: "Your own statement",
+  recorded_outcome: "Recorded outcome",
+  interviewer_feedback: "Interviewer feedback",
+  user_interpretation: "Your interpretation",
+  hypothesis: "Unconfirmed inference",
+};
+
+export const TASK_STATUS: Record<TaskStatus, { label: string; tone: Tone }> = {
+  planned: { label: "Planned", tone: "muted" },
+  in_progress: { label: "In progress", tone: "info" },
+  completed: { label: "Completed", tone: "positive" },
+  needs_more_practice: { label: "Needs more practice", tone: "progress" },
+};
+
+export const ATTEMPT_OUTCOME: Record<AttemptOutcome, string> = {
+  struggled: "Struggled",
+  partial: "Partly there",
+  solid: "Solid",
 };
 
 export const SECTION_TYPE: Record<SectionType, string> = {

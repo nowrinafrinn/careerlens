@@ -9,6 +9,7 @@ from app.models.application import JobApplication, RecruitmentEvent, Recruitment
 from app.models.base import Base
 from app.models.cv import CVDocument, CVPassage, CVSection, CVVersion
 from app.models.journal import Journal, Question, QuestionAttempt
+from app.models.learning import GapEvidence, GapReassessment, SkillGap, Task, TaskAttempt
 from app.models.user import User, UserSession
 
 __all__ = [
@@ -18,6 +19,11 @@ __all__ = [
     "CVRecommendation",
     "CVSection",
     "CVVersion",
+    "GapEvidence",
+    "GapReassessment",
+    "SkillGap",
+    "Task",
+    "TaskAttempt",
     "JobApplication",
     "JobRequirement",
     "Journal",

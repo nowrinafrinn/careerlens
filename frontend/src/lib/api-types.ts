@@ -595,6 +595,164 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/skill-gaps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Gaps
+         * @description Your skill gaps, ordered by what to work on next: open first, then your priority,
+         *     importance and how much evidence supports each one.
+         */
+        get: operations["list_gaps_api_v1_skill_gaps_get"];
+        put?: never;
+        /** Create Gap */
+        post: operations["create_gap_api_v1_skill_gaps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/requirements/{requirement_id}/skill-gap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Gap From Requirement
+         * @description Adds a requirement to your learning plan. Needs your own assessment of “I don't have this
+         *     yet” or “I'm learning this”: missing from the CV alone is not evidence of a gap.
+         */
+        post: operations["gap_from_requirement_api_v1_requirements__requirement_id__skill_gap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/questions/{question_id}/skill-gap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Gap From Question
+         * @description Adds a question you struggled with to your learning plan (as evidence for a gap).
+         */
+        post: operations["gap_from_question_api_v1_questions__question_id__skill_gap_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/skill-gaps/{gap_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Gap */
+        get: operations["get_gap_api_v1_skill_gaps__gap_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Gap */
+        patch: operations["update_gap_api_v1_skill_gaps__gap_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/skill-gaps/{gap_id}/reassessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reassess
+         * @description Records whether the gap has improved, optionally citing the attempt that shows it.
+         *     This is the only way to change a gap's status.
+         */
+        post: operations["reassess_api_v1_skill_gaps__gap_id__reassessments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tasks */
+        get: operations["list_tasks_api_v1_tasks_get"];
+        put?: never;
+        /** Create Task */
+        post: operations["create_task_api_v1_tasks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/{task_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Task */
+        delete: operations["delete_task_api_v1_tasks__task_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Task */
+        patch: operations["update_task_api_v1_tasks__task_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/tasks/{task_id}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Task Attempt
+         * @description Logs a practice session. A planned task becomes in progress; completion is your call.
+         */
+        post: operations["add_task_attempt_api_v1_tasks__task_id__attempts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -672,7 +830,7 @@ export interface components {
              */
             applied_on?: string | null;
             /** @default interested */
-            status: components["schemas"]["ApplicationStatus"];
+            status?: components["schemas"]["ApplicationStatus"];
             /**
              * Cv Version Id
              * @description The CV version used for this application.
@@ -805,6 +963,11 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
+        /**
+         * AttemptOutcome
+         * @enum {string}
+         */
+        AttemptOutcome: "struggled" | "partial" | "solid";
         /** AttemptRead */
         AttemptRead: {
             /**
@@ -866,7 +1029,7 @@ export interface components {
              * Application Count
              * @default 0
              */
-            application_count: number;
+            application_count?: number;
             /** Parse Warnings */
             parse_warnings: string[];
             /** Raw Text */
@@ -919,7 +1082,7 @@ export interface components {
              * Application Count
              * @default 0
              */
-            application_count: number;
+            application_count?: number;
         };
         /** CVVersionUpdate */
         CVVersionUpdate: {
@@ -997,6 +1160,12 @@ export interface components {
          */
         EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "application_cv_changed" | "journal_recorded" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
         /**
+         * EvidenceBasis
+         * @description Where a piece of evidence comes from, so facts and guesses never mix.
+         * @enum {string}
+         */
+        EvidenceBasis: "user_confirmed" | "recorded_outcome" | "interviewer_feedback" | "user_interpretation" | "hypothesis";
+        /**
          * EvidenceRead
          * @description A CV passage cited for a requirement, with where it sits in the CV.
          */
@@ -1024,6 +1193,195 @@ export interface components {
          * @enum {string}
          */
         EvidenceStatus: "demonstrated" | "partially_demonstrated" | "not_found_in_cv" | "needs_verification";
+        /** GapCreate */
+        GapCreate: {
+            /** Skill Name */
+            skill_name: string;
+            /** @default unclassified */
+            gap_type?: components["schemas"]["GapType"];
+            /** @default medium */
+            importance?: components["schemas"]["Level"];
+            /**
+             * Priority
+             * @description 1 = highest.
+             * @default 3
+             */
+            priority?: number;
+            /** Target Date */
+            target_date?: string | null;
+            /** Recommended Action */
+            recommended_action?: string | null;
+            /**
+             * Reason
+             * @description Why you think this is a gap. Stored as evidence you provided.
+             */
+            reason: string;
+        };
+        /** GapDetail */
+        GapDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Skill Name */
+            skill_name: string;
+            gap_type: components["schemas"]["GapType"];
+            importance: components["schemas"]["Level"];
+            confidence: components["schemas"]["Level"];
+            status: components["schemas"]["GapStatus"];
+            /** Priority */
+            priority: number;
+            /** Target Date */
+            target_date: string | null;
+            /** Recommended Action */
+            recommended_action: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Evidence Count */
+            evidence_count: number;
+            /** Application Count */
+            application_count: number;
+            /** Evidence By Basis */
+            evidence_by_basis: {
+                [key: string]: number;
+            };
+            /** Task Count */
+            task_count: number;
+            /** Completed Task Count */
+            completed_task_count: number;
+            /** Notes */
+            notes: string | null;
+            /** Evidence */
+            evidence: components["schemas"]["GapEvidenceRead"][];
+            /** Reassessments */
+            reassessments: components["schemas"]["ReassessmentRead"][];
+            /** Tasks */
+            tasks: components["schemas"]["TaskRead"][];
+        };
+        /** GapEvidenceRead */
+        GapEvidenceRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            basis: components["schemas"]["EvidenceBasis"];
+            /** Note */
+            note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Requirement Id */
+            requirement_id: string | null;
+            /** Requirement Text */
+            requirement_text: string | null;
+            /** Application Id */
+            application_id: string | null;
+            /** Company Name */
+            company_name: string | null;
+            /** Position Title */
+            position_title: string | null;
+            /** Question Id */
+            question_id: string | null;
+            /** Question Text */
+            question_text: string | null;
+            /** Journal Id */
+            journal_id: string | null;
+        };
+        /**
+         * GapFromSource
+         * @description Create a gap from a requirement or question, or attach the evidence to an existing gap.
+         */
+        GapFromSource: {
+            /**
+             * Skill Name
+             * @description Defaults to the requirement's skill or the question's topic.
+             */
+            skill_name?: string | null;
+        };
+        /**
+         * GapStatus
+         * @enum {string}
+         */
+        GapStatus: "open" | "improving" | "resolved" | "dismissed";
+        /** GapSummary */
+        GapSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Skill Name */
+            skill_name: string;
+            gap_type: components["schemas"]["GapType"];
+            importance: components["schemas"]["Level"];
+            confidence: components["schemas"]["Level"];
+            status: components["schemas"]["GapStatus"];
+            /** Priority */
+            priority: number;
+            /** Target Date */
+            target_date: string | null;
+            /** Recommended Action */
+            recommended_action: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Evidence Count */
+            evidence_count: number;
+            /** Application Count */
+            application_count: number;
+            /** Evidence By Basis */
+            evidence_by_basis: {
+                [key: string]: number;
+            };
+            /** Task Count */
+            task_count: number;
+            /** Completed Task Count */
+            completed_task_count: number;
+        };
+        /**
+         * GapType
+         * @description The candidate's own diagnosis. Never inferred from a wrong answer.
+         * @enum {string}
+         */
+        GapType: "unclassified" | "knowledge" | "application" | "speed" | "recall" | "preparation" | "communication";
+        /**
+         * GapUpdate
+         * @description Status isn't editable here: change it through a reassessment, so the history is kept.
+         */
+        GapUpdate: {
+            /** Skill Name */
+            skill_name?: string | null;
+            gap_type?: components["schemas"]["GapType"] | null;
+            importance?: components["schemas"]["Level"] | null;
+            confidence?: components["schemas"]["Level"] | null;
+            /** Priority */
+            priority?: number | null;
+            /** Target Date */
+            target_date?: string | null;
+            /** Recommended Action */
+            recommended_action?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1156,6 +1514,11 @@ export interface components {
          * @enum {string}
          */
         Kind: "presentation" | "evidence_gap" | "potential_capability_gap" | "unverified_claim";
+        /**
+         * Level
+         * @enum {string}
+         */
+        Level: "low" | "medium" | "high";
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -1245,7 +1608,7 @@ export interface components {
             /** Topic */
             topic?: string | null;
             /** @default unknown */
-            difficulty: components["schemas"]["Difficulty"];
+            difficulty?: components["schemas"]["Difficulty"];
             /**
              * Original Answer
              * @description What you answered at the time. Can't be changed later.
@@ -1320,6 +1683,8 @@ export interface components {
             latest_attempt: components["schemas"]["AttemptRead"] | null;
             /** Attempts */
             attempts: components["schemas"]["AttemptRead"][];
+            /** Skill Gap Id */
+            skill_gap_id?: string | null;
         };
         /**
          * QuestionFacets
@@ -1347,7 +1712,7 @@ export interface components {
             /** Topic */
             topic?: string | null;
             /** @default unknown */
-            difficulty: components["schemas"]["Difficulty"];
+            difficulty?: components["schemas"]["Difficulty"];
             /**
              * Original Answer
              * @description What you answered at the time. Can't be changed later.
@@ -1437,6 +1802,41 @@ export interface components {
             practice_status?: components["schemas"]["PracticeStatus"] | null;
             /** Asked On */
             asked_on?: string | null;
+        };
+        /** ReassessmentCreate */
+        ReassessmentCreate: {
+            new_status: components["schemas"]["GapStatus"];
+            confidence: components["schemas"]["Level"];
+            /** Summary */
+            summary: string;
+            /** Task Attempt Id */
+            task_attempt_id?: string | null;
+            /** Question Attempt Id */
+            question_attempt_id?: string | null;
+        };
+        /** ReassessmentRead */
+        ReassessmentRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Assessed At
+             * Format: date-time
+             */
+            assessed_at: string;
+            previous_status: components["schemas"]["GapStatus"];
+            new_status: components["schemas"]["GapStatus"];
+            confidence: components["schemas"]["Level"];
+            /** Summary */
+            summary: string;
+            /** Task Attempt Id */
+            task_attempt_id: string | null;
+            /** Question Attempt Id */
+            question_attempt_id: string | null;
+            /** Cited */
+            cited: string | null;
         };
         /** RecommendationDecision */
         RecommendationDecision: {
@@ -1549,6 +1949,8 @@ export interface components {
             dismissed: boolean;
             /** Evidence */
             evidence: components["schemas"]["EvidenceRead"][];
+            /** Skill Gap Id */
+            skill_gap_id?: string | null;
         };
         /** RequirementUpdate */
         RequirementUpdate: {
@@ -1576,7 +1978,7 @@ export interface components {
             /** @description Defaults to 'upcoming' if scheduled_at is given, else 'not_scheduled'. */
             status?: components["schemas"]["RoundStatus"] | null;
             /** @default unknown */
-            result: components["schemas"]["RoundResult"];
+            result?: components["schemas"]["RoundResult"];
             /** Follow Up Date */
             follow_up_date?: string | null;
             /** Completed At */
@@ -1713,6 +2115,132 @@ export interface components {
          * @enum {string}
          */
         SelfReport: "unknown" | "have_not_on_cv" | "do_not_have" | "learning";
+        /** TaskAttemptCreate */
+        TaskAttemptCreate: {
+            /** Duration Minutes */
+            duration_minutes?: number | null;
+            outcome: components["schemas"]["AttemptOutcome"];
+            /** Notes */
+            notes?: string | null;
+        };
+        /** TaskAttemptRead */
+        TaskAttemptRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Attempted At
+             * Format: date-time
+             */
+            attempted_at: string;
+            /** Duration Minutes */
+            duration_minutes: number | null;
+            outcome: components["schemas"]["AttemptOutcome"];
+            /** Notes */
+            notes: string | null;
+        };
+        /** TaskCreate */
+        TaskCreate: {
+            /** @default learning */
+            kind?: components["schemas"]["TaskKind"];
+            /** Title */
+            title: string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Priority
+             * @description 1 = highest.
+             * @default 3
+             */
+            priority?: number;
+            /** Due Date */
+            due_date?: string | null;
+            /** Why */
+            why?: string | null;
+            /** Skill Gap Id */
+            skill_gap_id?: string | null;
+            /** Job Requirement Id */
+            job_requirement_id?: string | null;
+            /** Application Id */
+            application_id?: string | null;
+            /** Recruitment Round Id */
+            recruitment_round_id?: string | null;
+            /** Question Id */
+            question_id?: string | null;
+        };
+        /**
+         * TaskKind
+         * @enum {string}
+         */
+        TaskKind: "learning" | "preparation";
+        /** TaskRead */
+        TaskRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["TaskKind"];
+            /** Title */
+            title: string;
+            /** Description */
+            description: string | null;
+            status: components["schemas"]["TaskStatus"];
+            /** Priority */
+            priority: number;
+            /** Due Date */
+            due_date: string | null;
+            /** Why */
+            why: string | null;
+            /** Skill Gap Id */
+            skill_gap_id: string | null;
+            /** Skill Name */
+            skill_name: string | null;
+            /** Job Requirement Id */
+            job_requirement_id: string | null;
+            /** Requirement Text */
+            requirement_text: string | null;
+            /** Application Id */
+            application_id: string | null;
+            /** Application Label */
+            application_label: string | null;
+            /** Recruitment Round Id */
+            recruitment_round_id: string | null;
+            /** Round Name */
+            round_name: string | null;
+            /** Question Id */
+            question_id: string | null;
+            /** Question Text */
+            question_text: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Attempts */
+            attempts: components["schemas"]["TaskAttemptRead"][];
+        };
+        /**
+         * TaskStatus
+         * @enum {string}
+         */
+        TaskStatus: "planned" | "in_progress" | "completed" | "needs_more_practice";
+        /** TaskUpdate */
+        TaskUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Description */
+            description?: string | null;
+            status?: components["schemas"]["TaskStatus"] | null;
+            /** Priority */
+            priority?: number | null;
+            /** Due Date */
+            due_date?: string | null;
+            /** Why */
+            why?: string | null;
+        };
         /** TemplateRead */
         TemplateRead: {
             template: components["schemas"]["JournalTemplate"];
@@ -3236,6 +3764,432 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuestionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_gaps_api_v1_skill_gaps_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["GapStatus"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_gap_api_v1_skill_gaps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GapCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    gap_from_requirement_api_v1_requirements__requirement_id__skill_gap_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requirement_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GapFromSource"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    gap_from_question_api_v1_questions__question_id__skill_gap_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GapFromSource"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_gap_api_v1_skill_gaps__gap_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gap_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_gap_api_v1_skill_gaps__gap_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gap_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GapUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reassess_api_v1_skill_gaps__gap_id__reassessments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                gap_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReassessmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tasks_api_v1_tasks_get: {
+        parameters: {
+            query?: {
+                kind?: components["schemas"]["TaskKind"] | null;
+                status?: components["schemas"]["TaskStatus"] | null;
+                skill_gap_id?: string | null;
+                application_id?: string | null;
+                recruitment_round_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_task_api_v1_tasks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_task_api_v1_tasks__task_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_task_api_v1_tasks__task_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_task_attempt_api_v1_tasks__task_id__attempts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskAttemptCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskRead"];
                 };
             };
             /** @description Validation Error */

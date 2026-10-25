@@ -10,6 +10,7 @@ from app.analysis.evidence import EvidenceStatus, Relevance
 from app.analysis.jd_extractor import Category, Importance, MatchMode
 from app.analysis.recommendations import ChangeType
 from app.analysis.recommendations import Kind as RecommendationKind
+from app.models.application import JobApplication
 from app.models.base import Base, Timestamps, UUIDPrimaryKey
 from app.models.cv import CVPassage, CVVersion
 from app.models.enums import db_enum
@@ -58,6 +59,7 @@ class RequirementAnalysis(UUIDPrimaryKey, Base):
     )
 
     cv_version: Mapped[CVVersion] = relationship()
+    application: Mapped["JobApplication"] = relationship()
     requirements: Mapped[list["JobRequirement"]] = relationship(
         back_populates="analysis", order_by="JobRequirement.position", cascade="all, delete-orphan", passive_deletes=True
     )

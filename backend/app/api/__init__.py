@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import analyses, applications, auth, cvs, health, journals, questions, recommendations, rounds
+from app.api import analyses, applications, auth, cvs, health, journals, learning, questions, recommendations, rounds
 
 api_router = APIRouter()
 api_router.include_router(health.router)
@@ -12,3 +12,4 @@ api_router.include_router(analyses.router)
 api_router.include_router(recommendations.router)
 api_router.include_router(journals.router)
 api_router.include_router(questions.router)
+api_router.include_router(learning.router)

@@ -198,6 +198,9 @@ def _get_requirement(db: Session, user: User, requirement_id: uuid.UUID) -> JobR
     return requirement
 
 
+get_requirement = _get_requirement  # public name for other services (ownership-checked)
+
+
 def update_requirement(db: Session, user: User, requirement_id: uuid.UUID, changes: dict[str, Any]) -> JobRequirement:
     """Self-report, dismissal, and corrections to category or importance.
 

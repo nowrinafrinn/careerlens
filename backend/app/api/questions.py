@@ -19,6 +19,7 @@ from app.schemas.journals import (
     QuestionUpdate,
 )
 from app.services import questions as service
+from app.services.learning import gap_id_for_question
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
@@ -55,10 +56,11 @@ def question_read(question: Question) -> QuestionRead:
     )
 
 
-def question_detail(question: Question) -> QuestionDetail:
+def question_detail(question: Question, skill_gap_id: uuid.UUID | None = None) -> QuestionDetail:
     return QuestionDetail(
         **question_read(question).model_dump(),
         attempts=[AttemptRead.model_validate(a) for a in question.attempts],
+        skill_gap_id=skill_gap_id,
     )
 
 
@@ -102,7 +104,7 @@ def create_question(body: QuestionCreate, user: CurrentUser, db: DbSession) -> Q
 @router.get("/{question_id}", response_model=QuestionDetail)
 def get_question(question_id: uuid.UUID, user: CurrentUser, db: DbSession) -> QuestionDetail:
     """The question with your original answer, every later attempt, and any verified solution."""
-    return question_detail(service.get_question(db, user, question_id))
+    return question_detail(service.get_question(db, user, question_id), gap_id_for_question(db, user, question_id))
 
 
 @router.patch("/{question_id}", response_model=QuestionDetail)

@@ -5,9 +5,10 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–8 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–9 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
-> CV improvement suggestions, and recruitment journals with a personal question bank. See [docs/PLAN.md](docs/PLAN.md) for the
+> CV improvement suggestions, recruitment journals with a personal question bank, and an
+> evidence-based learning plan. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -133,6 +134,20 @@ where relevant, to the CV passage involved:
   "then and now", next to the original. A **verified solution** and any future **AI suggestion** are
   kept in their own fields and labelled as such.
 - Recording an attempt marks a question as "practising". Only you can mark it "comfortable".
+
+## Learning plan
+
+- A **skill gap** is per skill, not per job: "SQL" from three applications is one gap with three
+  pieces of evidence, which shows how many of your target roles it matters for.
+- Gaps only come from evidence you provided: a requirement you marked "I don't have this yet" or
+  "I'm learning this", a question you partly answered or couldn't answer, or your own note. A
+  requirement your CV simply doesn't mention is **not** enough.
+- The **kind of gap** (knowledge, application, speed, recall, preparation, communication) is your
+  own diagnosis. CareerLens never infers it from a wrong answer.
+- **Learning tasks** link to the gap (and requirement, question or round) that motivated them, with
+  logged practice sessions.
+- A gap's status changes only through a **reassessment**: new status, confidence, what it's based
+  on, and optionally the practice session or question re-attempt that shows it. The history is kept.
 
 ## Prerequisites
 

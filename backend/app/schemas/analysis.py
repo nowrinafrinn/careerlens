@@ -45,6 +45,7 @@ class RequirementRead(BaseModel):
     user_edited: bool
     dismissed: bool
     evidence: list[EvidenceRead]
+    skill_gap_id: uuid.UUID | None = None  # the learning-plan gap this requirement feeds, if any
 
 
 class CoverageRead(BaseModel):

@@ -246,7 +246,7 @@ function DeleteButton({ cv }: { cv: CVDetail }) {
       router.push("/cvs");
     },
   });
-  const inUse = cv.application_count > 0;
+  const inUse = (cv.application_count ?? 0) > 0;
 
   return (
     <>

@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Pill } from "@/components/applications/status-badge";
+import { AddToPlan } from "@/components/learning/add-to-plan";
 import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import {
@@ -14,6 +15,7 @@ import {
   type SelfReport,
 } from "@/lib/analysis";
 import { CATEGORY, EVIDENCE_STATUS, IMPORTANCE, RELEVANCE, SECTION_TYPE, SELF_REPORT } from "@/lib/labels";
+import { gapFromRequirement } from "@/lib/learning";
 
 export function RequirementCard({ requirement, applicationId }: { requirement: Requirement; applicationId: string }) {
   const queryClient = useQueryClient();
@@ -124,6 +126,21 @@ export function RequirementCard({ requirement, applicationId }: { requirement: R
               </p>
             </div>
           </div>
+
+          {(requirement.self_report === "do_not_have" || requirement.self_report === "learning") && (
+            <div className="flex flex-col gap-1.5 rounded-lg bg-muted/60 px-3 py-2">
+              <p className="text-sm">
+                You said {requirement.self_report === "learning" ? "you're learning this" : "you don't have this yet"}. Add it
+                to your learning plan to track practice and progress.
+              </p>
+              <AddToPlan
+                existingGapId={requirement.skill_gap_id}
+                skillOptions={requirement.terms}
+                add={(skill) => gapFromRequirement(requirement.id, skill)}
+                refresh={[[...analysisKeys.latest(applicationId)]]}
+              />
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-muted-foreground">

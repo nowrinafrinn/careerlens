@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { Pill } from "@/components/applications/status-badge";
+import { AddToPlan } from "@/components/learning/add-to-plan";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,7 @@ import {
   type ResponseQuality,
 } from "@/lib/journals";
 import { CONFIDENCE_LABELS, DIFFICULTY, PRACTICE_STATUS, RESPONSE_QUALITY } from "@/lib/labels";
+import { gapFromQuestion } from "@/lib/learning";
 
 export function QuestionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -135,6 +137,25 @@ export function QuestionDetail() {
           )}
         </div>
       </section>
+
+      {(q.skill_gap_id || [q.response_quality, ...q.attempts.map((a) => a.response_quality)].some((r) => r === "partial" || r === "could_not_answer")) && (
+        <section aria-label="Learning plan" className="flex flex-col gap-2 rounded-xl border bg-background p-4 text-sm">
+          <p>
+            {q.skill_gap_id
+              ? "This question is evidence for a gap in your learning plan."
+              : "You struggled with this question. Add its topic to your learning plan to practise it deliberately."}
+          </p>
+          <AddToPlan
+            existingGapId={q.skill_gap_id}
+            skillOptions={q.topic ? [q.topic] : []}
+            add={(skill) => gapFromQuestion(q.id, skill ?? q.topic ?? undefined)}
+            refresh={[[...questionKeys.detail(q.id)]]}
+          />
+          {!q.topic && !q.skill_gap_id && (
+            <p className="text-xs text-muted-foreground">Set a topic above first; it becomes the skill&apos;s name.</p>
+          )}
+        </section>
+      )}
 
       <AttemptForm question={q} />
 
