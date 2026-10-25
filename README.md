@@ -5,9 +5,9 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–7 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–8 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
-> and CV improvement suggestions. See [docs/PLAN.md](docs/PLAN.md) for the
+> CV improvement suggestions, and recruitment journals with a personal question bank. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -119,6 +119,20 @@ where relevant, to the CV passage involved:
   **To apply in your CV** for you to copy into your own document.
 - Changing your self-assessment on a requirement updates its suggestions. Decisions you've made are
   kept, also across re-runs.
+
+## Journals and the question bank
+
+- After a round, **Write journal** (on the round, or on the application) opens structured prompts for
+  that kind of event: technical assessment, written exam, interview or general. The prompts are
+  defined in `backend/app/journal_templates.py`.
+- **What you were told** (explicit feedback only) and **your interpretation** are separate fields,
+  shown separately, so you can always tell what was actually said from what you guessed.
+- Questions recorded in a journal go into the **question bank** (Questions in the header), searchable
+  by text, company, position, round type, topic, difficulty, outcome, practice status and date.
+- A question's **original answer is never edited**. Later tries are saved as attempts and shown
+  "then and now", next to the original. A **verified solution** and any future **AI suggestion** are
+  kept in their own fields and labelled as such.
+- Recording an attempt marks a question as "practising". Only you can mark it "comfortable".
 
 ## Prerequisites
 

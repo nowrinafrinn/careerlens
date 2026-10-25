@@ -11,6 +11,7 @@ import { currentUserKey, getCurrentUser, logout } from "@/lib/auth";
 const NAV = [
   { href: "/applications", label: "Applications" },
   { href: "/cvs", label: "CVs" },
+  { href: "/questions", label: "Questions" },
 ];
 
 export function AppHeader() {

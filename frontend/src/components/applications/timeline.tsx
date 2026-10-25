@@ -62,6 +62,11 @@ export function describeEvent(event: RecruitmentEvent): string[] {
       if (!after) return [`CV removed (was “${before}”)`];
       return [`CV changed from “${before}” to “${after}”`];
     }
+    case "journal_recorded": {
+      const count = typeof next?.question_count === "number" ? next.question_count : 0;
+      const where = asString(next?.round_name);
+      return [`Journal written${where ? ` for ${where}` : ""}, ${count} question${count === 1 ? "" : "s"} recorded`];
+    }
     case "application_archived":
       return ["Application archived"];
     case "application_restored":

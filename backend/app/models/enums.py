@@ -69,6 +69,7 @@ class EventType(StrEnum):
     APPLICATION_ARCHIVED = "application_archived"
     APPLICATION_RESTORED = "application_restored"
     APPLICATION_CV_CHANGED = "application_cv_changed"
+    JOURNAL_RECORDED = "journal_recorded"
     ROUND_CREATED = "round_created"
     ROUND_SCHEDULED = "round_scheduled"
     ROUND_RESCHEDULED = "round_rescheduled"

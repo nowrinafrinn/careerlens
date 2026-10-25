@@ -476,8 +476,18 @@ cd frontend && npm install && npm run dev
   30 new tests (167 total), including "accepting everything leaves the CV and file byte-identical".
   Browser-verified: generation, accept, edit with number warning, "to apply" list with unfilled-gap
   warning, suggestions changing after a self-report. Screens not visually checked (pane not drawing).
-- [ ] **M8 Journals + question bank:** templates, journal form, save questions, search/filter, attempts.
+- [x] **M8 Journals + question bank:** templates, journal form, save questions, search/filter, attempts.
   ✅ Tests: journal-question association; filters by company/topic/response_quality; attempts preserve original answer.
+  *Done 2026-10-25.* Templates in code (`app/journal_templates.py`: technical assessment, written
+  exam, interview, general; served at `/journal-templates`; answers validated against them).
+  Migration 0007: journals (responses JSONB; interviewer feedback and interpretation in separate
+  columns), questions (original answer immutable; verified_solution and ai_suggestion in their own
+  columns; trigram GIN index using the pg_trgm from 0001), question_attempts; `journal_recorded`
+  history event (CHECK replaced by hand again). Search: text/topic/subject, company, position,
+  round type, topic, difficulty, outcome, practice status, date range; facets endpoint for filter
+  menus. Attempts move new/to-practise → practising; never auto "comfortable". 15 new tests
+  (182 total). Browser-verified: journal from a round (template inferred), questions saved to the
+  bank, combined filters, re-attempt with then-and-now comparison, verified solution, history entry.
 
 ### Day 3 — Learning, preparation, dashboard
 - [ ] **M9 Skill gaps + tasks + attempts + reassessments.**

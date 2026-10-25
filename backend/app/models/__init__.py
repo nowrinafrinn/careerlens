@@ -8,6 +8,7 @@ from app.models.analysis import CVRecommendation, JobRequirement, RequirementAna
 from app.models.application import JobApplication, RecruitmentEvent, RecruitmentRound
 from app.models.base import Base
 from app.models.cv import CVDocument, CVPassage, CVSection, CVVersion
+from app.models.journal import Journal, Question, QuestionAttempt
 from app.models.user import User, UserSession
 
 __all__ = [
@@ -19,6 +20,9 @@ __all__ = [
     "CVVersion",
     "JobApplication",
     "JobRequirement",
+    "Journal",
+    "Question",
+    "QuestionAttempt",
     "RecruitmentEvent",
     "RequirementAnalysis",
     "RequirementEvidence",

@@ -439,6 +439,162 @@ export interface paths {
         patch: operations["decide_api_v1_recommendations__recommendation_id__patch"];
         trace?: never;
     };
+    "/api/v1/journal-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Journal Templates
+         * @description The prompts for each kind of journal. Journals only accept answers to these prompts.
+         */
+        get: operations["journal_templates_api_v1_journal_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/journals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Journals */
+        get: operations["list_journals_api_v1_journals_get"];
+        put?: never;
+        /**
+         * Create Journal
+         * @description Records a journal, and any questions in it, which go into your question bank.
+         */
+        post: operations["create_journal_api_v1_journals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/journals/{journal_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Journal */
+        get: operations["get_journal_api_v1_journals__journal_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Journal
+         * @description Deletes the journal. Its questions stay in your question bank.
+         */
+        delete: operations["delete_journal_api_v1_journals__journal_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Journal */
+        patch: operations["update_journal_api_v1_journals__journal_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/journals/{journal_id}/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Questions */
+        post: operations["add_questions_api_v1_journals__journal_id__questions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search Questions */
+        get: operations["search_questions_api_v1_questions_get"];
+        put?: never;
+        /** Create Question */
+        post: operations["create_question_api_v1_questions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/questions/facets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Question Facets */
+        get: operations["question_facets_api_v1_questions_facets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/questions/{question_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Question
+         * @description The question with your original answer, every later attempt, and any verified solution.
+         */
+        get: operations["get_question_api_v1_questions__question_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Question
+         * @description Topic, difficulty, verified solution, practice status… The original answer can't be edited.
+         */
+        patch: operations["update_question_api_v1_questions__question_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/questions/{question_id}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Attempt */
+        post: operations["add_attempt_api_v1_questions__question_id__attempts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -637,6 +793,40 @@ export interface components {
              */
             change_reason?: string | null;
         };
+        /** AttemptCreate */
+        AttemptCreate: {
+            /** Answer */
+            answer?: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes?: number | null;
+            /** Confidence */
+            confidence?: number | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** AttemptRead */
+        AttemptRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Attempted At
+             * Format: date-time
+             */
+            attempted_at: string;
+            /** Answer */
+            answer: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes: number | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Notes */
+            notes: string | null;
+        };
         /** Body_upload_cv_api_v1_cv_versions_post */
         Body_upload_cv_api_v1_cv_versions_post: {
             /**
@@ -765,6 +955,11 @@ export interface components {
             /** Explanation */
             explanation: string;
         };
+        /**
+         * Difficulty
+         * @enum {string}
+         */
+        Difficulty: "easy" | "medium" | "hard" | "unknown";
         /** EventRead */
         EventRead: {
             /**
@@ -800,7 +995,7 @@ export interface components {
          * EventType
          * @enum {string}
          */
-        EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "application_cv_changed" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
+        EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "application_cv_changed" | "journal_recorded" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
         /**
          * EvidenceRead
          * @description A CV passage cited for a requirement, with where it sits in the CV.
@@ -854,6 +1049,108 @@ export interface components {
          * @enum {string}
          */
         Importance: "required" | "preferred" | "uncertain";
+        /** JournalCreate */
+        JournalCreate: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Round Id */
+            round_id?: string | null;
+            template: components["schemas"]["JournalTemplate"];
+            /** Occurred On */
+            occurred_on?: string | null;
+            /**
+             * Responses
+             * @description Prompt key → your answer.
+             */
+            responses?: {
+                [key: string]: string;
+            };
+            /**
+             * Interviewer Feedback
+             * @description Only what was explicitly said to you.
+             */
+            interviewer_feedback?: string | null;
+            /**
+             * User Interpretation
+             * @description Your own reading of how it went.
+             */
+            user_interpretation?: string | null;
+            /** Follow Up Actions */
+            follow_up_actions?: string | null;
+            /** Questions */
+            questions?: components["schemas"]["QuestionFields"][];
+        };
+        /** JournalRead */
+        JournalRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /** Round Id */
+            round_id: string | null;
+            /** Round Name */
+            round_name: string | null;
+            template: components["schemas"]["JournalTemplate"];
+            /** Occurred On */
+            occurred_on: string | null;
+            /** Responses */
+            responses: {
+                [key: string]: string;
+            };
+            /** Interviewer Feedback */
+            interviewer_feedback: string | null;
+            /** User Interpretation */
+            user_interpretation: string | null;
+            /** Follow Up Actions */
+            follow_up_actions: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Questions */
+            questions: components["schemas"]["QuestionRead"][];
+        };
+        /**
+         * JournalTemplate
+         * @enum {string}
+         */
+        JournalTemplate: "technical_assessment" | "written_exam" | "interview" | "general";
+        /** JournalUpdate */
+        JournalUpdate: {
+            /** Round Id */
+            round_id?: string | null;
+            /** Occurred On */
+            occurred_on?: string | null;
+            /** Responses */
+            responses?: {
+                [key: string]: string;
+            } | null;
+            /** Interviewer Feedback */
+            interviewer_feedback?: string | null;
+            /** User Interpretation */
+            user_interpretation?: string | null;
+            /** Follow Up Actions */
+            follow_up_actions?: string | null;
+        };
         /**
          * Kind
          * @enum {string}
@@ -890,6 +1187,17 @@ export interface components {
             /** Offset */
             offset: number;
         };
+        /** Page[QuestionRead] */
+        Page_QuestionRead_: {
+            /** Items */
+            items: components["schemas"]["QuestionRead"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
         /**
          * ParseStatus
          * @enum {string}
@@ -910,6 +1218,225 @@ export interface components {
             char_start: number;
             /** Char End */
             char_end: number;
+        };
+        /**
+         * PracticeStatus
+         * @enum {string}
+         */
+        PracticeStatus: "new" | "to_practice" | "practicing" | "comfortable";
+        /** PromptRead */
+        PromptRead: {
+            /** Key */
+            key: string;
+            /** Question */
+            question: string;
+            /** Hint */
+            hint: string;
+        };
+        /**
+         * QuestionCreate
+         * @description A question recorded on its own, optionally linked to an application and round.
+         */
+        QuestionCreate: {
+            /** Text */
+            text: string;
+            /** Subject */
+            subject?: string | null;
+            /** Topic */
+            topic?: string | null;
+            /** @default unknown */
+            difficulty: components["schemas"]["Difficulty"];
+            /**
+             * Original Answer
+             * @description What you answered at the time. Can't be changed later.
+             */
+            original_answer?: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes?: number | null;
+            /** Confidence */
+            confidence?: number | null;
+            /** Difficulty Reason */
+            difficulty_reason?: string | null;
+            /** Asked On */
+            asked_on?: string | null;
+            /** @description Defaults to 'to_practice' for partial or unanswered questions, else 'new'. */
+            practice_status?: components["schemas"]["PracticeStatus"] | null;
+            /** Application Id */
+            application_id?: string | null;
+            /** Round Id */
+            round_id?: string | null;
+        };
+        /** QuestionDetail */
+        QuestionDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Text */
+            text: string;
+            /** Subject */
+            subject: string | null;
+            /** Topic */
+            topic: string | null;
+            difficulty: components["schemas"]["Difficulty"];
+            /** Original Answer */
+            original_answer: string | null;
+            /** Verified Solution */
+            verified_solution: string | null;
+            /** Ai Suggestion */
+            ai_suggestion: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes: number | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Difficulty Reason */
+            difficulty_reason: string | null;
+            practice_status: components["schemas"]["PracticeStatus"];
+            /** Asked On */
+            asked_on: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Application Id */
+            application_id: string | null;
+            /** Company Name */
+            company_name: string | null;
+            /** Position Title */
+            position_title: string | null;
+            /** Round Id */
+            round_id: string | null;
+            /** Round Name */
+            round_name: string | null;
+            round_type: components["schemas"]["RoundType"] | null;
+            /** Journal Id */
+            journal_id: string | null;
+            /** Attempt Count */
+            attempt_count: number;
+            latest_attempt: components["schemas"]["AttemptRead"] | null;
+            /** Attempts */
+            attempts: components["schemas"]["AttemptRead"][];
+        };
+        /**
+         * QuestionFacets
+         * @description Values that exist in your bank, for filter menus.
+         */
+        QuestionFacets: {
+            /** Companies */
+            companies: string[];
+            /** Positions */
+            positions: string[];
+            /** Topics */
+            topics: string[];
+            /** Subjects */
+            subjects: string[];
+        };
+        /**
+         * QuestionFields
+         * @description What can be recorded about a question when it's first saved.
+         */
+        QuestionFields: {
+            /** Text */
+            text: string;
+            /** Subject */
+            subject?: string | null;
+            /** Topic */
+            topic?: string | null;
+            /** @default unknown */
+            difficulty: components["schemas"]["Difficulty"];
+            /**
+             * Original Answer
+             * @description What you answered at the time. Can't be changed later.
+             */
+            original_answer?: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes?: number | null;
+            /** Confidence */
+            confidence?: number | null;
+            /** Difficulty Reason */
+            difficulty_reason?: string | null;
+            /** Asked On */
+            asked_on?: string | null;
+            /** @description Defaults to 'to_practice' for partial or unanswered questions, else 'new'. */
+            practice_status?: components["schemas"]["PracticeStatus"] | null;
+        };
+        /** QuestionRead */
+        QuestionRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Text */
+            text: string;
+            /** Subject */
+            subject: string | null;
+            /** Topic */
+            topic: string | null;
+            difficulty: components["schemas"]["Difficulty"];
+            /** Original Answer */
+            original_answer: string | null;
+            /** Verified Solution */
+            verified_solution: string | null;
+            /** Ai Suggestion */
+            ai_suggestion: string | null;
+            response_quality: components["schemas"]["ResponseQuality"];
+            /** Time Spent Minutes */
+            time_spent_minutes: number | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Difficulty Reason */
+            difficulty_reason: string | null;
+            practice_status: components["schemas"]["PracticeStatus"];
+            /** Asked On */
+            asked_on: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Application Id */
+            application_id: string | null;
+            /** Company Name */
+            company_name: string | null;
+            /** Position Title */
+            position_title: string | null;
+            /** Round Id */
+            round_id: string | null;
+            /** Round Name */
+            round_name: string | null;
+            round_type: components["schemas"]["RoundType"] | null;
+            /** Journal Id */
+            journal_id: string | null;
+            /** Attempt Count */
+            attempt_count: number;
+            latest_attempt: components["schemas"]["AttemptRead"] | null;
+        };
+        /**
+         * QuestionUpdate
+         * @description Later edits. The original answer, how it went, time and confidence describe the
+         *     event itself and can't be changed; record a new attempt instead.
+         */
+        QuestionUpdate: {
+            /** Text */
+            text?: string | null;
+            /** Subject */
+            subject?: string | null;
+            /** Topic */
+            topic?: string | null;
+            difficulty?: components["schemas"]["Difficulty"] | null;
+            /** Difficulty Reason */
+            difficulty_reason?: string | null;
+            /** Verified Solution */
+            verified_solution?: string | null;
+            practice_status?: components["schemas"]["PracticeStatus"] | null;
+            /** Asked On */
+            asked_on?: string | null;
         };
         /** RecommendationDecision */
         RecommendationDecision: {
@@ -1031,6 +1558,12 @@ export interface components {
             /** Dismissed */
             dismissed?: boolean | null;
         };
+        /**
+         * ResponseQuality
+         * @description How it went, in the candidate's own judgement.
+         * @enum {string}
+         */
+        ResponseQuality: "confident" | "partial" | "could_not_answer" | "not_attempted";
         /** RoundCreate */
         RoundCreate: {
             /** Name */
@@ -1180,6 +1713,16 @@ export interface components {
          * @enum {string}
          */
         SelfReport: "unknown" | "have_not_on_cv" | "do_not_have" | "learning";
+        /** TemplateRead */
+        TemplateRead: {
+            template: components["schemas"]["JournalTemplate"];
+            /** Label */
+            label: string;
+            /** Description */
+            description: string;
+            /** Prompts */
+            prompts: components["schemas"]["PromptRead"][];
+        };
         /** UserRead */
         UserRead: {
             /**
@@ -2248,6 +2791,451 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RecommendationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    journal_templates_api_v1_journal_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateRead"][];
+                };
+            };
+        };
+    };
+    list_journals_api_v1_journals_get: {
+        parameters: {
+            query?: {
+                application_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_journal_api_v1_journals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JournalCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_journal_api_v1_journals__journal_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                journal_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_journal_api_v1_journals__journal_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                journal_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_journal_api_v1_journals__journal_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                journal_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JournalUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_questions_api_v1_journals__journal_id__questions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                journal_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionFields"][];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JournalRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_questions_api_v1_questions_get: {
+        parameters: {
+            query?: {
+                /** @description Matches question text, topic or subject. */
+                q?: string | null;
+                company?: string | null;
+                position?: string | null;
+                round_type?: components["schemas"]["RoundType"] | null;
+                topic?: string | null;
+                difficulty?: components["schemas"]["Difficulty"] | null;
+                response_quality?: components["schemas"]["ResponseQuality"] | null;
+                practice_status?: components["schemas"]["PracticeStatus"] | null;
+                date_from?: string | null;
+                date_to?: string | null;
+                application_id?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_QuestionRead_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_question_api_v1_questions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    question_facets_api_v1_questions_facets_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionFacets"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_question_api_v1_questions__question_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_question_api_v1_questions__question_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuestionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_attempt_api_v1_questions__question_id__attempts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                question_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttemptCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuestionDetail"];
                 };
             };
             /** @description Validation Error */

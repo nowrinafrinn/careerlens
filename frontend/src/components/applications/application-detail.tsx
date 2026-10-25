@@ -10,6 +10,7 @@ import { RoundsSection } from "@/components/applications/rounds-section";
 import { StatusDialog } from "@/components/applications/status-dialog";
 import { ApplicationStatusBadge } from "@/components/applications/status-badge";
 import { Timeline } from "@/components/applications/timeline";
+import { JournalsSection } from "@/components/journals/journals-section";
 import { Button } from "@/components/ui/button";
 import { buttonClass } from "@/lib/button-class";
 import { ApiError } from "@/lib/api";
@@ -55,6 +56,7 @@ export function ApplicationDetail() {
         <div className="flex min-w-0 flex-col gap-6">
           <AnalysisSummary application={application} />
           <RoundsSection applicationId={application.id} rounds={application.rounds} />
+          <JournalsSection applicationId={application.id} />
           <JobDescription text={application.job_description} applicationId={application.id} />
         </div>
 

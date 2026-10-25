@@ -3,6 +3,7 @@
 import type { Category, EvidenceStatus, Importance, Relevance, SelfReport } from "@/lib/analysis";
 import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/lib/applications";
 import type { ParseStatus, SectionType } from "@/lib/cvs";
+import type { Difficulty, PracticeStatus, ResponseQuality } from "@/lib/journals";
 import type { ChangeType, RecommendationKind } from "@/lib/recommendations";
 
 type Tone = "neutral" | "info" | "progress" | "positive" | "negative" | "muted";
@@ -132,6 +133,35 @@ export const CHANGE_TYPE: Record<ChangeType, string> = {
   add_bullet: "Add a bullet",
   remove_or_verify: "Remove or verify",
   no_cv_change: "No CV change",
+};
+
+export const RESPONSE_QUALITY: Record<ResponseQuality, { label: string; tone: Tone }> = {
+  confident: { label: "Answered confidently", tone: "positive" },
+  partial: { label: "Partly answered", tone: "progress" },
+  could_not_answer: { label: "Couldn't answer", tone: "negative" },
+  not_attempted: { label: "Not attempted", tone: "muted" },
+};
+
+export const PRACTICE_STATUS: Record<PracticeStatus, { label: string; tone: Tone }> = {
+  new: { label: "Not reviewed", tone: "muted" },
+  to_practice: { label: "To practise", tone: "progress" },
+  practicing: { label: "Practising", tone: "info" },
+  comfortable: { label: "Comfortable", tone: "positive" },
+};
+
+export const DIFFICULTY: Record<Difficulty, string> = {
+  easy: "Easy",
+  medium: "Medium",
+  hard: "Hard",
+  unknown: "Difficulty not set",
+};
+
+export const CONFIDENCE_LABELS: Record<number, string> = {
+  1: "1 · Not at all",
+  2: "2 · A little",
+  3: "3 · Somewhat",
+  4: "4 · Fairly",
+  5: "5 · Very",
 };
 
 export const SECTION_TYPE: Record<SectionType, string> = {
