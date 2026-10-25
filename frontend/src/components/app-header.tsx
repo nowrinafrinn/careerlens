@@ -65,7 +65,7 @@ export function AppHeader() {
             <BrandMark />
             CareerLens
           </Link>
-          <nav aria-label="Main" className="hidden items-center gap-0.5 md:flex">
+          <nav aria-label="Main" className="hidden items-center gap-0.5 lg:flex">
             {NAV.map((item) => (
               <Link
                 key={item.href}
@@ -83,11 +83,11 @@ export function AppHeader() {
               href="/cvs"
               aria-label="CVs"
               aria-current={cvsActive ? "page" : undefined}
-              className="grid size-11 place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-primary/12 aria-[current=page]:text-primary md:hidden"
+              className="grid size-11 place-items-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:bg-primary/12 aria-[current=page]:text-primary lg:hidden"
             >
               <FileText className="size-5" aria-hidden />
             </Link>
-            <span className="hidden truncate text-sm text-muted-foreground lg:inline">{name}</span>
+            <span className="hidden truncate text-sm text-muted-foreground xl:inline">{name}</span>
             <span
               aria-hidden
               className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground uppercase"
@@ -103,7 +103,7 @@ export function AppHeader() {
 
       <nav
         aria-label="Main"
-        className="surface no-lift fixed inset-x-3 bottom-3 z-40 flex justify-around rounded-3xl border p-1.5 md:hidden"
+        className="surface no-lift fixed inset-x-3 bottom-3 z-40 flex justify-around rounded-3xl border p-1.5 lg:hidden"
       >
         {NAV.filter((item) => item.inTabBar).map((item) => {
           const Icon = item.icon;

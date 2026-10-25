@@ -20,10 +20,10 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <Suspense fallback={null}>
         <PageTransition stageId={STAGE_ID} />
       </Suspense>
-      {/* Bottom padding below md keeps content clear of the floating tab bar. */}
+      {/* Bottom padding below lg keeps content clear of the floating tab bar. */}
       <main
         id={STAGE_ID}
-        className="mx-auto flex w-full max-w-6xl flex-1 origin-top flex-col px-4 pt-6 pb-28 sm:px-6 sm:pt-8 md:pb-10"
+        className="mx-auto flex w-full max-w-6xl flex-1 origin-top flex-col px-4 pt-6 pb-28 sm:px-6 sm:pt-8 lg:pb-10"
       >
         {children}
       </main>
