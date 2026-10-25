@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState, type FormEvent } from "react";
 
@@ -19,11 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { applicationKeys, deleteRound, type Round } from "@/lib/applications";
 import { buttonClass } from "@/lib/button-class";
+import { listPrepTasks, preparationKeys } from "@/lib/preparation";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { ROUND_TYPE } from "@/lib/labels";
 import { useCloseOnHide } from "@/lib/use-close-on-hide";
 
 export function RoundsSection({ applicationId, rounds }: { applicationId: string; rounds: Round[] }) {
+  // One request for the whole application; grouped per round for the "Prepare" progress.
+  const prepTasks = useQuery({ queryKey: preparationKeys.checklist(applicationId, null), queryFn: () => listPrepTasks(applicationId, null) });
+  const progress = (roundId: string) => {
+    const tasks = prepTasks.data?.filter((t) => t.recruitment_round_id === roundId) ?? [];
+    return { total: tasks.length, done: tasks.filter((t) => t.status === "completed").length };
+  };
   return (
     <section aria-labelledby="rounds-heading" className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-4">
@@ -48,7 +55,7 @@ export function RoundsSection({ applicationId, rounds }: { applicationId: string
       ) : (
         <ol className="flex flex-col gap-3">
           {rounds.map((round, index) => (
-            <RoundCard key={round.id} applicationId={applicationId} round={round} number={index + 1} />
+            <RoundCard key={round.id} applicationId={applicationId} round={round} number={index + 1} prep={progress(round.id)} />
           ))}
         </ol>
       )}
@@ -56,7 +63,17 @@ export function RoundsSection({ applicationId, rounds }: { applicationId: string
   );
 }
 
-function RoundCard({ applicationId, round, number }: { applicationId: string; round: Round; number: number }) {
+function RoundCard({
+  applicationId,
+  round,
+  number,
+  prep,
+}: {
+  applicationId: string;
+  round: Round;
+  number: number;
+  prep: { total: number; done: number };
+}) {
   return (
     <li className="rounded-xl border bg-background p-4">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
@@ -101,6 +118,9 @@ function RoundCard({ applicationId, round, number }: { applicationId: string; ro
       {round.notes && <p className="mt-3 text-sm whitespace-pre-wrap text-muted-foreground">{round.notes}</p>}
 
       <div className="mt-4 flex flex-wrap gap-2">
+        <Link href={`/applications/${applicationId}/prepare?round=${round.id}`} className={buttonClass({ size: "sm" })}>
+          Prepare{prep.total > 0 && <span className="tabular-nums"> · {prep.done}/{prep.total}</span>}
+        </Link>
         <Link
           href={`/applications/${applicationId}/journals/new?round=${round.id}`}
           className={buttonClass({ variant: "outline", size: "sm" })}

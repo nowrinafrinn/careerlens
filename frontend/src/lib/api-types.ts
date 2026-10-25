@@ -753,6 +753,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/applications/{application_id}/preparation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preparation Suggestions
+         * @description Suggestions for preparing for this position (and round), from your own records.
+         *
+         *     Computed each time, not stored. Save the ones you want as preparation tasks
+         *     (POST /tasks with kind=preparation). Generated questions are practice questions,
+         *     not questions the employer is known to ask.
+         */
+        get: operations["preparation_suggestions_api_v1_applications__application_id__preparation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1587,6 +1611,24 @@ export interface components {
          * @enum {string}
          */
         PracticeStatus: "new" | "to_practice" | "practicing" | "comfortable";
+        /** PreparationRead */
+        PreparationRead: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Round Id */
+            round_id: string | null;
+            /** Analysis Id */
+            analysis_id: string | null;
+            /** Analysis Is Stale */
+            analysis_is_stale: boolean;
+            /** Note */
+            note: string;
+            /** Suggestions */
+            suggestions: components["schemas"]["SuggestionRead"][];
+        };
         /** PromptRead */
         PromptRead: {
             /** Key */
@@ -2115,6 +2157,33 @@ export interface components {
          * @enum {string}
          */
         SelfReport: "unknown" | "have_not_on_cv" | "do_not_have" | "learning";
+        /**
+         * SuggestionKind
+         * @enum {string}
+         */
+        SuggestionKind: "project_question" | "review_topic" | "practice_question" | "behavioral_question" | "challenging_area" | "gap_practice" | "revisit_question" | "round_format";
+        /** SuggestionRead */
+        SuggestionRead: {
+            kind: components["schemas"]["SuggestionKind"];
+            /** Title */
+            title: string;
+            /** Detail */
+            detail: string;
+            /** Why */
+            why: string;
+            /** Priority */
+            priority: number;
+            /** Is Practice Question */
+            is_practice_question: boolean;
+            /** Requirement Id */
+            requirement_id: string | null;
+            /** Skill Gap Id */
+            skill_gap_id: string | null;
+            /** Question Id */
+            question_id: string | null;
+            /** Saved Task Id */
+            saved_task_id: string | null;
+        };
         /** TaskAttemptCreate */
         TaskAttemptCreate: {
             /** Duration Minutes */
@@ -4190,6 +4259,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TaskRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preparation_suggestions_api_v1_applications__application_id__preparation_get: {
+        parameters: {
+            query?: {
+                round_id?: string | null;
+            };
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparationRead"];
                 };
             };
             /** @description Validation Error */

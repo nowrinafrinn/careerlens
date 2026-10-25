@@ -501,7 +501,17 @@ cd frontend && npm install && npm run dev
   Plan order: active first, then priority, importance, open before improving, evidence count.
   Analysis and question pages link to the gap they feed. 14 new tests (196 total); the
   "not found ≠ gap" test confirmed to fail when the rule is removed. Browser-verified end to end.
-- [ ] **M10 Preparation:** rule-based suggestions from requirements/gaps/projects, labelled "practice question", user saves selected ones to a round.
+- [x] **M10 Preparation:** rule-based suggestions from requirements/gaps/projects, labelled "practice question", user saves selected ones to a round.
+  *Done 2026-10-25.* Pure generator `app/analysis/preparation.py`: round-format tips, "walk me through
+  how you used X in [your passage]" for demonstrated skills, review topics for listed/related
+  ones, honest-answer prep for skills the CV doesn't show, STAR prompts for responsibilities and
+  collaboration lines, open gaps relevant to the job, unfinished questions on related topics.
+  Every suggestion has a `why`; generated questions carry `is_practice_question` and say they
+  aren't known employer questions. Computed per request (`GET /applications/{id}/preparation`),
+  not stored; saving creates a `preparation` task (shared tasks table) and marks the suggestion
+  saved for that round. Works without an analysis (round tips + own checklist items). 15 new tests
+  (211 total). Browser-verified; review caught a duplicate project question and "a online / a hr"
+  grammar, both fixed.
 - [ ] **M11 Dashboard + insights:** upcoming/overdue/pending/follow-ups; insights with observation counts and "not enough data" (< 3 observations) state.
   ✅ Tests: insight with 1 observation reports insufficient data; every insight returns source refs.
 

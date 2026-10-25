@@ -109,6 +109,9 @@ function Header({ application }: { application: Detail }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href={`/applications/${application.id}/prepare`} className={buttonClass({ size: "sm" })}>
+            Prepare
+          </Link>
           <StatusDialog application={application} />
           <Link href={`/applications/${application.id}/edit`} className={buttonClass({ variant: "outline", size: "sm" })}>
             Edit details

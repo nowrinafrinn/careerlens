@@ -5,6 +5,7 @@ import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/l
 import type { ParseStatus, SectionType } from "@/lib/cvs";
 import type { Difficulty, PracticeStatus, ResponseQuality } from "@/lib/journals";
 import type { AttemptOutcome, EvidenceBasis, GapStatus, GapType, Level, TaskStatus } from "@/lib/learning";
+import type { SuggestionKind } from "@/lib/preparation";
 import type { ChangeType, RecommendationKind } from "@/lib/recommendations";
 
 type Tone = "neutral" | "info" | "progress" | "positive" | "negative" | "muted";
@@ -203,6 +204,17 @@ export const ATTEMPT_OUTCOME: Record<AttemptOutcome, string> = {
   struggled: "Struggled",
   partial: "Partly there",
   solid: "Solid",
+};
+
+export const SUGGESTION_KIND: Record<SuggestionKind, { label: string; order: number }> = {
+  round_format: { label: "The round itself", order: 0 },
+  project_question: { label: "Explaining your own work", order: 1 },
+  review_topic: { label: "Topics to review", order: 2 },
+  challenging_area: { label: "Harder areas: prepare honest answers", order: 3 },
+  behavioral_question: { label: "Behavioural practice (STAR)", order: 4 },
+  gap_practice: { label: "From your learning plan", order: 5 },
+  revisit_question: { label: "From your question bank", order: 6 },
+  practice_question: { label: "Practice questions", order: 7 },
 };
 
 export const SECTION_TYPE: Record<SectionType, string> = {

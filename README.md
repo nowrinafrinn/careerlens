@@ -5,10 +5,10 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–9 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–10 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
-> CV improvement suggestions, recruitment journals with a personal question bank, and an
-> evidence-based learning plan. See [docs/PLAN.md](docs/PLAN.md) for the
+> CV improvement suggestions, recruitment journals with a personal question bank, an evidence-based
+> learning plan, and position-specific preparation. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -148,6 +148,20 @@ where relevant, to the CV passage involved:
   logged practice sessions.
 - A gap's status changes only through a **reassessment**: new status, confidence, what it's based
   on, and optionally the practice session or question re-attempt that shows it. The history is kept.
+
+## Preparing for a round
+
+**Prepare** (on the application or a round) suggests what to prepare, from your own records:
+format tips for the round type, questions about the projects that are your evidence for the job's
+skills, topics to review where the CV only names a skill, honest-answer prep where it doesn't show
+one, STAR prompts for listed responsibilities, relevant open skill gaps, and past questions you
+haven't mastered.
+
+- Every suggestion says **why** it was made and links to its source.
+- Generated questions are labelled **practice questions**. CareerLens never claims an employer will
+  ask them.
+- Suggestions aren't stored. Add the ones you want to the round's **checklist** (preparation tasks),
+  or write your own items. It all works without any AI.
 
 ## Prerequisites
 
