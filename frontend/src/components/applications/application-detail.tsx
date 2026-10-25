@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
+import { AnalysisSummary } from "@/components/analysis/analysis-summary";
 import { RoundsSection } from "@/components/applications/rounds-section";
 import { StatusDialog } from "@/components/applications/status-dialog";
 import { ApplicationStatusBadge } from "@/components/applications/status-badge";
@@ -52,6 +53,7 @@ export function ApplicationDetail() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="flex min-w-0 flex-col gap-6">
+          <AnalysisSummary application={application} />
           <RoundsSection applicationId={application.id} rounds={application.rounds} />
           <JobDescription text={application.job_description} applicationId={application.id} />
         </div>

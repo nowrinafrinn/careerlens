@@ -5,8 +5,8 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–5 of 14 (foundation, accounts, applications and recruitment rounds, their
-> screens, and CV upload with section extraction) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–6 of 14 are complete: foundation, accounts, applications and recruitment
+> rounds with their screens, CV upload with section extraction, and requirement-to-CV evidence analysis. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -73,6 +73,30 @@ Not yet implemented: login rate limiting, password reset, email verification.
   read in the wrong order; sections can be retyped but not split or merged.
 - Nothing is sent to an external AI service.
 
+## Requirements and CV evidence
+
+On an application with a job description and a CV version, **Analyse requirements** compares them.
+It is rule-based (`backend/app/analysis/`), so nothing is sent to an AI service and every verdict
+can be traced back to its rule.
+
+| Verdict | Meaning |
+|---|---|
+| Demonstrated | The CV shows the skill used in a role, internship or project |
+| Partly shown | Only listed (e.g. in Skills), only a related skill is used, or part is missing |
+| Not found in this CV | The CV doesn't mention it. **This is not evidence that you lack it** |
+| Needs your judgement | Soft skills, years of experience and vague lines can't be settled by text matching |
+
+- Each verdict lists the CV passages it used, with their section and why they count.
+- **Your own assessment** ("I have this but it's not on my CV", "I don't have this yet", "I'm
+  learning this") is stored next to the verdict and never changes it.
+- **Coverage** is demonstrated required requirements ÷ all required requirements. Preferred,
+  uncertain, dismissed and responsibility lines are excluded. It describes the CV, not you, and it
+  doesn't predict hiring.
+- Analyses are snapshots. If the job description, the CV version or its section types change, the
+  analysis is marked out of date. Re-running keeps your assessments and corrections.
+- The skill dictionary (`backend/app/analysis/skills.py`) only knows the terms listed in it. Add
+  missing ones there.
+
 ## Prerequisites
 
 - Docker Desktop (running)
@@ -128,7 +152,9 @@ Then open:
   appear in URLs.
 - `src/lib/api-types.ts` is **generated** from the backend's OpenAPI schema. After changing a backend
   schema, run `npm run gen:api` (with the backend running) and the TypeScript compiler will point at
-  every place in the frontend that needs updating.
+  every place in the frontend that needs updating. On Windows the backend's auto-reload sometimes
+  misses changes (especially after switching git branches). If new endpoints are missing from the
+  generated file, restart the backend and run it again.
 - Server data goes through TanStack Query (`src/lib/applications.ts` holds the query keys and API
   calls). Any 401 response sends the user to `/login` and back afterwards.
 - Next.js 16 keeps recently visited pages mounted but hidden. Dialogs close themselves when hidden

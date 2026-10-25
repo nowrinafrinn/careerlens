@@ -317,10 +317,145 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/applications/{application_id}/analyses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Analyses */
+        get: operations["list_analyses_api_v1_applications__application_id__analyses_get"];
+        put?: never;
+        /**
+         * Run Analysis
+         * @description Extracts the job's requirements and checks each against the application's CV version.
+         *
+         *     Rule-based; nothing is sent to an external service. Earlier analyses are kept.
+         */
+        post: operations["run_analysis_api_v1_applications__application_id__analyses_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/applications/{application_id}/analyses/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Latest Analysis
+         * @description The most recent analysis, flagged as stale if the job description or CV changed since.
+         */
+        get: operations["latest_analysis_api_v1_applications__application_id__analyses_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{analysis_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Analysis */
+        get: operations["get_analysis_api_v1_analyses__analysis_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/requirements/{requirement_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Requirement
+         * @description Your own assessment (self_report), dismissal, or a corrected category/importance.
+         *
+         *     The self-report is stored next to the CV verdict and never replaces it.
+         */
+        patch: operations["update_requirement_api_v1_requirements__requirement_id__patch"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AnalysisMethod
+         * @enum {string}
+         */
+        AnalysisMethod: "rule_engine" | "ai";
+        /** AnalysisRead */
+        AnalysisRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            method: components["schemas"]["AnalysisMethod"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            cv_version: components["schemas"]["CVVersionRef"];
+            coverage: components["schemas"]["CoverageRead"];
+            /** Is Stale */
+            is_stale: boolean;
+            /** Stale Reasons */
+            stale_reasons: string[];
+            /** Requirements */
+            requirements: components["schemas"]["RequirementRead"][];
+        };
+        /** AnalysisSummary */
+        AnalysisSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            method: components["schemas"]["AnalysisMethod"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            cv_version: components["schemas"]["CVVersionRef"];
+            coverage: components["schemas"]["CoverageRead"];
+        };
         /** ApplicationCreate */
         ApplicationCreate: {
             /** Company Name */
@@ -563,6 +698,28 @@ export interface components {
             /** Is Confirmed */
             is_confirmed?: boolean | null;
         };
+        /**
+         * Category
+         * @enum {string}
+         */
+        Category: "technical_skill" | "tool" | "experience" | "education" | "project" | "collaboration" | "responsibility" | "other";
+        /** CoverageRead */
+        CoverageRead: {
+            /** Required Total */
+            required_total: number;
+            /** Demonstrated */
+            demonstrated: number;
+            /** Partially Demonstrated */
+            partially_demonstrated: number;
+            /** Not Found In Cv */
+            not_found_in_cv: number;
+            /** Needs Verification */
+            needs_verification: number;
+            /** Percent */
+            percent: number | null;
+            /** Explanation */
+            explanation: string;
+        };
         /** EventRead */
         EventRead: {
             /**
@@ -599,6 +756,34 @@ export interface components {
          * @enum {string}
          */
         EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "application_cv_changed" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
+        /**
+         * EvidenceRead
+         * @description A CV passage cited for a requirement, with where it sits in the CV.
+         */
+        EvidenceRead: {
+            /**
+             * Passage Id
+             * Format: uuid
+             */
+            passage_id: string;
+            /** Passage Text */
+            passage_text: string;
+            section_type: components["schemas"]["SectionType"];
+            /** Char Start */
+            char_start: number;
+            /** Char End */
+            char_end: number;
+            relevance: components["schemas"]["Relevance"];
+            /** Matched Terms */
+            matched_terms: string[];
+            /** Note */
+            note: string;
+        };
+        /**
+         * EvidenceStatus
+         * @enum {string}
+         */
+        EvidenceStatus: "demonstrated" | "partially_demonstrated" | "not_found_in_cv" | "needs_verification";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -619,6 +804,11 @@ export interface components {
             /** Migration Revision */
             migration_revision: string | null;
         };
+        /**
+         * Importance
+         * @enum {string}
+         */
+        Importance: "required" | "preferred" | "uncertain";
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -629,6 +819,16 @@ export interface components {
             /** Password */
             password: string;
         };
+        /**
+         * MatchMode
+         * @enum {string}
+         */
+        MatchMode: "all" | "any";
+        /**
+         * Origin
+         * @enum {string}
+         */
+        Origin: "rule_engine" | "ai" | "user";
         /** Page[ApplicationRead] */
         Page_ApplicationRead_: {
             /** Items */
@@ -672,6 +872,55 @@ export interface components {
             password: string;
             /** Display Name */
             display_name?: string | null;
+        };
+        /**
+         * Relevance
+         * @enum {string}
+         */
+        Relevance: "direct" | "listed" | "related" | "possible";
+        /** RequirementRead */
+        RequirementRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Position */
+            position: number;
+            /** Text */
+            text: string;
+            /** Jd Char Start */
+            jd_char_start: number;
+            /** Jd Char End */
+            jd_char_end: number;
+            /** Terms */
+            terms: string[];
+            match_mode: components["schemas"]["MatchMode"];
+            category: components["schemas"]["Category"];
+            importance: components["schemas"]["Importance"];
+            evidence_status: components["schemas"]["EvidenceStatus"];
+            /** Evidence Rationale */
+            evidence_rationale: string;
+            /** Missing Details */
+            missing_details: string | null;
+            /** Suggested Action */
+            suggested_action: string;
+            self_report: components["schemas"]["SelfReport"];
+            origin: components["schemas"]["Origin"];
+            /** User Edited */
+            user_edited: boolean;
+            /** Dismissed */
+            dismissed: boolean;
+            /** Evidence */
+            evidence: components["schemas"]["EvidenceRead"][];
+        };
+        /** RequirementUpdate */
+        RequirementUpdate: {
+            category?: components["schemas"]["Category"] | null;
+            importance?: components["schemas"]["Importance"] | null;
+            self_report?: components["schemas"]["SelfReport"] | null;
+            /** Dismissed */
+            dismissed?: boolean | null;
         };
         /** RoundCreate */
         RoundCreate: {
@@ -816,6 +1065,12 @@ export interface components {
         SectionUpdate: {
             section_type: components["schemas"]["SectionType"];
         };
+        /**
+         * SelfReport
+         * @description The candidate's own statement. Kept apart from what the CV shows.
+         * @enum {string}
+         */
+        SelfReport: "unknown" | "have_not_on_cv" | "do_not_have" | "learning";
         /** UserRead */
         UserRead: {
             /**
@@ -1646,6 +1901,175 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_analyses_api_v1_applications__application_id__analyses_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_analysis_api_v1_applications__application_id__analyses_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    latest_analysis_api_v1_applications__application_id__analyses_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                application_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_analysis_api_v1_analyses__analysis_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_requirement_api_v1_requirements__requirement_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                requirement_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequirementUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequirementRead"];
+                };
             };
             /** @description Validation Error */
             422: {

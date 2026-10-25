@@ -1,5 +1,6 @@
 // Human-readable labels and badge colours for the API's enum values.
 
+import type { Category, EvidenceStatus, Importance, Relevance, SelfReport } from "@/lib/analysis";
 import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/lib/applications";
 import type { ParseStatus, SectionType } from "@/lib/cvs";
 
@@ -46,6 +47,60 @@ export const ROUND_STATUS: Record<RoundStatus, { label: string; tone: Tone }> = 
   awaiting_result: { label: "Awaiting result", tone: "progress" },
   rescheduled: { label: "Rescheduled", tone: "progress" },
   cancelled: { label: "Cancelled", tone: "muted" },
+};
+
+export const EVIDENCE_STATUS: Record<EvidenceStatus, { label: string; tone: Tone; meaning: string }> = {
+  demonstrated: {
+    label: "Demonstrated",
+    tone: "positive",
+    meaning: "Your CV shows it being used, in a role, internship or project.",
+  },
+  partially_demonstrated: {
+    label: "Partly shown",
+    tone: "progress",
+    meaning: "It's listed, or only something related is shown, or part of it is missing.",
+  },
+  not_found_in_cv: {
+    label: "Not found in this CV",
+    tone: "negative",
+    meaning: "The CV doesn't mention it. That says nothing about whether you have it.",
+  },
+  needs_verification: {
+    label: "Needs your judgement",
+    tone: "muted",
+    meaning: "Text matching can't decide this (soft skills, years, vague wording).",
+  },
+};
+
+export const IMPORTANCE: Record<Importance, string> = {
+  required: "Required",
+  preferred: "Preferred",
+  uncertain: "Importance unclear",
+};
+
+export const CATEGORY: Record<Category, string> = {
+  technical_skill: "Technical skill",
+  tool: "Tool or technology",
+  experience: "Experience",
+  education: "Education",
+  project: "Projects",
+  collaboration: "Collaboration",
+  responsibility: "Responsibility",
+  other: "Other",
+};
+
+export const SELF_REPORT: Record<SelfReport, string> = {
+  unknown: "Not stated",
+  have_not_on_cv: "I have this (not shown on my CV)",
+  do_not_have: "I don't have this yet",
+  learning: "I'm learning this",
+};
+
+export const RELEVANCE: Record<Relevance, string> = {
+  direct: "Shown in use",
+  listed: "Listed only",
+  related: "Related skill",
+  possible: "Possibly relevant",
 };
 
 export const SECTION_TYPE: Record<SectionType, string> = {

@@ -288,8 +288,10 @@ PATCH  /cv-versions/{id}               (label, is_confirmed)   DELETE /cv-versio
 PATCH  /cv-versions/{id}/sections/{sid} (correct section type)
 GET    /cv-versions/{id}/file          (original file, byte for byte)
 POST   /applications/{id}/analyses     (run analysis against application's CV version)
+GET    /applications/{id}/analyses     GET /analyses/{id}
 GET    /applications/{id}/analyses/latest   (requirements + evidence + coverage + staleness flag)
-PATCH  /requirements/{id}              (edit text/category/importance/self_report)
+PATCH  /requirements/{id}              (category/importance/self_report/dismissed; text is not
+                                        editable, since evidence offsets point into the JD)
 GET    /analyses/{id}/recommendations  PATCH /recommendations/{id}  (accept/edit/reject)
 POST   /journals   GET /journals?application_id=   GET/PATCH /journals/{id}
 GET    /journal-templates              (prompt definitions per template)
@@ -445,7 +447,19 @@ cd frontend && npm install && npm run dev
   download, link to an application (history entry), fake-PDF / duplicate / in-use errors.
   Known limits: no OCR; a PDF heading outside the dictionary is merged into the section above
   (sections can be retyped but not split); multi-column PDFs may come out in the wrong order.
-- [ ] **M6 Requirement extraction + evidence matching (rule engine):**
+- [x] **M6 Requirement extraction + evidence matching (rule engine):**
+  *Done 2026-10-25.* `app/analysis/skills.py` (~120 skills with aliases, kinds and families;
+  case-sensitive matching for words like Go/Excel/REST), `jd_extractor.py` (posting headings →
+  required/preferred/responsibility/ignored; inline words override; "or" → any-of; offsets into the
+  JD), `evidence.py` (used in experience/projects → demonstrated; listed only or related family →
+  partial; absent → not found, always worded as "doesn't mean you lack it"; soft skills, vague lines
+  and unreadable CVs → needs verification; years capped at partial). Migration 0005:
+  requirement_analyses (snapshots with JD hash + CV signature for staleness), job_requirements
+  (verdict and self_report as separate columns, user_edited, dismissed), requirement_evidence.
+  Re-runs carry over self-reports, corrections and dismissals. Coverage = demonstrated required ÷
+  required, with its explanation in every response. 37 new tests (137 total). Browser-verified on a
+  real run: verdicts, quoted evidence, self-report beside the verdict, stale flag on the application
+  page after a JD edit, re-run carrying over input.
   ✅ Tests: fixture JD yields expected required/preferred split; skill in project bullet → `demonstrated`; only in skills list → `partially_demonstrated`; absent → `not_found_in_cv` and **no capability gap created**; vague soft skill → `needs_verification`; evidence links point to real passage offsets.
   ✅ Re-opening the application shows the stored analysis without re-running; changed CV version flags it stale.
 - [ ] **M7 Recommendations:** template-based, per requirement, 4 kinds, accept/edit/reject.

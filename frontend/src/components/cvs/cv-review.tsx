@@ -118,7 +118,11 @@ function SectionCard({ cvId, section }: { cvId: string; section: CVSection }) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (type: SectionType) => updateSection(cvId, section.id, type),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: cvKeys.all }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: cvKeys.all });
+      // Analyses using this CV may now be out of date.
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all });
+    },
   });
   const selectId = `section-type-${section.id}`;
   const unrecognized = section.section_type === "unrecognized";
