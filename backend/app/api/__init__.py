@@ -5,6 +5,7 @@ from app.api import (
     applications,
     auth,
     cvs,
+    dashboard,
     health,
     journals,
     learning,
@@ -26,3 +27,4 @@ api_router.include_router(journals.router)
 api_router.include_router(questions.router)
 api_router.include_router(learning.router)
 api_router.include_router(preparation.router)
+api_router.include_router(dashboard.router)

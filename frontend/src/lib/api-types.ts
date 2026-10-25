@@ -777,10 +777,85 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dashboard
+         * @description What needs attention, what's coming in the next 14 days, what's waiting on a result,
+         *     and where your learning stands. Pass `today` as your local date so date-based items match
+         *     your calendar (defaults to the server's date in UTC).
+         */
+        get: operations["dashboard_api_v1_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Insights
+         * @description Patterns across your records. Each insight lists its sources and how many observations
+         *     it rests on; below the minimum it is marked as not enough data, not presented as a pattern.
+         */
+        get: operations["insights_api_v1_insights_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AnalysisItem */
+        AnalysisItem: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Analysis Id
+             * Format: uuid
+             */
+            analysis_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Coverage Percent */
+            coverage_percent: number | null;
+            /** Required Total */
+            required_total: number;
+            /** Demonstrated */
+            demonstrated: number;
+            /** Needs Your Input */
+            needs_your_input: number;
+            /** Is Stale */
+            is_stale: boolean;
+        };
         /**
          * AnalysisMethod
          * @enum {string}
@@ -1014,6 +1089,36 @@ export interface components {
             /** Notes */
             notes: string | null;
         };
+        /** AttentionItem */
+        AttentionItem: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "deadline_passed" | "round_passed" | "confirmation_passed" | "task_overdue";
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Message */
+            message: string;
+            /** Application Id */
+            application_id?: string | null;
+            /** Company Name */
+            company_name?: string | null;
+            /** Position Title */
+            position_title?: string | null;
+            /** Round Id */
+            round_id?: string | null;
+            /** Round Name */
+            round_name?: string | null;
+            round_type?: components["schemas"]["RoundType"] | null;
+            /** Task Id */
+            task_id?: string | null;
+            /** Title */
+            title?: string | null;
+        };
         /** Body_upload_cv_api_v1_cv_versions_post */
         Body_upload_cv_api_v1_cv_versions_post: {
             /**
@@ -1142,6 +1247,44 @@ export interface components {
             /** Explanation */
             explanation: string;
         };
+        /** DashboardRead */
+        DashboardRead: {
+            /**
+             * Today
+             * Format: date
+             */
+            today: string;
+            /** Application Counts */
+            application_counts: {
+                [key: string]: number;
+            };
+            /** Needs Attention */
+            needs_attention: components["schemas"]["AttentionItem"][];
+            /** Upcoming Rounds */
+            upcoming_rounds: components["schemas"]["UpcomingRound"][];
+            /** Upcoming Deadlines */
+            upcoming_deadlines: components["schemas"]["UpcomingDeadline"][];
+            /** Pending Results */
+            pending_results: components["schemas"]["PendingResult"][];
+            /** Follow Ups */
+            follow_ups: components["schemas"]["FollowUp"][];
+            /** Top Tasks */
+            top_tasks: components["schemas"]["TaskItem"][];
+            /** Gap Counts */
+            gap_counts: {
+                [key: string]: number;
+            };
+            /** Recent Reassessments */
+            recent_reassessments: components["schemas"]["ReassessmentItem"][];
+            /** Questions To Practice */
+            questions_to_practice: components["schemas"]["PracticeItem"][];
+            /** Questions To Practice Total */
+            questions_to_practice_total: number;
+            /** Recent Journals */
+            recent_journals: components["schemas"]["JournalItem"][];
+            /** Analyses */
+            analyses: components["schemas"]["AnalysisItem"][];
+        };
         /**
          * Difficulty
          * @enum {string}
@@ -1217,6 +1360,33 @@ export interface components {
          * @enum {string}
          */
         EvidenceStatus: "demonstrated" | "partially_demonstrated" | "not_found_in_cv" | "needs_verification";
+        /** FollowUp */
+        FollowUp: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Round Id
+             * Format: uuid
+             */
+            round_id: string;
+            /** Round Name */
+            round_name: string;
+            round_type: components["schemas"]["RoundType"];
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Overdue */
+            overdue: boolean;
+        };
         /** GapCreate */
         GapCreate: {
             /** Skill Name */
@@ -1431,6 +1601,59 @@ export interface components {
          * @enum {string}
          */
         Importance: "required" | "preferred" | "uncertain";
+        /** InsightRead */
+        InsightRead: {
+            /** Key */
+            key: string;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "recurring_skill" | "cv_evidence" | "difficulty_topic" | "recurring_question_topic" | "shared_priority" | "improvement" | "preparation_before_improvement";
+            /** Title */
+            title: string;
+            /** Statement */
+            statement: string;
+            /** Observation Count */
+            observation_count: number;
+            /** Sufficient Data */
+            sufficient_data: boolean;
+            /**
+             * Basis
+             * @enum {string}
+             */
+            basis: "job_descriptions" | "cv_analysis" | "recorded_outcomes" | "your_statements" | "mixed";
+            /** Caveat */
+            caveat: string;
+            /** Sources */
+            sources: components["schemas"]["InsightSource"][];
+        };
+        /** InsightSource */
+        InsightSource: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "application" | "question" | "skill_gap" | "requirement" | "reassessment";
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Label */
+            label: string;
+            /** Application Id */
+            application_id?: string | null;
+        };
+        /** InsightsRead */
+        InsightsRead: {
+            /** Minimum Observations */
+            minimum_observations: number;
+            /** Insights */
+            insights: components["schemas"]["InsightRead"][];
+            /** Data Notes */
+            data_notes: string[];
+        };
         /** JournalCreate */
         JournalCreate: {
             /**
@@ -1464,6 +1687,33 @@ export interface components {
             follow_up_actions?: string | null;
             /** Questions */
             questions?: components["schemas"]["QuestionFields"][];
+        };
+        /** JournalItem */
+        JournalItem: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Journal Id
+             * Format: uuid
+             */
+            journal_id: string;
+            template: components["schemas"]["JournalTemplate"];
+            /** Round Name */
+            round_name: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Question Count */
+            question_count: number;
         };
         /** JournalRead */
         JournalRead: {
@@ -1605,6 +1855,44 @@ export interface components {
             char_start: number;
             /** Char End */
             char_end: number;
+        };
+        /** PendingResult */
+        PendingResult: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Round Id
+             * Format: uuid
+             */
+            round_id: string;
+            /** Round Name */
+            round_name: string;
+            round_type: components["schemas"]["RoundType"];
+            /**
+             * Since
+             * Format: date
+             */
+            since: string;
+        };
+        /** PracticeItem */
+        PracticeItem: {
+            /**
+             * Question Id
+             * Format: uuid
+             */
+            question_id: string;
+            /** Text */
+            text: string;
+            /** Topic */
+            topic: string | null;
+            practice_status: components["schemas"]["PracticeStatus"];
         };
         /**
          * PracticeStatus
@@ -1855,6 +2143,25 @@ export interface components {
             task_attempt_id?: string | null;
             /** Question Attempt Id */
             question_attempt_id?: string | null;
+        };
+        /** ReassessmentItem */
+        ReassessmentItem: {
+            /**
+             * Skill Gap Id
+             * Format: uuid
+             */
+            skill_gap_id: string;
+            /** Skill Name */
+            skill_name: string;
+            previous_status: components["schemas"]["GapStatus"];
+            new_status: components["schemas"]["GapStatus"];
+            /**
+             * Assessed At
+             * Format: date-time
+             */
+            assessed_at: string;
+            /** Summary */
+            summary: string;
         };
         /** ReassessmentRead */
         ReassessmentRead: {
@@ -2239,6 +2546,28 @@ export interface components {
             /** Question Id */
             question_id?: string | null;
         };
+        /** TaskItem */
+        TaskItem: {
+            /**
+             * Task Id
+             * Format: uuid
+             */
+            task_id: string;
+            /** Title */
+            title: string;
+            kind: components["schemas"]["TaskKind"];
+            status: components["schemas"]["TaskStatus"];
+            /** Priority */
+            priority: number;
+            /** Due Date */
+            due_date: string | null;
+            /** Skill Gap Id */
+            skill_gap_id: string | null;
+            /** Application Id */
+            application_id: string | null;
+            /** Round Id */
+            round_id: string | null;
+        };
         /**
          * TaskKind
          * @enum {string}
@@ -2319,6 +2648,52 @@ export interface components {
             description: string;
             /** Prompts */
             prompts: components["schemas"]["PromptRead"][];
+        };
+        /** UpcomingDeadline */
+        UpcomingDeadline: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+        };
+        /** UpcomingRound */
+        UpcomingRound: {
+            /**
+             * Application Id
+             * Format: uuid
+             */
+            application_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Position Title */
+            position_title: string;
+            /**
+             * Round Id
+             * Format: uuid
+             */
+            round_id: string;
+            /** Round Name */
+            round_name: string;
+            round_type: components["schemas"]["RoundType"];
+            /**
+             * Scheduled At
+             * Format: date-time
+             */
+            scheduled_at: string;
+            /** Prep Total */
+            prep_total: number;
+            /** Prep Done */
+            prep_done: number;
         };
         /** UserRead */
         UserRead: {
@@ -4294,6 +4669,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PreparationRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dashboard_api_v1_dashboard_get: {
+        parameters: {
+            query?: {
+                today?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    insights_api_v1_insights_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InsightsRead"];
                 };
             };
             /** @description Validation Error */

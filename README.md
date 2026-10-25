@@ -5,10 +5,10 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–10 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–11 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
 > CV improvement suggestions, recruitment journals with a personal question bank, an evidence-based
-> learning plan, and position-specific preparation. See [docs/PLAN.md](docs/PLAN.md) for the
+> learning plan, position-specific preparation, and the dashboard with insights. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -162,6 +162,28 @@ haven't mastered.
   ask them.
 - Suggestions aren't stored. Add the ones you want to the round's **checklist** (preparation tasks),
   or write your own items. It all works without any AI.
+
+## Dashboard and insights
+
+The **dashboard** (`/`) collects what needs you today, using your browser's local date:
+
+- **Needs attention:** application deadlines, rounds and confirmation dates that have passed, and
+  overdue tasks.
+- **Coming up** (next 14 days): rounds with their preparation progress, and application deadlines.
+- **Waiting on results:** completed rounds without a result, and follow-up dates.
+- Your applications by status, each analysis's CV coverage and the requirements still waiting for
+  your own assessment, open tasks, skill-gap counts, questions to practise and recent journals.
+- Closed and archived applications are left out.
+
+**Insights** (`/insights`) are patterns across your records: skills that recur across your target
+jobs, required skills your CV doesn't show yet, topics where you recorded difficulty, question topics
+that come up in several applications, and gaps you've reassessed.
+
+- Each insight shows its **observation count**, what it's based on (job descriptions, CV analysis,
+  your recorded outcomes or your own statements) and links to its source records.
+- Below **3 observations** an insight is marked **Not enough data yet**: one event isn't a pattern.
+- Things that happened together aren't presented as cause and effect, and rejections aren't used to
+  judge your ability.
 
 ## Prerequisites
 

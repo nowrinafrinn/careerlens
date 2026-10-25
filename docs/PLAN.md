@@ -512,8 +512,20 @@ cd frontend && npm install && npm run dev
   saved for that round. Works without an analysis (round tips + own checklist items). 15 new tests
   (211 total). Browser-verified; review caught a duplicate project question and "a online / a hr"
   grammar, both fixed.
-- [ ] **M11 Dashboard + insights:** upcoming/overdue/pending/follow-ups; insights with observation counts and "not enough data" (< 3 observations) state.
+- [x] **M11 Dashboard + insights:** upcoming/overdue/pending/follow-ups; insights with observation counts and "not enough data" (< 3 observations) state.
   ✅ Tests: insight with 1 observation reports insufficient data; every insight returns source refs.
+  *Done 2026-10-26.* No migration: both endpoints compute from existing tables per request.
+  `GET /dashboard?today=` takes the browser's local date (defaults to UTC) so "overdue" matches the
+  user's calendar; it excludes closed/archived applications and covers attention items, 14-day
+  rounds (with prep done/total) and deadlines, pending results, follow-ups, top open tasks, gap
+  counts, reassessments, questions to practise, recent journals and analysis coverage (including
+  required lines still needing the user's own assessment, and stale analyses). `GET /insights`:
+  rule-based patterns (recurring skill, CV evidence, difficulty topic, recurring question topic,
+  shared gap priority, improvement, preparation alongside improvement), each with observation
+  count, basis, caveat and source refs; below 3 observations the statement starts "Not enough data
+  yet". Co-occurrence is never stated as causation. "/" is now the dashboard (redirect removed); nav
+  gains Dashboard and Insights and scrolls sideways on phones. 14 new tests (225 total).
+  Browser-verified with the demo account; the dev server served a stale header once (fixed by restart).
 
 ### Day 4 — Stabilise & ship
 - [ ] **M12** Full journey run-through (acceptance criteria 1–14 below), bug fixes, error/empty/loading states, mobile layout.

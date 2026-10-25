@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import { currentUserKey, getCurrentUser, logout } from "@/lib/auth";
 
 const NAV = [
+  { href: "/", label: "Dashboard" },
   { href: "/applications", label: "Applications" },
   { href: "/cvs", label: "CVs" },
   { href: "/questions", label: "Questions" },
   { href: "/learning", label: "Learning" },
+  { href: "/insights", label: "Insights" },
 ];
 
 export function AppHeader() {
@@ -36,26 +38,27 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-6 px-4 sm:px-6">
-        <Link href="/applications" className="text-sm font-semibold tracking-tight">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-3 px-4 sm:gap-6 sm:px-6">
+        <Link href="/" className="shrink-0 text-sm font-semibold tracking-tight">
           CareerLens
         </Link>
-        <nav aria-label="Main" className="flex items-center gap-1">
+        {/* On narrow screens the links scroll sideways instead of widening the page. */}
+        <nav aria-label="Main" className="-my-2 flex min-w-0 items-center gap-1 overflow-x-auto py-2 [scrollbar-width:none]">
           {NAV.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:font-medium aria-[current=page]:text-foreground"
+                className="shrink-0 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:font-medium aria-[current=page]:text-foreground"
               >
                 {item.label}
               </Link>
             );
           })}
         </nav>
-        <div className="ml-auto flex min-w-0 items-center gap-3">
+        <div className="ml-auto flex min-w-0 shrink-0 items-center sm:shrink gap-3">
           <span className="hidden truncate text-sm text-muted-foreground sm:inline">
             {user ? (user.display_name ?? user.email) : ""}
           </span>
