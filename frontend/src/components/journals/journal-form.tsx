@@ -103,7 +103,7 @@ export function JournalForm({ application, journal, initialRoundId }: Props) {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-6">
-      <section className="grid gap-4 rounded-xl border bg-background p-5 sm:grid-cols-3">
+      <section className="grid gap-4 surface rounded-xl border p-5 sm:grid-cols-3">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="journal-round">Round</Label>
           <NativeSelect
@@ -144,7 +144,7 @@ export function JournalForm({ application, journal, initialRoundId }: Props) {
         {current && <p className="text-sm text-muted-foreground sm:col-span-3">{current.description}</p>}
       </section>
 
-      <section aria-labelledby="prompts-heading" className="flex flex-col gap-4 rounded-xl border bg-background p-5">
+      <section aria-labelledby="prompts-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">
         <div>
           <h2 id="prompts-heading" className="text-sm font-semibold">
             What happened
@@ -171,7 +171,7 @@ export function JournalForm({ application, journal, initialRoundId }: Props) {
         ))}
       </section>
 
-      <section aria-labelledby="feedback-heading" className="flex flex-col gap-4 rounded-xl border bg-background p-5">
+      <section aria-labelledby="feedback-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">
         <div>
           <h2 id="feedback-heading" className="text-sm font-semibold">
             Feedback and your reading of it
@@ -211,7 +211,7 @@ export function JournalForm({ application, journal, initialRoundId }: Props) {
             </p>
           </div>
           {questions.map((question, index) => (
-            <fieldset key={index} className="flex flex-col gap-3 rounded-xl border bg-background p-4">
+            <fieldset key={index} className="flex flex-col gap-3 surface rounded-xl border p-4">
               <div className="flex items-center justify-between">
                 <legend className="text-sm font-medium">Question {index + 1}</legend>
                 <Button type="button" variant="ghost" size="sm" className="text-muted-foreground" onClick={() => setQuestions(questions.filter((_, i) => i !== index))}>

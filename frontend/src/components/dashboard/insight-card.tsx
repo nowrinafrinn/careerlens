@@ -5,7 +5,7 @@ import { INSIGHT_BASIS, sourceHref, type Insight } from "@/lib/dashboard";
 
 export function InsightCard({ insight, compact = false }: { insight: Insight; compact?: boolean }) {
   return (
-    <li className={`flex flex-col gap-2 rounded-xl border bg-background p-4 text-sm ${insight.sufficient_data ? "" : "border-dashed"}`}>
+    <li className={`flex flex-col gap-2 surface rounded-xl border p-4 text-sm ${insight.sufficient_data ? "" : "border-dashed"}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="min-w-0 font-medium">{insight.title}</p>
         <div className="flex flex-wrap gap-1.5">

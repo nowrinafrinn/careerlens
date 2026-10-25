@@ -78,7 +78,7 @@ export function QuestionDetail() {
         </p>
       </div>
 
-      <section aria-label="Details" className="grid gap-3 rounded-xl border bg-background p-4 sm:grid-cols-4">
+      <section aria-label="Details" className="grid gap-3 surface rounded-xl border p-4 sm:grid-cols-4">
         <Meta label="Practice status" id="meta-practice">
           <NativeSelect id="meta-practice" value={q.practice_status} onChange={(e) => update.mutate({ practice_status: e.target.value as PracticeStatus })}>
             {Object.entries(PRACTICE_STATUS).map(([key, meta]) => (
@@ -131,7 +131,7 @@ export function QuestionDetail() {
               extra={latest.notes}
             />
           ) : (
-            <div className="flex items-center rounded-xl border border-dashed bg-background p-4 text-sm text-muted-foreground">
+            <div className="flex items-center surface rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
               No later attempts yet. Try it again below without looking at the solution, then compare.
             </div>
           )}
@@ -139,7 +139,7 @@ export function QuestionDetail() {
       </section>
 
       {(q.skill_gap_id || [q.response_quality, ...q.attempts.map((a) => a.response_quality)].some((r) => r === "partial" || r === "could_not_answer")) && (
-        <section aria-label="Learning plan" className="flex flex-col gap-2 rounded-xl border bg-background p-4 text-sm">
+        <section aria-label="Learning plan" className="flex flex-col gap-2 surface rounded-xl border p-4 text-sm">
           <p>
             {q.skill_gap_id
               ? "This question is evidence for a gap in your learning plan."
@@ -162,7 +162,7 @@ export function QuestionDetail() {
       <VerifiedSolution question={q} onSave={(verified_solution) => update.mutate({ verified_solution })} saving={update.isPending} />
 
       {q.ai_suggestion && (
-        <section className="rounded-xl border border-dashed bg-background p-4 text-sm">
+        <section className="surface rounded-xl border border-dashed p-4 text-sm">
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">AI-generated suggestion · not verified</p>
           <p className="mt-1 whitespace-pre-wrap">{q.ai_suggestion}</p>
         </section>
@@ -175,7 +175,7 @@ export function QuestionDetail() {
           </h2>
           <ol className="flex flex-col gap-2">
             {[...q.attempts].reverse().map((attempt) => (
-              <li key={attempt.id} className="rounded-xl border bg-background p-4 text-sm">
+              <li key={attempt.id} className="surface rounded-xl border p-4 text-sm">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-muted-foreground tabular-nums">{formatDateTime(attempt.attempted_at)}</span>
                   <Pill tone={RESPONSE_QUALITY[attempt.response_quality].tone}>{RESPONSE_QUALITY[attempt.response_quality].label}</Pill>
@@ -230,7 +230,7 @@ function AnswerCard(props: {
 }) {
   const quality = RESPONSE_QUALITY[props.quality];
   return (
-    <div className="flex flex-col gap-2 rounded-xl border bg-background p-4 text-sm">
+    <div className="flex flex-col gap-2 surface rounded-xl border p-4 text-sm">
       <div>
         <p className="font-medium">{props.title}</p>
         <p className="text-xs text-muted-foreground">{props.note}</p>
@@ -280,7 +280,7 @@ function AttemptForm({ question }: { question: Detail }) {
   }
 
   return (
-    <section aria-labelledby="try-heading" className="rounded-xl border bg-background p-4">
+    <section aria-labelledby="try-heading" className="surface rounded-xl border p-4">
       <h2 id="try-heading" className="text-base font-semibold">
         Try it again
       </h2>
@@ -336,7 +336,7 @@ function VerifiedSolution({ question, onSave, saving }: { question: Detail; onSa
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(question.verified_solution ?? "");
   return (
-    <section aria-labelledby="solution-heading" className="rounded-xl border bg-background p-4 text-sm">
+    <section aria-labelledby="solution-heading" className="surface rounded-xl border p-4 text-sm">
       <div className="flex items-center justify-between gap-2">
         <h2 id="solution-heading" className="text-base font-semibold">
           Verified solution

@@ -31,7 +31,7 @@ export function InsightsView() {
       ) : (
         <>
           {insights.data.insights.length === 0 ? (
-            <p className="rounded-xl border border-dashed bg-background p-6 text-sm text-muted-foreground">
+            <p className="surface rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
               No insights yet. They appear as your records grow.
             </p>
           ) : (
@@ -42,7 +42,7 @@ export function InsightsView() {
             </ul>
           )}
           {insights.data.data_notes.length > 0 && (
-            <section aria-labelledby="notes-heading" className="rounded-xl border bg-background p-4 text-sm">
+            <section aria-labelledby="notes-heading" className="surface rounded-xl border p-4 text-sm">
               <h2 id="notes-heading" className="font-medium">
                 For more insights
               </h2>

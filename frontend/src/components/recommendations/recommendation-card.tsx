@@ -48,7 +48,7 @@ export function RecommendationCard({ rec, analysisId }: { rec: Recommendation; a
   const usable = rec.change_type !== "no_cv_change";
 
   return (
-    <li className={`flex flex-col gap-3 rounded-xl border bg-background p-4 ${rec.status === "rejected" ? "opacity-60" : ""}`}>
+    <li className={`flex flex-col gap-3 surface rounded-xl border p-4 ${rec.status === "rejected" ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="font-medium">{rec.title}</h3>

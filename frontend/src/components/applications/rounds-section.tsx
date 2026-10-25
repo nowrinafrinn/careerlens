@@ -48,7 +48,7 @@ export function RoundsSection({ applicationId, rounds }: { applicationId: string
       </div>
 
       {rounds.length === 0 ? (
-        <div className="rounded-xl border border-dashed bg-background px-5 py-8 text-sm text-muted-foreground">
+        <div className="surface rounded-xl border border-dashed px-5 py-8 text-sm text-muted-foreground">
           No rounds yet. Add one when you hear about the next step, such as a CV screening, an online
           assessment or an interview.
         </div>
@@ -75,7 +75,7 @@ function RoundCard({
   prep: { total: number; done: number };
 }) {
   return (
-    <li className="rounded-xl border bg-background p-4">
+    <li className="surface rounded-xl border p-4">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground">

@@ -131,13 +131,13 @@ export function QuestionBank() {
           Questions couldn&apos;t be loaded. Check that the backend is running, then refresh.
         </p>
       ) : results.data.items.length === 0 ? (
-        <p className="rounded-xl border border-dashed bg-background px-6 py-10 text-center text-sm text-muted-foreground">
+        <p className="surface rounded-xl border border-dashed px-6 py-10 text-center text-sm text-muted-foreground">
           {filtered
             ? "No questions match these filters."
             : "No questions yet. Record them in a journal after an assessment or interview, or add one here."}
         </p>
       ) : (
-        <ul className={`divide-y overflow-hidden rounded-xl border bg-background ${results.isFetching ? "opacity-70" : ""}`}>
+        <ul className={`divide-y overflow-hidden surface rounded-xl border ${results.isFetching ? "opacity-70" : ""}`}>
           {results.data.items.map((question) => (
             <QuestionRow key={question.id} question={question} />
           ))}

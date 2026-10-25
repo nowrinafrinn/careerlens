@@ -23,7 +23,7 @@ export function AnalysisSummary({ application }: { application: ApplicationDetai
       <h2 id="evidence-heading" className="text-base font-semibold">
         Requirements and CV evidence
       </h2>
-      <div className="flex flex-col gap-4 rounded-xl border bg-background p-4">
+      <div className="flex flex-col gap-4 surface rounded-xl border p-4">
         {!ready ? (
           <p className="text-sm text-muted-foreground">
             {!application.job_description?.trim() && !application.cv_version

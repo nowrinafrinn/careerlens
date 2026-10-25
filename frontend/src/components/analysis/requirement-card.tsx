@@ -31,7 +31,7 @@ export function RequirementCard({ requirement, applicationId }: { requirement: R
   const id = requirement.id;
 
   return (
-    <li className={`rounded-xl border bg-background ${requirement.dismissed ? "opacity-60" : ""}`}>
+    <li className={`surface rounded-xl border ${requirement.dismissed ? "opacity-60" : ""}`}>
       <details className="group">
         <summary className="flex cursor-pointer list-none items-start gap-3 p-4 [&::-webkit-details-marker]:hidden">
           <span

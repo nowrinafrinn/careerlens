@@ -104,7 +104,7 @@ export function PrepareView() {
 function SuggestionGroups({ suggestions, applicationId, roundId }: { suggestions: Suggestion[]; applicationId: string; roundId: string | null }) {
   if (suggestions.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed bg-background p-5 text-sm text-muted-foreground">
+      <p className="surface rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
         No suggestions yet. Analyse the job&apos;s requirements, or choose a round, to get some. You can always add your
         own checklist items.
       </p>
@@ -160,7 +160,7 @@ function SuggestionCard({ suggestion: s, applicationId, roundId }: { suggestion:
         : null;
 
   return (
-    <li className="flex flex-col gap-2 rounded-xl border bg-background p-4 text-sm">
+    <li className="flex flex-col gap-2 surface rounded-xl border p-4 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="min-w-0 font-medium">{s.title}</p>
         {s.is_practice_question && <Pill tone="info">Practice question</Pill>}
@@ -222,7 +222,7 @@ function Checklist({ applicationId, roundId }: { applicationId: string; roundId:
   const done = items.filter((t) => t.status === "completed").length;
 
   return (
-    <aside aria-labelledby="checklist-heading" className="flex min-w-0 flex-col gap-3 self-start rounded-xl border bg-background p-4 lg:sticky lg:top-20">
+    <aside aria-labelledby="checklist-heading" className="flex min-w-0 flex-col gap-3 self-start surface rounded-xl border p-4 lg:sticky lg:top-20">
       <div>
         <h2 id="checklist-heading" className="text-base font-semibold">
           Your checklist

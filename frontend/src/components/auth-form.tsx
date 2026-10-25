@@ -67,7 +67,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="surface float-forward w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-lg">{copy.title}</CardTitle>
         <CardDescription>{copy.description}</CardDescription>

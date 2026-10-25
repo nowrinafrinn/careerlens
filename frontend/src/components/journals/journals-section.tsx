@@ -27,12 +27,12 @@ export function JournalsSection({ applicationId }: { applicationId: string }) {
       ) : journals.isError ? (
         <p className="text-sm text-destructive">Journals couldn&apos;t be loaded.</p>
       ) : journals.data.length === 0 ? (
-        <p className="rounded-xl border border-dashed bg-background px-5 py-6 text-sm text-muted-foreground">
+        <p className="surface rounded-xl border border-dashed px-5 py-6 text-sm text-muted-foreground">
           After an assessment or interview, write down what happened and the questions you were asked. They become
           the evidence for what to practise next.
         </p>
       ) : (
-        <ul className="divide-y overflow-hidden rounded-xl border bg-background">
+        <ul className="divide-y overflow-hidden surface rounded-xl border">
           {journals.data.map((journal) => (
             <li key={journal.id}>
               <Link href={`/journals/${journal.id}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm hover:bg-muted/50">

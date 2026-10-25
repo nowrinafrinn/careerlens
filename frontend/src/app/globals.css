@@ -2,13 +2,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* Light or dark follows the device setting; there is no in-app toggle. */
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-page: var(--page);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-fira-code);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -48,83 +50,200 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* "Glass Ops": slate glass surfaces over a soft glow, green as the one accent.
+   --page is the solid ground; --background is the translucent glass that
+   cards, inputs and the header are made of. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  color-scheme: light;
+  --page: #eef2f7;
+  --background: rgb(255 255 255 / 0.62);
+  --foreground: #0f172a;
+  --card: rgb(255 255 255 / 0.62);
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #15803d;
+  --primary-foreground: #ffffff;
+  --secondary: rgb(15 23 42 / 0.05);
+  --secondary-foreground: #0f172a;
+  --muted: rgb(15 23 42 / 0.05);
+  --muted-foreground: #475569;
+  --accent: rgb(15 23 42 / 0.06);
+  --accent-foreground: #0f172a;
+  --destructive: #b91c1c;
+  --border: rgb(15 23 42 / 0.1);
+  --input: rgb(15 23 42 / 0.18);
+  --ring: #15803d;
+  --chart-1: #15803d;
+  --chart-2: #1d4ed8;
+  --chart-3: #b45309;
+  --chart-4: #475569;
+  --chart-5: #0f172a;
+  --radius: 0.75rem;
+  --sidebar: rgb(255 255 255 / 0.62);
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #15803d;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgb(15 23 42 / 0.06);
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: rgb(15 23 42 / 0.1);
+  --sidebar-ring: #15803d;
+
+  --glass-edge: rgb(255 255 255 / 0.95);
+  --glow-1: rgb(34 197 94 / 0.2);
+  --glow-2: rgb(59 130 246 / 0.16);
+  --dots: rgb(15 23 42 / 0.07);
+  --floor: rgb(21 128 61 / 0.3);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 12px 32px -16px rgb(15 23 42 / 0.28);
+  --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 28px 44px -20px rgb(15 23 42 / 0.42), 0 0 0 1px rgb(21 128 61 / 0.28);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #0b1120;
+    --background: rgb(30 41 59 / 0.55);
+    --foreground: #f8fafc;
+    --card: rgb(30 41 59 / 0.55);
+    --card-foreground: #f8fafc;
+    --popover: #1b2336;
+    --popover-foreground: #f8fafc;
+    --primary: #22c55e;
+    --primary-foreground: #052e16;
+    --secondary: rgb(255 255 255 / 0.06);
+    --secondary-foreground: #f8fafc;
+    --muted: rgb(255 255 255 / 0.06);
+    --muted-foreground: #94a3b8;
+    --accent: rgb(255 255 255 / 0.08);
+    --accent-foreground: #f8fafc;
+    --destructive: #f87171;
+    --border: rgb(255 255 255 / 0.1);
+    --input: rgb(255 255 255 / 0.18);
+    --ring: #22c55e;
+    --chart-1: #22c55e;
+    --chart-2: #93c5fd;
+    --chart-3: #fbbf24;
+    --chart-4: #94a3b8;
+    --chart-5: #f8fafc;
+    --sidebar: rgb(30 41 59 / 0.55);
+    --sidebar-foreground: #f8fafc;
+    --sidebar-primary: #22c55e;
+    --sidebar-primary-foreground: #052e16;
+    --sidebar-accent: rgb(255 255 255 / 0.08);
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: rgb(255 255 255 / 0.1);
+    --sidebar-ring: #22c55e;
+
+    --glass-edge: rgb(255 255 255 / 0.1);
+    --glow-1: rgb(34 197 94 / 0.18);
+    --glow-2: rgb(99 102 241 / 0.2);
+    --dots: rgb(255 255 255 / 0.06);
+    --floor: rgb(34 197 94 / 0.38);
+    --shadow: 0 1px 0 rgb(255 255 255 / 0.06) inset, 0 14px 34px -16px rgb(0 0 0 / 0.7);
+    --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.08) inset, 0 30px 50px -20px rgb(0 0 0 / 0.9), 0 0 0 1px rgb(34 197 94 / 0.35);
+  }
+}
+
+/* A frosted-glass panel. Panels without form fields lift toward the viewer
+   on hover (the "depth" effect); forms, dashed empty states and chrome marked
+   .no-lift (header, tab bar) stay put. */
+@utility surface {
+  background-color: var(--background);
+  border-color: var(--glass-edge);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px) saturate(140%);
+  transition:
+    transform 0.3s cubic-bezier(0.16, 0.84, 0.24, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 0.84, 0.24, 1);
+  &.border-dashed {
+    border-color: var(--input);
+    box-shadow: none;
+  }
+  &:not(.border-dashed):not(.no-lift):not(:has(input, textarea, select)):hover {
+    transform: perspective(800px) translate3d(0, -4px, 24px);
+    box-shadow: var(--shadow-lift);
+  }
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
-    @apply font-sans;
+    @apply bg-page font-sans;
+  }
+  body {
+    @apply text-foreground;
+    isolation: isolate;
+  }
+  /* Ground: two soft glows over a dot grid. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(640px 420px at 88% -8%, var(--glow-1), transparent 70%),
+      radial-gradient(560px 420px at -4% 104%, var(--glow-2), transparent 70%),
+      radial-gradient(var(--dots) 1px, transparent 1px) 0 0 / 22px 22px;
+  }
+  /* A 3D grid floor receding toward the horizon, drifting slowly. */
+  body::after {
+    content: "";
+    position: fixed;
+    left: -25%;
+    right: -25%;
+    bottom: 0;
+    height: 55vh;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(var(--floor) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, var(--floor) 1.5px, transparent 1.5px);
+    background-size: 44px 44px;
+    transform: perspective(600px) rotateX(60deg);
+    transform-origin: 50% 100%;
+    mask-image: linear-gradient(to top, #000 30%, transparent 95%);
+    animation: floor-drift 9s linear infinite;
+  }
+}
+
+/* The sign-in pages rise out of depth on load. Signed-in pages get the same
+   entrance on every navigation from components/page-transition.tsx. */
+.page-depth {
+  transform-origin: 50% 0;
+  animation: depth-in 0.7s cubic-bezier(0.16, 0.84, 0.24, 1) both;
+}
+
+/* The sign-in card floats forward. */
+.float-forward {
+  transform: perspective(1000px) translateZ(30px);
+  box-shadow: var(--shadow-lift);
+}
+
+@keyframes depth-in {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) translate3d(0, 24px, -300px) rotateX(10deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes floor-drift {
+  from { background-position: 0 0; }
+  to { background-position: 0 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after,
+  .page-depth {
+    animation: none;
+  }
+  .surface:hover,
+  .float-forward {
+    transform: none !important;
   }
 }

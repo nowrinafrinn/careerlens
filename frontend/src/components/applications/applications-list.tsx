@@ -118,14 +118,14 @@ export function ApplicationsList() {
       {isPending ? (
         <ListSkeleton />
       ) : isError ? (
-        <p role="alert" className="rounded-lg border bg-background p-6 text-sm text-destructive">
+        <p role="alert" className="surface rounded-lg border p-6 text-sm text-destructive">
           Applications couldn&apos;t be loaded. Check that the backend is running, then refresh.
         </p>
       ) : data.items.length === 0 ? (
         <EmptyState filtered={filtered} />
       ) : (
         <ul
-          className={`divide-y overflow-hidden rounded-xl border bg-background transition-opacity ${isFetching ? "opacity-70" : ""}`}
+          className={`divide-y overflow-hidden surface rounded-xl border transition-opacity ${isFetching ? "opacity-70" : ""}`}
         >
           {data.items.map((application) => (
             <ApplicationRow key={application.id} application={application} />
@@ -206,7 +206,7 @@ function ApplicationRow({ application }: { application: Application }) {
 
 function EmptyState({ filtered }: { filtered: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed bg-background px-6 py-14 text-center">
+    <div className="flex flex-col items-center gap-3 surface rounded-xl border border-dashed px-6 py-14 text-center">
       {filtered ? (
         <>
           <p className="font-medium">No applications match these filters</p>
@@ -233,7 +233,7 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 
 function ListSkeleton() {
   return (
-    <ul aria-hidden className="divide-y overflow-hidden rounded-xl border bg-background">
+    <ul aria-hidden className="divide-y overflow-hidden surface rounded-xl border">
       {Array.from({ length: 4 }, (_, i) => (
         <li key={i} className="flex items-center justify-between gap-6 px-4 py-4">
           <div className="flex flex-col gap-2">

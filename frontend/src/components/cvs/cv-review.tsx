@@ -87,7 +87,7 @@ export function CVReview() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-background p-4 text-sm">
+      <div className="surface rounded-xl border p-4 text-sm">
         <p>
           <span className="font-medium">{status.description}</span> This is what CareerLens could read from your file.
           If a block is in the wrong section, change its type. Your original file is never modified.
@@ -128,7 +128,7 @@ function SectionCard({ cvId, section }: { cvId: string; section: CVSection }) {
   const unrecognized = section.section_type === "unrecognized";
 
   return (
-    <li className={`rounded-xl border bg-background p-4 ${unrecognized ? "border-amber-300 dark:border-amber-800" : ""}`}>
+    <li className={`surface rounded-xl border p-4 ${unrecognized ? "border-amber-300 dark:border-amber-800" : ""}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground">{section.heading_text ? "Heading in your CV" : "No heading"}</p>

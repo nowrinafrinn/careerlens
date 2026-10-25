@@ -16,7 +16,7 @@ import type { GapStatus } from "@/lib/learning";
 function Card({ title, action, children, className = "" }: { title: string; action?: ReactNode; children: ReactNode; className?: string }) {
   const id = `card-${title.toLowerCase().replace(/[^a-z]+/g, "-")}`;
   return (
-    <section aria-labelledby={id} className={`flex min-w-0 flex-col gap-3 rounded-xl border bg-background p-4 ${className}`}>
+    <section aria-labelledby={id} className={`flex min-w-0 flex-col gap-3 surface rounded-xl border p-4 ${className}`}>
       <div className="flex items-center justify-between gap-2">
         <h2 id={id} className="text-sm font-semibold">
           {title}
@@ -201,7 +201,7 @@ export function DashboardView() {
 function NeedsAttention({ items }: { items: Dashboard["needs_attention"] }) {
   if (items.length === 0) {
     return (
-      <p className="rounded-xl border bg-background px-4 py-3 text-sm text-muted-foreground">
+      <p className="surface rounded-xl border px-4 py-3 text-sm text-muted-foreground">
         Nothing overdue. Deadlines, past rounds and tasks will show here when they need you.
       </p>
     );

@@ -40,11 +40,11 @@ export function CVList() {
             CVs couldn&apos;t be loaded. Check that the backend is running, then refresh.
           </p>
         ) : data.length === 0 ? (
-          <p className="rounded-xl border border-dashed bg-background px-5 py-8 text-sm text-muted-foreground">
+          <p className="surface rounded-xl border border-dashed px-5 py-8 text-sm text-muted-foreground">
             No CVs yet. Upload one above to see what CareerLens can read from it.
           </p>
         ) : (
-          <ul className="divide-y overflow-hidden rounded-xl border bg-background">
+          <ul className="divide-y overflow-hidden surface rounded-xl border">
             {data.map((cv) => (
               <CVRow key={cv.id} cv={cv} />
             ))}
@@ -126,7 +126,7 @@ function UploadCard() {
   }
 
   return (
-    <section aria-labelledby="upload-heading" className="rounded-xl border bg-background p-5 sm:p-6">
+    <section aria-labelledby="upload-heading" className="surface rounded-xl border p-5 sm:p-6">
       <h2 id="upload-heading" className="text-sm font-semibold">
         Upload a CV
       </h2>

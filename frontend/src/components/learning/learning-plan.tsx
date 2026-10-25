@@ -45,7 +45,7 @@ export function LearningPlan() {
           The learning plan couldn&apos;t be loaded. Check that the backend is running, then refresh.
         </p>
       ) : gaps.data.length === 0 ? (
-        <div className="flex flex-col gap-2 rounded-xl border border-dashed bg-background p-6 text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 surface rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Nothing in your plan yet</p>
           <p>Gaps come from real evidence. Add one from:</p>
           <ul className="list-disc pl-5">
@@ -95,7 +95,7 @@ function GapCard({ gap }: { gap: GapSummary }) {
     <li>
       <Link
         href={`/learning/${gap.id}`}
-        className="flex flex-col gap-2 rounded-xl border bg-background p-4 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+        className="flex flex-col gap-2 surface rounded-xl border p-4 transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
       >
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="min-w-0">

@@ -91,7 +91,7 @@ export function ApplicationForm({ application }: { application?: ApplicationDeta
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="flex flex-col gap-6" noValidate={false}>
-      <section className="grid gap-5 rounded-xl border bg-background p-5 sm:grid-cols-2 sm:p-6">
+      <section className="grid gap-5 surface rounded-xl border p-5 sm:grid-cols-2 sm:p-6">
         <h2 className="text-sm font-semibold sm:col-span-2">Position</h2>
         <FormField id="position_title" label="Position title" error={err.position_title}>
           <Input
@@ -202,7 +202,7 @@ export function ApplicationForm({ application }: { application?: ApplicationDeta
         </FormField>
       </section>
 
-      <section className="flex flex-col gap-5 rounded-xl border bg-background p-5 sm:p-6">
+      <section className="flex flex-col gap-5 surface rounded-xl border p-5 sm:p-6">
         <h2 className="text-sm font-semibold">Details</h2>
         <FormField
           id="job_description"

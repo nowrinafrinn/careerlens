@@ -60,7 +60,7 @@ export function RecommendationsView() {
       </div>
 
       {!analysis.data ? (
-        <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed bg-background p-6">
+        <div className="flex flex-col items-start gap-3 surface rounded-xl border border-dashed p-6">
           <p className="font-medium">No analysis yet</p>
           <p className="text-sm text-muted-foreground">Suggestions come from the requirement analysis. Run it first.</p>
           <Link href={`/applications/${id}/analysis`} className={buttonClass({ size: "sm" })}>
@@ -128,7 +128,7 @@ function ToApply({ texts }: { texts: string[] }) {
   }
 
   return (
-    <section aria-labelledby="apply-heading" className="flex flex-col gap-3 rounded-xl border bg-background p-4">
+    <section aria-labelledby="apply-heading" className="flex flex-col gap-3 surface rounded-xl border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="apply-heading" className="text-base font-semibold">
           To apply in your CV <span className="font-normal text-muted-foreground tabular-nums">({texts.length})</span>

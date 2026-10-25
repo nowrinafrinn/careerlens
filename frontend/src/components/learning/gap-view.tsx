@@ -76,7 +76,7 @@ export function GapView() {
         </div>
       </div>
 
-      <section aria-labelledby="diagnosis-heading" className="flex flex-col gap-4 rounded-xl border bg-background p-5">
+      <section aria-labelledby="diagnosis-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">
         <div>
           <h2 id="diagnosis-heading" className="text-sm font-semibold">
             Your diagnosis
@@ -141,7 +141,7 @@ export function GapView() {
         </h2>
         <ul className="flex flex-col gap-2">
           {g.evidence.map((e) => (
-            <li key={e.id} className="rounded-xl border bg-background p-4 text-sm">
+            <li key={e.id} className="surface rounded-xl border p-4 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <Pill tone="neutral">{EVIDENCE_BASIS[e.basis]}</Pill>
                 <span className="text-xs text-muted-foreground tabular-nums">{formatDateTime(e.created_at)}</span>
@@ -247,7 +247,7 @@ function TasksSection({ gap }: { gap: GapDetail }) {
           ))}
         </ul>
       )}
-      <form onSubmit={onSubmit} className="grid gap-3 rounded-xl border border-dashed bg-background p-4 sm:grid-cols-[minmax(0,1fr)_10rem_auto] sm:items-end">
+      <form onSubmit={onSubmit} className="grid gap-3 surface rounded-xl border border-dashed p-4 sm:grid-cols-[minmax(0,1fr)_10rem_auto] sm:items-end">
         <FormField id="new-task" label="New task">
           <Input id="new-task" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} placeholder="Solve 5 timed window-function problems" />
         </FormField>
@@ -266,7 +266,7 @@ function TaskCard({ task, gapId }: { task: Task; gapId: string }) {
   const update = useGapMutation(gapId, (body: { status: TaskStatus }) => updateTask(task.id, body));
   const status = TASK_STATUS[task.status];
   return (
-    <li className="flex flex-col gap-3 rounded-xl border bg-background p-4 text-sm">
+    <li className="flex flex-col gap-3 surface rounded-xl border p-4 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-medium">{task.title}</p>

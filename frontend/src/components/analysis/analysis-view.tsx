@@ -108,7 +108,7 @@ export function AnalysisView() {
       )}
 
       {!result ? (
-        <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed bg-background p-6">
+        <div className="flex flex-col items-start gap-3 surface rounded-xl border border-dashed p-6">
           <p className="font-medium">Not analysed yet</p>
           <p className="max-w-xl text-sm text-muted-foreground">
             CareerLens will pick out the job&apos;s requirements and look for evidence of each one in the CV version
@@ -132,7 +132,7 @@ export function AnalysisView() {
             </div>
           )}
 
-          <section aria-labelledby="coverage-heading" className="flex flex-col gap-4 rounded-xl border bg-background p-5">
+          <section aria-labelledby="coverage-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">
             <h2 id="coverage-heading" className="sr-only">
               Coverage
             </h2>
@@ -152,7 +152,7 @@ export function AnalysisView() {
           </section>
 
           {result.requirements.length === 0 ? (
-            <p className="rounded-xl border border-dashed bg-background p-6 text-sm text-muted-foreground">
+            <p className="surface rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
               No requirements could be picked out of this job description. Postings that use headings such as
               &quot;Requirements&quot; or bullet points work best.
             </p>

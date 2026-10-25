@@ -63,14 +63,14 @@ export function ApplicationDetail() {
         <aside className="flex min-w-0 flex-col gap-6">
           <Facts application={application} />
           {application.notes && (
-            <section aria-labelledby="notes-heading" className="rounded-xl border bg-background p-4">
+            <section aria-labelledby="notes-heading" className="surface rounded-xl border p-4">
               <h2 id="notes-heading" className="mb-2 text-sm font-semibold">
                 Notes
               </h2>
               <p className="text-sm whitespace-pre-wrap">{application.notes}</p>
             </section>
           )}
-          <section aria-labelledby="history-heading" className="rounded-xl border bg-background p-4">
+          <section aria-labelledby="history-heading" className="surface rounded-xl border p-4">
             <h2 id="history-heading" className="mb-3 text-sm font-semibold">
               History
             </h2>
@@ -154,7 +154,7 @@ function ArchivedBanner({ application }: { application: Detail }) {
 function Facts({ application }: { application: Detail }) {
   const days = application.deadline ? daysUntil(application.deadline) : null;
   return (
-    <section aria-labelledby="facts-heading" className="rounded-xl border bg-background p-4">
+    <section aria-labelledby="facts-heading" className="surface rounded-xl border p-4">
       <h2 id="facts-heading" className="sr-only">
         Details
       </h2>
@@ -214,7 +214,7 @@ function JobDescription({ text, applicationId }: { text: string | null; applicat
         Job description
       </h2>
       {text ? (
-        <div className="rounded-xl border bg-background p-4">
+        <div className="surface rounded-xl border p-4">
           <p className={`text-sm whitespace-pre-wrap ${long && !expanded ? "line-clamp-[16]" : ""}`}>{text}</p>
           {long && (
             <Button variant="link" size="sm" className="mt-2 px-0" onClick={() => setExpanded((value) => !value)}>
@@ -223,7 +223,7 @@ function JobDescription({ text, applicationId }: { text: string | null; applicat
           )}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed bg-background px-5 py-6 text-sm text-muted-foreground">
+        <div className="surface rounded-xl border border-dashed px-5 py-6 text-sm text-muted-foreground">
           No job description saved.{" "}
           <Link href={`/applications/${applicationId}/edit`} className="text-foreground underline underline-offset-4">
             Add it

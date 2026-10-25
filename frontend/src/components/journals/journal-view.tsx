@@ -64,7 +64,7 @@ export function JournalView() {
         </div>
       </div>
 
-      <section aria-labelledby="answers-heading" className="flex flex-col gap-4 rounded-xl border bg-background p-5">
+      <section aria-labelledby="answers-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">
         <h2 id="answers-heading" className="sr-only">
           Answers
         </h2>
@@ -85,16 +85,16 @@ export function JournalView() {
           <h2 id="feedback-heading" className="sr-only">
             Feedback
           </h2>
-          <div className="rounded-xl border bg-background p-4">
+          <div className="surface rounded-xl border p-4">
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">What you were told</p>
             <p className="mt-1 text-sm whitespace-pre-wrap">{j.interviewer_feedback ?? "No explicit feedback recorded."}</p>
           </div>
-          <div className="rounded-xl border border-dashed bg-background p-4">
+          <div className="surface rounded-xl border border-dashed p-4">
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Your interpretation</p>
             <p className="mt-1 text-sm whitespace-pre-wrap">{j.user_interpretation ?? "None recorded."}</p>
           </div>
           {j.follow_up_actions && (
-            <div className="rounded-xl border bg-background p-4 sm:col-span-2">
+            <div className="surface rounded-xl border p-4 sm:col-span-2">
               <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">Follow-up actions</p>
               <p className="mt-1 text-sm whitespace-pre-wrap">{j.follow_up_actions}</p>
             </div>
@@ -110,11 +110,11 @@ export function JournalView() {
           <AddQuestionsButton journal={j} />
         </div>
         {j.questions.length === 0 ? (
-          <p className="rounded-xl border border-dashed bg-background p-5 text-sm text-muted-foreground">
+          <p className="surface rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
             No questions recorded. Add the ones you remember so you can practise them later.
           </p>
         ) : (
-          <ul className="divide-y overflow-hidden rounded-xl border bg-background">
+          <ul className="divide-y overflow-hidden surface rounded-xl border">
             {j.questions.map((q) => (
               <li key={q.id}>
                 <Link href={`/questions/${q.id}`} className="flex flex-col gap-1.5 px-4 py-3 hover:bg-muted/50">
