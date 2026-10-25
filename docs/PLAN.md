@@ -462,8 +462,20 @@ cd frontend && npm install && npm run dev
   page after a JD edit, re-run carrying over input.
   ✅ Tests: fixture JD yields expected required/preferred split; skill in project bullet → `demonstrated`; only in skills list → `partially_demonstrated`; absent → `not_found_in_cv` and **no capability gap created**; vague soft skill → `needs_verification`; evidence links point to real passage offsets.
   ✅ Re-opening the application shows the stored analysis without re-running; changed CV version flags it stale.
-- [ ] **M7 Recommendations:** template-based, per requirement, 4 kinds, accept/edit/reject.
+- [x] **M7 Recommendations:** template-based, per requirement, 4 kinds, accept/edit/reject.
   ✅ Tests: recommendations never contain numbers not present in source passage; assumptions list populated for rewrites.
+  *Done 2026-10-25.* Pure generator `app/analysis/recommendations.py`: presentation rewrites keep the
+  original words and add only [bracketed gaps]; listed-only skills → unverified claim (example
+  template, or removal if the candidate said they lack it); not found → evidence gap ("Do you have
+  X?" / add an example if they have it); potential capability gap **only** on the candidate's own
+  "don't have / learning", with no CV change. Change types: rewrite, add bullet, remove/verify,
+  no CV change. Migration 0006 `cv_recommendations` (tied to the analysis snapshot; status
+  proposed/accepted/edited/rejected; final_text; decided_at). Generated on each analysis run, carried
+  over by key, and refreshed for a requirement when its self-report/category/dismissal changes;
+  decided suggestions are never removed. Edited text with new numbers gets a `number_warnings` flag.
+  30 new tests (167 total), including "accepting everything leaves the CV and file byte-identical".
+  Browser-verified: generation, accept, edit with number warning, "to apply" list with unfilled-gap
+  warning, suggestions changing after a self-report. Screens not visually checked (pane not drawing).
 - [ ] **M8 Journals + question bank:** templates, journal form, save questions, search/filter, attempts.
   ✅ Tests: journal-question association; filters by company/topic/response_quality; attempts preserve original answer.
 

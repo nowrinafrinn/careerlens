@@ -8,6 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.analysis.evidence import EvidenceStatus, Relevance
 from app.analysis.jd_extractor import Category, Importance, MatchMode
+from app.analysis.recommendations import ChangeType
+from app.analysis.recommendations import Kind as RecommendationKind
 from app.models.base import Base, Timestamps, UUIDPrimaryKey
 from app.models.cv import CVPassage, CVVersion
 from app.models.enums import db_enum
@@ -59,6 +61,9 @@ class RequirementAnalysis(UUIDPrimaryKey, Base):
     requirements: Mapped[list["JobRequirement"]] = relationship(
         back_populates="analysis", order_by="JobRequirement.position", cascade="all, delete-orphan", passive_deletes=True
     )
+    recommendations: Mapped[list["CVRecommendation"]] = relationship(
+        order_by="CVRecommendation.position", cascade="all, delete-orphan", passive_deletes=True
+    )
 
 
 class JobRequirement(UUIDPrimaryKey, Timestamps, Base):
@@ -93,6 +98,46 @@ class JobRequirement(UUIDPrimaryKey, Timestamps, Base):
     evidence: Mapped[list["RequirementEvidence"]] = relationship(
         back_populates="requirement", cascade="all, delete-orphan", passive_deletes=True
     )
+
+
+class RecommendationStatus(StrEnum):
+    PROPOSED = "proposed"
+    ACCEPTED = "accepted"
+    EDITED = "edited"
+    REJECTED = "rejected"
+
+
+class CVRecommendation(UUIDPrimaryKey, Timestamps, Base):
+    """A suggested CV change. The uploaded CV is never modified; accepted
+    suggestions are a list for the candidate to apply in their own editor."""
+
+    __tablename__ = "cv_recommendations"
+
+    analysis_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("requirement_analyses.id", ondelete="CASCADE"), index=True
+    )
+    requirement_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job_requirements.id", ondelete="CASCADE"), index=True
+    )
+    cv_passage_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("cv_passages.id", ondelete="CASCADE"))
+    position: Mapped[int] = mapped_column(Integer)
+    kind: Mapped[RecommendationKind] = mapped_column(db_enum(RecommendationKind, "recommendation_kind"))
+    change_type: Mapped[ChangeType] = mapped_column(db_enum(ChangeType, "change_type"))
+    title: Mapped[str] = mapped_column(String(300))
+    rationale: Mapped[str] = mapped_column(Text)
+    original_text: Mapped[str | None] = mapped_column(Text)
+    suggested_text: Mapped[str | None] = mapped_column(Text)
+    assumptions: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    terms: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    origin: Mapped[Origin] = mapped_column(db_enum(Origin, "origin"), default=Origin.RULE_ENGINE)
+    status: Mapped[RecommendationStatus] = mapped_column(
+        db_enum(RecommendationStatus, "recommendation_status"), default=RecommendationStatus.PROPOSED
+    )
+    # What the candidate will actually use: the suggestion as accepted, or their own edit.
+    final_text: Mapped[str | None] = mapped_column(Text)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    requirement: Mapped["JobRequirement"] = relationship()
 
 
 class RequirementEvidence(UUIDPrimaryKey, Base):

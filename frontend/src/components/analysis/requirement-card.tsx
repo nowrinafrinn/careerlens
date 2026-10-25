@@ -19,7 +19,11 @@ export function RequirementCard({ requirement, applicationId }: { requirement: R
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (body: RequirementUpdate) => updateRequirement(requirement.id, body),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: analysisKeys.latest(applicationId) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: analysisKeys.latest(applicationId) });
+      // A new self-report changes which CV suggestions apply.
+      queryClient.invalidateQueries({ queryKey: ["applications", "recommendations"] });
+    },
   });
   const status = EVIDENCE_STATUS[requirement.evidence_status];
   const id = requirement.id;

@@ -399,6 +399,46 @@ export interface paths {
         patch: operations["update_requirement_api_v1_requirements__requirement_id__patch"];
         trace?: never;
     };
+    "/api/v1/analyses/{analysis_id}/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Recommendations
+         * @description Suggested CV changes from this analysis. Your uploaded CV is never modified.
+         */
+        get: operations["list_recommendations_api_v1_analyses__analysis_id__recommendations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/{recommendation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Decide
+         * @description Accept, edit (with your own `final_text`), reject, or undo (`proposed`) a suggestion.
+         */
+        patch: operations["decide_api_v1_recommendations__recommendation_id__patch"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -703,6 +743,11 @@ export interface components {
          * @enum {string}
          */
         Category: "technical_skill" | "tool" | "experience" | "education" | "project" | "collaboration" | "responsibility" | "other";
+        /**
+         * ChangeType
+         * @enum {string}
+         */
+        ChangeType: "rewrite_passage" | "add_bullet" | "remove_or_verify" | "no_cv_change";
         /** CoverageRead */
         CoverageRead: {
             /** Required Total */
@@ -809,6 +854,11 @@ export interface components {
          * @enum {string}
          */
         Importance: "required" | "preferred" | "uncertain";
+        /**
+         * Kind
+         * @enum {string}
+         */
+        Kind: "presentation" | "evidence_gap" | "potential_capability_gap" | "unverified_claim";
         /** LoginRequest */
         LoginRequest: {
             /**
@@ -861,6 +911,65 @@ export interface components {
             /** Char End */
             char_end: number;
         };
+        /** RecommendationDecision */
+        RecommendationDecision: {
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "accepted" | "edited" | "rejected";
+            /** Final Text */
+            final_text?: string | null;
+        };
+        /** RecommendationRead */
+        RecommendationRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Analysis Id
+             * Format: uuid
+             */
+            analysis_id: string;
+            /**
+             * Requirement Id
+             * Format: uuid
+             */
+            requirement_id: string;
+            /** Requirement Text */
+            requirement_text: string;
+            /** Cv Passage Id */
+            cv_passage_id: string | null;
+            kind: components["schemas"]["Kind"];
+            change_type: components["schemas"]["ChangeType"];
+            /** Title */
+            title: string;
+            /** Rationale */
+            rationale: string;
+            /** Original Text */
+            original_text: string | null;
+            /** Suggested Text */
+            suggested_text: string | null;
+            /** Assumptions */
+            assumptions: string[];
+            /** Terms */
+            terms: string[];
+            origin: components["schemas"]["Origin"];
+            status: components["schemas"]["RecommendationStatus"];
+            /** Final Text */
+            final_text: string | null;
+            /** Decided At */
+            decided_at: string | null;
+            /** Number Warnings */
+            number_warnings: string[];
+        };
+        /**
+         * RecommendationStatus
+         * @enum {string}
+         */
+        RecommendationStatus: "proposed" | "accepted" | "edited" | "rejected";
         /** RegisterRequest */
         RegisterRequest: {
             /**
@@ -2069,6 +2178,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RequirementRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_recommendations_api_v1_analyses__analysis_id__recommendations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                analysis_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    decide_api_v1_recommendations__recommendation_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recommendation_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecommendationDecision"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationRead"];
                 };
             };
             /** @description Validation Error */

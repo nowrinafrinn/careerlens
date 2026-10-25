@@ -18,6 +18,7 @@ from app.analysis.jd_extractor import Category, Importance, extract_requirements
 from app.errors import AppError
 from app.models import CVVersion, JobApplication, JobRequirement, RequirementAnalysis, RequirementEvidence, User
 from app.models.analysis import AnalysisMethod, Origin, SelfReport
+from app.services import recommendations
 from app.services.applications import get_application
 
 COVERAGE_EXPLANATION = (
@@ -138,6 +139,7 @@ def run_analysis(db: Session, user: User, application_id: uuid.UUID) -> Requirem
         )
         _apply_assessment(requirement, passages)
         analysis.requirements.append(requirement)
+    recommendations.generate_for_analysis(analysis, passages, previous[0] if previous else None)
     db.add(analysis)
     db.commit()
     return analysis
@@ -211,11 +213,16 @@ def update_requirement(db: Session, user: User, requirement_id: uuid.UUID, chang
     for field in ("self_report", "dismissed"):
         if field in changes:
             setattr(requirement, field, changes[field])
+    passages = _passages(requirement.analysis.cv_version)
     if category_changed:
         # Remove the old links first: on flush, inserts run before deletes, and the
         # same passage linked again would break the one-link-per-passage constraint.
         requirement.evidence.clear()
         db.flush()
-        _apply_assessment(requirement, _passages(requirement.analysis.cv_version))
+        _apply_assessment(requirement, passages)
+    if changes:
+        # A new self-report or category changes which suggestions apply.
+        db.flush()
+        recommendations.refresh_for_requirement(db, requirement, passages)
     db.commit()
     return requirement

@@ -84,14 +84,19 @@ export function AnalysisView() {
             )}
           </div>
           {result && (
-            <Button
-              variant={result.is_stale ? "default" : "outline"}
-              size="sm"
-              onClick={() => run.mutate()}
-              disabled={run.isPending}
-            >
-              {run.isPending ? "Analysing…" : "Run again"}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/applications/${id}/cv-suggestions`} className={buttonClass({ size: "sm" })}>
+                CV suggestions
+              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => run.mutate()}
+                disabled={run.isPending}
+              >
+                {run.isPending ? "Analysing…" : "Run again"}
+              </Button>
+            </div>
           )}
         </div>
       </div>

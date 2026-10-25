@@ -55,9 +55,17 @@ export function AnalysisSummary({ application }: { application: ApplicationDetai
                   ? "Out of date: the job description or CV changed since it was run."
                   : `${analysis.requirements.length} requirements checked against CV v${analysis.cv_version.version_number}.`}
               </p>
-              <Link href={href} className={buttonClass({ variant: "outline", size: "sm" })}>
-                Open analysis
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/applications/${application.id}/cv-suggestions`}
+                  className={buttonClass({ variant: "outline", size: "sm" })}
+                >
+                  CV suggestions
+                </Link>
+                <Link href={href} className={buttonClass({ variant: "outline", size: "sm" })}>
+                  Open analysis
+                </Link>
+              </div>
             </div>
           </>
         )}

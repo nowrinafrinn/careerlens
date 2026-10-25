@@ -3,6 +3,7 @@
 import type { Category, EvidenceStatus, Importance, Relevance, SelfReport } from "@/lib/analysis";
 import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/lib/applications";
 import type { ParseStatus, SectionType } from "@/lib/cvs";
+import type { ChangeType, RecommendationKind } from "@/lib/recommendations";
 
 type Tone = "neutral" | "info" | "progress" | "positive" | "negative" | "muted";
 
@@ -101,6 +102,36 @@ export const RELEVANCE: Record<Relevance, string> = {
   listed: "Listed only",
   related: "Related skill",
   possible: "Possibly relevant",
+};
+
+export const RECOMMENDATION_KIND: Record<RecommendationKind, { label: string; tone: Tone; description: string }> = {
+  presentation: {
+    label: "Presentation",
+    tone: "info",
+    description: "You have relevant experience, but the CV could communicate it more clearly.",
+  },
+  unverified_claim: {
+    label: "Unverified claim",
+    tone: "progress",
+    description: "A skill is named without anything in the CV to back it up.",
+  },
+  evidence_gap: {
+    label: "Evidence gap",
+    tone: "neutral",
+    description: "The CV doesn't give enough to judge. You may well have the experience.",
+  },
+  potential_capability_gap: {
+    label: "Possible learning goal",
+    tone: "muted",
+    description: "Only shown when you said you don't have something yet. No CV change; it's for your learning plan.",
+  },
+};
+
+export const CHANGE_TYPE: Record<ChangeType, string> = {
+  rewrite_passage: "Rewrite a bullet",
+  add_bullet: "Add a bullet",
+  remove_or_verify: "Remove or verify",
+  no_cv_change: "No CV change",
 };
 
 export const SECTION_TYPE: Record<SectionType, string> = {

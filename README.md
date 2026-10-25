@@ -5,8 +5,9 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–6 of 14 are complete: foundation, accounts, applications and recruitment
-> rounds with their screens, CV upload with section extraction, and requirement-to-CV evidence analysis. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–7 of 14 are complete: foundation, accounts, applications and recruitment
+> rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
+> and CV improvement suggestions. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -96,6 +97,28 @@ can be traced back to its rule.
   analysis is marked out of date. Re-running keeps your assessments and corrections.
 - The skill dictionary (`backend/app/analysis/skills.py`) only knows the terms listed in it. Add
   missing ones there.
+
+## CV suggestions
+
+Each analysis produces suggestions (Application → CV suggestions), each tied to a requirement and,
+where relevant, to the CV passage involved:
+
+| Kind | When |
+|---|---|
+| Presentation | The skill is shown in use, but the bullet doesn't say what it was for or what came of it |
+| Unverified claim | A skill is listed with nothing to back it up (or listed although you said you don't have it) |
+| Evidence gap | The CV doesn't show it, and you haven't said, or have said you have it |
+| Possible learning goal | Only when **you** said "I don't have this yet" or "I'm learning this". Never a CV change |
+
+- Suggestions never invent experience, results or numbers. Rewrites keep your words and add
+  **[bracketed gaps]** for you to fill truthfully or delete. A test checks every suggestion for numbers
+  that weren't in the original.
+- Each suggestion lists what you must confirm before using it. If your own edit adds a number, the app
+  asks you to check it.
+- Accept, edit or reject each one. Your uploaded CV is never changed: accepted text is collected under
+  **To apply in your CV** for you to copy into your own document.
+- Changing your self-assessment on a requirement updates its suggestions. Decisions you've made are
+  kept, also across re-runs.
 
 ## Prerequisites
 
