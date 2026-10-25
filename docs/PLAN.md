@@ -417,7 +417,17 @@ cd frontend && npm install && npm run dev
   entries intact. Changes from plan: rescheduling is any PATCH that changes `scheduled_at` (no
   separate endpoint); rounds can be deleted (snapshot kept in history), applications only archived;
   history date-times stored in UTC; `cv_version_id` column deferred to M5 with the CV tables.
-- [ ] **M4 Frontend shell:** login, applications list, create form, application detail with rounds + timeline.
+- [x] **M4 Frontend shell:** login, applications list, create form, application detail with rounds + timeline.
+  *Done 2026-10-25.* TanStack Query for server state (401 anywhere → sign-in), API types generated
+  from FastAPI's OpenAPI schema (`npm run gen:api`), app shell with route group `(app)`. Pages:
+  list (search, status filter, archived toggle, pagination, deadline warnings; filters in the URL),
+  new/edit application, detail (status dialog with reason, rounds with add/edit/delete dialogs,
+  separate status and result badges, readable history, archive/restore banner), `/status`.
+  Verified in the browser through the API proxy: create → add round → reschedule with reason →
+  status change (applied date auto-filled) → edit deadline (only that change recorded) → search,
+  filters, archive/restore, unknown-id page; no horizontal scroll at 375px. Screenshots of the list
+  and detail pages found and fixed a translucent page background and a borderless outline link.
+  Not visually checked: dialogs and the phone layout (the pane couldn't draw in the background).
 
 ### Day 2 — CV evidence & journals
 - [ ] **M5 CV upload & parsing:** magic-byte validation, 5 MB limit, store original, sections + passages, parse warnings, correction UI.

@@ -5,8 +5,8 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–3 of 14 (foundation, accounts, applications and recruitment rounds API)
-> are complete. The application screens arrive in Milestone 4; until then use http://localhost:3000/api/docs. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–4 of 14 (foundation, accounts, applications and recruitment rounds, and
+> their screens) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -102,8 +102,21 @@ npm run dev
 
 Then open:
 
-- http://localhost:3000: the app (currently a system status page)
+- http://localhost:3000: the app (create an account on first visit)
 - http://localhost:3000/api/docs: interactive API documentation
+- http://localhost:3000/status: API and database status
+
+## Frontend structure
+
+- `src/app/(app)/`: signed-in pages sharing the header layout. `(app)` is a route group and doesn't
+  appear in URLs.
+- `src/lib/api-types.ts` is **generated** from the backend's OpenAPI schema. After changing a backend
+  schema, run `npm run gen:api` (with the backend running) and the TypeScript compiler will point at
+  every place in the frontend that needs updating.
+- Server data goes through TanStack Query (`src/lib/applications.ts` holds the query keys and API
+  calls). Any 401 response sends the user to `/login` and back afterwards.
+- Next.js 16 keeps recently visited pages mounted but hidden. Dialogs close themselves when hidden
+  (`useCloseOnHide`), and sign-out does a full page load so no previous user's data stays in memory.
 
 ## Tests and checks
 

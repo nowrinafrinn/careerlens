@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    // The dashboard (a later milestone) will live at "/". Until then, start at the list.
+    return [{ source: "/", destination: "/applications", permanent: false }];
+  },
   async rewrites() {
     return [
       {

@@ -1,15 +1,11 @@
 import { apiFetch } from "@/lib/api";
+import type { components } from "@/lib/api-types";
 
-// Mirrors backend/app/schemas/auth.py UserRead
-export type User = {
-  id: string;
-  email: string;
-  display_name: string | null;
-  ai_processing_consent_at: string | null;
-  created_at: string;
-};
+export type User = components["schemas"]["UserRead"];
 
 export type Credentials = { email: string; password: string };
+
+export const currentUserKey = ["auth", "me"] as const;
 
 const jsonPost = (body: unknown): RequestInit => ({
   method: "POST",

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { Providers } from "@/components/providers";
+
 import "./globals.css";
 
 // globals.css maps Tailwind's font-sans / font-mono to these variables.
@@ -22,9 +25,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // Solid background on <html>; the body's light tint sits on top of it. A
+      // translucent background alone would show whatever is behind the page.
+      className={`${geistSans.variable} ${geistMono.variable} h-full bg-background antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-muted/30">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
