@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     # database makes requests hang for ~2 minutes instead of failing fast.
     db_connect_timeout: int = 5
 
+    # Auth
+    session_ttl_days: int = 14
+    # Send the session cookie over HTTPS only. Must be true in any deployment;
+    # false locally because http://localhost has no TLS.
+    cookie_secure: bool = False
+    # Set false on a public deployment once your own account exists.
+    allow_registration: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -394,9 +394,18 @@ cd frontend && npm install && npm run dev
   0.1s when Postgres is stopped and recovers on restart, with migration `0001` intact; frontend lint,
   typecheck and production build clean. Added a 5s DB connect timeout after finding that an
   unreachable DB otherwise hangs requests for ~130s on Windows.
-- [ ] **M2 Auth + users:** register/login/logout/me, cookie session, `current_user` dependency.
-  ✅ Tests: user B gets 404 on user A's application; unauthenticated → 401.
+- [x] **M2 Auth + users:** register/login/logout/me, cookie session, `current_user` dependency.
+  ✅ Tests: unauthenticated → 401. (The "user B gets 404 on user A's application" test moves to M3,
+  where applications, the first user-owned records, are created.)
+  *Done 2026-10-25.* Database-backed sessions (only the SHA-256 of the token is stored; logout
+  deletes the row), Argon2id passwords, httpOnly + SameSite=Lax cookie, same error for unknown email
+  and wrong password, `ALLOW_REGISTRATION` switch. 19 auth tests (23 total). Frontend: /login,
+  /register, `proxy.ts` redirect for signed-out visitors, account bar with sign-out. Verified in the
+  browser: redirect, registration, cookie hidden from JS, wrong-password message, server-side session
+  revocation sends the page to /login without a loop, sign-out deletes the session row.
+  Known MVP limits: no login rate limiting, no password reset, no email verification.
 - [ ] **M3 Applications + rounds + events:** CRUD, status changes, round reschedule, timeline.
+  ✅ Tests: user B gets 404 (not 403) on user A's application and its rounds.
   ✅ Tests: status change writes event; reschedule keeps old date in history; completing a round leaves `result=unknown` and application status unchanged.
   ✅ Manual: create app in UI, restart backend + DB container, data still there.
 - [ ] **M4 Frontend shell:** login, applications list, create form, application detail with rounds + timeline.

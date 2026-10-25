@@ -5,7 +5,7 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestone 1 of 14 (foundation) is complete. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–2 of 14 (foundation, accounts and sign-in) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -26,6 +26,21 @@ Browser ──► Next.js :3000 ──(/api/* rewrite)──► FastAPI :8000 �
 
 The browser only ever talks to Next.js. Requests to `/api/*` are forwarded to FastAPI, so the
 browser sees a single origin. That keeps login cookies simple and means no CORS configuration.
+
+## Accounts and sign-in
+
+- Passwords are hashed with Argon2id; the plain password is never stored or logged.
+- Signing in creates a session row; the browser gets a random token in an `httpOnly`, `SameSite=Lax`
+  cookie, and the database stores only the token's SHA-256 hash. Signing out deletes the row, so the
+  old cookie stops working everywhere.
+- Every API route that touches a user's records takes the `CurrentUser` dependency
+  (`backend/app/api/deps.py`) and filters by that user's id.
+- `frontend/src/proxy.ts` redirects signed-out visitors to `/login` before the page loads. It only
+  checks that a cookie exists; the backend decides whether it is valid.
+- For a public deployment set `COOKIE_SECURE=true`, and `ALLOW_REGISTRATION=false` once your own
+  account exists.
+
+Not yet implemented: login rate limiting, password reset, email verification.
 
 ## Prerequisites
 
