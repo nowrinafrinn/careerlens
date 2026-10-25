@@ -18,6 +18,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session
 
+from app.api.deps import SESSION_COOKIE
 from app.config import BACKEND_DIR, get_settings
 from app.db import get_db
 from app.main import app
@@ -61,3 +62,24 @@ def client(db: Session) -> Iterator[TestClient]:
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+def sign_up(client: TestClient, email: str) -> str:
+    """Registers a user and leaves the client signed in as them. Returns their session token."""
+    client.cookies.clear()
+    response = client.post("/api/v1/auth/register", json={"email": email, "password": "test-password-1"})
+    assert response.status_code == 201, response.text
+    return client.cookies[SESSION_COOKIE]
+
+
+def act_as(client: TestClient, token: str) -> None:
+    """Switches the client to another signed-in user."""
+    client.cookies.clear()
+    client.cookies.set(SESSION_COOKIE, token)
+
+
+@pytest.fixture
+def ada(client: TestClient) -> TestClient:
+    """A client signed in as a fresh user."""
+    sign_up(client, "ada@example.com")
+    return client

@@ -5,7 +5,8 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–2 of 14 (foundation, accounts and sign-in) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–3 of 14 (foundation, accounts, applications and recruitment rounds API)
+> are complete. The application screens arrive in Milestone 4; until then use http://localhost:3000/api/docs. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -41,6 +42,20 @@ browser sees a single origin. That keeps login cookies simple and means no CORS 
   account exists.
 
 Not yet implemented: login rate limiting, password reset, email verification.
+
+## Applications, rounds and history
+
+- An **application** has its own status (`interested` → … → `offer` / `rejected` / `withdrawn` /
+  `closed_unknown`). Any status can follow any other; the history shows every change.
+- Each application has ordered **recruitment rounds**. A round has a **status** (where it is in time:
+  `not_scheduled`, `upcoming`, `completed`, …) and a separate **result** (`unknown`, `passed`,
+  `failed`). Completing a round never marks it passed, and nothing a round does changes the
+  application's status.
+- **`recruitment_events`** is append-only. Status, result and date changes each add a row with the
+  old and new values and an optional reason, so a rescheduled interview keeps its original date.
+  `GET /applications/{id}/timeline` returns it. Date-times in the history are stored in UTC.
+- Applications are archived, never deleted. A round created by mistake can be deleted; the deletion
+  is itself recorded with a snapshot of the round.
 
 ## Prerequisites
 

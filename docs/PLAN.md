@@ -279,8 +279,9 @@ GET    /applications/{id}              PATCH /applications/{id}    (status chang
 POST   /applications/{id}/archive
 GET    /applications/{id}/timeline     (events + rounds, chronological)
 GET    /applications/{id}/rounds       POST /applications/{id}/rounds
-PATCH  /rounds/{id}                    (status/result/notes)
-POST   /rounds/{id}/reschedule         {new_scheduled_at, reason}  → event with old+new
+GET    /rounds/{id}                    DELETE /rounds/{id}?reason=   (history + snapshot kept)
+PATCH  /rounds/{id}                    (any field; changing scheduled_at records a reschedule with
+                                        old+new dates; optional change_reason)
 POST   /cv-documents                   (multipart upload → document + version + sections + passages)
 GET    /cv-versions                    GET /cv-versions/{id}  (sections + passages)
 PATCH  /cv-versions/{id}/sections/{sid} (correct type/heading; confirm)
@@ -404,10 +405,18 @@ cd frontend && npm install && npm run dev
   browser: redirect, registration, cookie hidden from JS, wrong-password message, server-side session
   revocation sends the page to /login without a loop, sign-out deletes the session row.
   Known MVP limits: no login rate limiting, no password reset, no email verification.
-- [ ] **M3 Applications + rounds + events:** CRUD, status changes, round reschedule, timeline.
+- [x] **M3 Applications + rounds + events:** CRUD, status changes, round reschedule, timeline.
   ✅ Tests: user B gets 404 (not 403) on user A's application and its rounds.
   ✅ Tests: status change writes event; reschedule keeps old date in history; completing a round leaves `result=unknown` and application status unchanged.
   ✅ Manual: create app in UI, restart backend + DB container, data still there.
+  *Done 2026-10-25.* Migration 0003 (job_applications, recruitment_rounds, recruitment_events with
+  CHECK constraints on every status/type/result). 39 new tests (62 total), including user isolation
+  for applications and rounds; a deliberate removal of the owner filter was confirmed to fail the
+  isolation test. Persistence verified through the API (UI arrives in M4): created an application,
+  round, reschedule and completion, restarted API + frontend + Postgres, all data and six history
+  entries intact. Changes from plan: rescheduling is any PATCH that changes `scheduled_at` (no
+  separate endpoint); rounds can be deleted (snapshot kept in history), applications only archived;
+  history date-times stored in UTC; `cv_version_id` column deferred to M5 with the CV tables.
 - [ ] **M4 Frontend shell:** login, applications list, create form, application detail with rounds + timeline.
 
 ### Day 2 — CV evidence & journals
