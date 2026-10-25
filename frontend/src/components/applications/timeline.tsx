@@ -55,6 +55,13 @@ export function describeEvent(event: RecruitmentEvent): string[] {
       return describeDateChanges(old, next).map((line) =>
         event.event_type === "round_date_changed" ? `${round}: ${line.charAt(0).toLowerCase()}${line.slice(1)}` : line,
       );
+    case "application_cv_changed": {
+      const before = asString(old?.cv_label);
+      const after = asString(next?.cv_label);
+      if (!before) return [`CV set to “${after}”`];
+      if (!after) return [`CV removed (was “${before}”)`];
+      return [`CV changed from “${before}” to “${after}”`];
+    }
     case "application_archived":
       return ["Application archived"];
     case "application_restored":

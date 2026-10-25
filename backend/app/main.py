@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 
 from app.api import api_router
+from app.config import get_settings
 from app.errors import register_error_handlers
+from app.upload_limit import UploadSizeLimit
 
 
 def create_app() -> FastAPI:
@@ -14,6 +16,7 @@ def create_app() -> FastAPI:
         redoc_url=None,
     )
     register_error_handlers(app)
+    app.add_middleware(UploadSizeLimit, path_prefix="/api/v1/cv-versions", max_bytes=get_settings().cv_max_bytes)
     app.include_router(api_router, prefix="/api/v1")
     return app
 

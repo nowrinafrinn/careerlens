@@ -13,8 +13,9 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.errors import AppError
-from app.models import JobApplication, RecruitmentEvent, User
+from app.models import CVVersion, JobApplication, RecruitmentEvent, User
 from app.models.enums import ApplicationStatus, EventType
+from app.services import cvs
 from app.services.events import record_event
 
 # Changes to these fields are written to the history.
@@ -72,6 +73,7 @@ def list_applications(
 
 
 def create_application(db: Session, user: User, data: dict[str, Any]) -> JobApplication:
+    cvs.ensure_owned(db, user, data.get("cv_version_id"))
     application = JobApplication(user_id=user.id, **data)
     if application.status == ApplicationStatus.APPLIED and application.applied_on is None:
         application.applied_on = date.today()
@@ -87,6 +89,7 @@ def create_application(db: Session, user: User, data: dict[str, Any]) -> JobAppl
             "company_name": application.company_name,
             "position_title": application.position_title,
             "status": application.status,
+            "cv_version_id": application.cv_version_id,
         },
     )
     db.commit()
@@ -108,9 +111,13 @@ def update_application(
     ):
         changes = {**changes, "applied_on": date.today()}
 
+    if "cv_version_id" in changes:
+        cvs.ensure_owned(db, user, changes["cv_version_id"])
+
     old_dates: dict[str, Any] = {}
     new_dates: dict[str, Any] = {}
     old_status = application.status
+    old_cv = application.cv_version
 
     for field, value in changes.items():
         if getattr(application, field) == value:
@@ -138,6 +145,24 @@ def update_application(
             event_type=EventType.APPLICATION_DATE_CHANGED,
             old=old_dates,
             new=new_dates,
+            reason=reason,
+        )
+    if application.cv_version_id != (old_cv.id if old_cv else None):
+        db.flush()
+        db.refresh(application, ["cv_version"])
+        new_cv = application.cv_version
+
+        def describe(cv: CVVersion | None) -> dict[str, Any]:
+            # The label is copied in, so the history still reads well if the CV is renamed or deleted.
+            return {"cv_version_id": cv.id if cv else None, "cv_label": cv.label if cv else None}
+
+        record_event(
+            db,
+            user_id=user.id,
+            application_id=application.id,
+            event_type=EventType.APPLICATION_CV_CHANGED,
+            old=describe(old_cv),
+            new=describe(new_cv),
             reason=reason,
         )
     db.commit()

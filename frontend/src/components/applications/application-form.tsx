@@ -1,13 +1,12 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 
 import { describedBy, FormField, readApiError, type FieldErrors } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
-import { buttonClass } from "@/lib/button-class";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,9 +18,12 @@ import {
   type ApplicationDetail,
   type ApplicationUpdate,
 } from "@/lib/applications";
+import { buttonClass } from "@/lib/button-class";
+import { cvKeys, listCVs } from "@/lib/cvs";
 import { APPLICATION_STATUS, APPLICATION_STATUS_ORDER } from "@/lib/labels";
 
-// Text fields edited here. Status is changed on the detail page, where a reason can be recorded.
+// Plain form values edited here (empty = not set). Status is changed on the
+// detail page instead, where a reason can be recorded.
 const TEXT_FIELDS = [
   "company_name",
   "position_title",
@@ -29,6 +31,7 @@ const TEXT_FIELDS = [
   "source",
   "deadline",
   "applied_on",
+  "cv_version_id",
   "job_description",
   "notes",
 ] as const;
@@ -51,6 +54,7 @@ export function ApplicationForm({ application }: { application?: ApplicationDeta
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<{ fields: FieldErrors; form: string | null }>({ fields: {}, form: null });
   const editing = Boolean(application);
+  const cvs = useQuery({ queryKey: cvKeys.list(), queryFn: listCVs });
 
   const mutation = useMutation({
     mutationFn: async (form: HTMLFormElement) => {
@@ -70,6 +74,7 @@ export function ApplicationForm({ application }: { application?: ApplicationDeta
     },
     onSuccess: (saved) => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all });
+      queryClient.invalidateQueries({ queryKey: cvKeys.all }); // "used by N applications" counts
       formRef.current?.reset(); // this page stays mounted (hidden) after navigating away
       router.push(`/applications/${saved.id}`);
     },
@@ -135,6 +140,30 @@ export function ApplicationForm({ application }: { application?: ApplicationDeta
             defaultValue={application?.source ?? ""}
             {...describedBy("source", err.source, true)}
           />
+        </FormField>
+        <FormField
+          id="cv_version_id"
+          label="CV version used"
+          optional
+          hint={cvs.data?.length === 0 ? "Upload a CV on the CVs page to choose it here." : undefined}
+          error={err.cv_version_id}
+        >
+          <NativeSelect
+            id="cv_version_id"
+            name="cv_version_id"
+            // key: the default can only be applied once the CV list has loaded.
+            key={cvs.isSuccess ? "loaded" : "loading"}
+            defaultValue={application?.cv_version_id ?? ""}
+            disabled={cvs.isPending}
+            {...describedBy("cv_version_id", err.cv_version_id, cvs.data?.length === 0)}
+          >
+            <option value="">{cvs.isPending ? "Loading CVs…" : "None selected"}</option>
+            {cvs.data?.map((cv) => (
+              <option key={cv.id} value={cv.id}>
+                v{cv.version_number} · {cv.label}
+              </option>
+            ))}
+          </NativeSelect>
         </FormField>
         {!editing && (
           <FormField id="status" label="Status">

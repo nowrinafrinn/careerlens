@@ -3,7 +3,7 @@ import { cn } from "cn";
 import type { ApplicationStatus, RoundResult, RoundStatus } from "@/lib/applications";
 import { APPLICATION_STATUS, ROUND_RESULT, ROUND_STATUS, TONE_CLASSES } from "@/lib/labels";
 
-function Pill({ tone, children, className }: { tone: keyof typeof TONE_CLASSES; children: string; className?: string }) {
+export function Pill({ tone, children, className }: { tone: keyof typeof TONE_CLASSES; children: string; className?: string }) {
   return (
     <span
       className={cn(

@@ -231,6 +231,92 @@ export interface paths {
         patch: operations["update_round_api_v1_rounds__round_id__patch"];
         trace?: never;
     };
+    "/api/v1/cv-versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Versions */
+        get: operations["list_versions_api_v1_cv_versions_get"];
+        put?: never;
+        /**
+         * Upload Cv
+         * @description Uploads a CV, keeps the original file, and extracts its sections.
+         *
+         *     The file type is decided from its content, not its name. A readable file
+         *     with no usable text is saved with `parse_status: failed` and a warning.
+         */
+        post: operations["upload_cv_api_v1_cv_versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cv-versions/{version_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Version */
+        get: operations["get_version_api_v1_cv_versions__version_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Version
+         * @description Deletes a CV version and its file. Refused while any application uses it.
+         */
+        delete: operations["delete_version_api_v1_cv_versions__version_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Version */
+        patch: operations["update_version_api_v1_cv_versions__version_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/cv-versions/{version_id}/sections/{section_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Section
+         * @description Corrects the section type the parser chose.
+         */
+        patch: operations["update_section_api_v1_cv_versions__version_id__sections__section_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/cv-versions/{version_id}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download Original
+         * @description The original uploaded file, byte for byte.
+         */
+        get: operations["download_original_api_v1_cv_versions__version_id__file_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -256,6 +342,11 @@ export interface components {
             applied_on?: string | null;
             /** @default interested */
             status: components["schemas"]["ApplicationStatus"];
+            /**
+             * Cv Version Id
+             * @description The CV version used for this application.
+             */
+            cv_version_id?: string | null;
             /** Notes */
             notes?: string | null;
         };
@@ -282,6 +373,8 @@ export interface components {
             /** Applied On */
             applied_on: string | null;
             status: components["schemas"]["ApplicationStatus"];
+            /** Cv Version Id */
+            cv_version_id: string | null;
             /** Archived At */
             archived_at: string | null;
             /**
@@ -298,6 +391,7 @@ export interface components {
             job_description: string | null;
             /** Notes */
             notes: string | null;
+            cv_version: components["schemas"]["CVVersionRef"] | null;
             /** Rounds */
             rounds: components["schemas"]["RoundRead"][];
         };
@@ -321,6 +415,8 @@ export interface components {
             /** Applied On */
             applied_on: string | null;
             status: components["schemas"]["ApplicationStatus"];
+            /** Cv Version Id */
+            cv_version_id: string | null;
             /** Archived At */
             archived_at: string | null;
             /**
@@ -356,6 +452,8 @@ export interface components {
             /** Applied On */
             applied_on?: string | null;
             status?: components["schemas"]["ApplicationStatus"] | null;
+            /** Cv Version Id */
+            cv_version_id?: string | null;
             /** Notes */
             notes?: string | null;
             /**
@@ -363,6 +461,107 @@ export interface components {
              * @description Optional. Stored with any history entries this change creates.
              */
             change_reason?: string | null;
+        };
+        /** Body_upload_cv_api_v1_cv_versions_post */
+        Body_upload_cv_api_v1_cv_versions_post: {
+            /**
+             * File
+             * @description PDF or DOCX, up to 5 MB.
+             */
+            file: string;
+            /** Label */
+            label?: string | null;
+        };
+        /** CVVersionDetail */
+        CVVersionDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version Number */
+            version_number: number;
+            /** Label */
+            label: string;
+            parse_status: components["schemas"]["ParseStatus"];
+            /** Is Confirmed */
+            is_confirmed: boolean;
+            /** Original Filename */
+            original_filename: string;
+            /** Mime Type */
+            mime_type: string;
+            /** Size Bytes */
+            size_bytes: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Application Count
+             * @default 0
+             */
+            application_count: number;
+            /** Parse Warnings */
+            parse_warnings: string[];
+            /** Raw Text */
+            raw_text: string;
+            /** Sections */
+            sections: components["schemas"]["SectionRead"][];
+        };
+        /**
+         * CVVersionRef
+         * @description The short form used inside an application.
+         */
+        CVVersionRef: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version Number */
+            version_number: number;
+            /** Label */
+            label: string;
+            parse_status: components["schemas"]["ParseStatus"];
+        };
+        /** CVVersionSummary */
+        CVVersionSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Version Number */
+            version_number: number;
+            /** Label */
+            label: string;
+            parse_status: components["schemas"]["ParseStatus"];
+            /** Is Confirmed */
+            is_confirmed: boolean;
+            /** Original Filename */
+            original_filename: string;
+            /** Mime Type */
+            mime_type: string;
+            /** Size Bytes */
+            size_bytes: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Application Count
+             * @default 0
+             */
+            application_count: number;
+        };
+        /** CVVersionUpdate */
+        CVVersionUpdate: {
+            /** Label */
+            label?: string | null;
+            /** Is Confirmed */
+            is_confirmed?: boolean | null;
         };
         /** EventRead */
         EventRead: {
@@ -399,7 +598,7 @@ export interface components {
          * EventType
          * @enum {string}
          */
-        EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
+        EventType: "application_created" | "application_status_changed" | "application_date_changed" | "application_archived" | "application_restored" | "application_cv_changed" | "round_created" | "round_scheduled" | "round_rescheduled" | "round_date_changed" | "round_status_changed" | "round_result_recorded" | "round_deleted";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -440,6 +639,27 @@ export interface components {
             limit: number;
             /** Offset */
             offset: number;
+        };
+        /**
+         * ParseStatus
+         * @enum {string}
+         */
+        ParseStatus: "ok" | "partial" | "failed";
+        /** PassageRead */
+        PassageRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Text */
+            text: string;
+            /** Position */
+            position: number;
+            /** Char Start */
+            char_start: number;
+            /** Char End */
+            char_end: number;
         };
         /** RegisterRequest */
         RegisterRequest: {
@@ -569,6 +789,32 @@ export interface components {
              * @description Optional. Stored with any history entries this change creates.
              */
             change_reason?: string | null;
+        };
+        /** SectionRead */
+        SectionRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            section_type: components["schemas"]["SectionType"];
+            /** Heading Text */
+            heading_text: string | null;
+            /** Position */
+            position: number;
+            /** User Corrected */
+            user_corrected: boolean;
+            /** Passages */
+            passages: components["schemas"]["PassageRead"][];
+        };
+        /**
+         * SectionType
+         * @enum {string}
+         */
+        SectionType: "header" | "summary" | "education" | "skills" | "experience" | "internship" | "projects" | "certifications" | "achievements" | "other_experience" | "other" | "unrecognized";
+        /** SectionUpdate */
+        SectionUpdate: {
+            section_type: components["schemas"]["SectionType"];
         };
         /** UserRead */
         UserRead: {
@@ -1164,6 +1410,242 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["RoundRead"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_versions_api_v1_cv_versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CVVersionSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_cv_api_v1_cv_versions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_cv_api_v1_cv_versions_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CVVersionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_version_api_v1_cv_versions__version_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CVVersionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_version_api_v1_cv_versions__version_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_version_api_v1_cv_versions__version_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CVVersionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CVVersionDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_section_api_v1_cv_versions__version_id__sections__section_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+                section_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SectionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SectionRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_original_api_v1_cv_versions__version_id__file_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version_id: string;
+            };
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

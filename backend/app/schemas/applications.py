@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.models.enums import ApplicationStatus
 from app.schemas.common import Name, PartialUpdate, Reason, Url
+from app.schemas.cv import CVVersionRef
 from app.schemas.rounds import RoundRead
 
 JobDescription = Annotated[str, StringConstraints(max_length=100_000)]
@@ -24,6 +25,7 @@ class ApplicationCreate(BaseModel):
     deadline: date | None = None
     applied_on: date | None = Field(default=None, description="Set to today automatically when status is 'applied'.")
     status: ApplicationStatus = ApplicationStatus.INTERESTED
+    cv_version_id: uuid.UUID | None = Field(default=None, description="The CV version used for this application.")
     notes: Notes | None = None
 
 
@@ -39,6 +41,7 @@ class ApplicationUpdate(PartialUpdate):
     deadline: date | None = None
     applied_on: date | None = None
     status: ApplicationStatus | None = None
+    cv_version_id: uuid.UUID | None = None
     notes: Notes | None = None
     change_reason: Reason | None = Field(
         default=None, description="Optional. Stored with any history entries this change creates."
@@ -56,6 +59,7 @@ class ApplicationRead(BaseModel):
     deadline: date | None
     applied_on: date | None
     status: ApplicationStatus
+    cv_version_id: uuid.UUID | None
     archived_at: datetime | None
     created_at: datetime
     updated_at: datetime
@@ -66,4 +70,5 @@ class ApplicationDetail(ApplicationRead):
 
     job_description: str | None
     notes: str | None
+    cv_version: CVVersionRef | None
     rounds: list[RoundRead]

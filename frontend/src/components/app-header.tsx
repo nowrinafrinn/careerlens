@@ -8,7 +8,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { currentUserKey, getCurrentUser, logout } from "@/lib/auth";
 
-const NAV = [{ href: "/applications", label: "Applications" }];
+const NAV = [
+  { href: "/applications", label: "Applications" },
+  { href: "/cvs", label: "CVs" },
+];
 
 export function AppHeader() {
   const pathname = usePathname();

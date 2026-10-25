@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     # Set false on a public deployment once your own account exists.
     allow_registration: bool = True
 
+    # Uploaded files (original CVs). Never committed: see .gitignore.
+    storage_dir: Path = BACKEND_DIR / "storage"
+    cv_max_bytes: int = 5 * 1024 * 1024
+
 
 @lru_cache
 def get_settings() -> Settings:

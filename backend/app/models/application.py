@@ -1,6 +1,6 @@
 import uuid
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import Date, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
@@ -8,6 +8,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, Timestamps, UUIDPrimaryKey
 from app.models.enums import ApplicationStatus, EventType, RoundResult, RoundStatus, RoundType, db_enum
+
+if TYPE_CHECKING:
+    from app.models.cv import CVVersion
 
 
 class JobApplication(UUIDPrimaryKey, Timestamps, Base):
@@ -27,10 +30,15 @@ class JobApplication(UUIDPrimaryKey, Timestamps, Base):
     status: Mapped[ApplicationStatus] = mapped_column(
         db_enum(ApplicationStatus, "application_status"), default=ApplicationStatus.INTERESTED
     )
+    # RESTRICT: a CV version in use by an application can't be deleted.
+    cv_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("cv_versions.id", ondelete="RESTRICT"), index=True
+    )
     notes: Mapped[str | None] = mapped_column(Text)
     # Soft archive: hidden from the default list, never deleted, history intact.
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
+    cv_version: Mapped["CVVersion | None"] = relationship()
     rounds: Mapped[list["RecruitmentRound"]] = relationship(
         back_populates="application",
         order_by="RecruitmentRound.position",

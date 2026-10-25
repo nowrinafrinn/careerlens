@@ -282,9 +282,11 @@ GET    /applications/{id}/rounds       POST /applications/{id}/rounds
 GET    /rounds/{id}                    DELETE /rounds/{id}?reason=   (history + snapshot kept)
 PATCH  /rounds/{id}                    (any field; changing scheduled_at records a reschedule with
                                         old+new dates; optional change_reason)
-POST   /cv-documents                   (multipart upload → document + version + sections + passages)
+POST   /cv-versions                    (multipart upload → document + version + sections + passages)
 GET    /cv-versions                    GET /cv-versions/{id}  (sections + passages)
-PATCH  /cv-versions/{id}/sections/{sid} (correct type/heading; confirm)
+PATCH  /cv-versions/{id}               (label, is_confirmed)   DELETE /cv-versions/{id} (409 if in use)
+PATCH  /cv-versions/{id}/sections/{sid} (correct section type)
+GET    /cv-versions/{id}/file          (original file, byte for byte)
 POST   /applications/{id}/analyses     (run analysis against application's CV version)
 GET    /applications/{id}/analyses/latest   (requirements + evidence + coverage + staleness flag)
 PATCH  /requirements/{id}              (edit text/category/importance/self_report)
@@ -430,8 +432,19 @@ cd frontend && npm install && npm run dev
   Not visually checked: dialogs and the phone layout (the pane couldn't draw in the background).
 
 ### Day 2 — CV evidence & journals
-- [ ] **M5 CV upload & parsing:** magic-byte validation, 5 MB limit, store original, sections + passages, parse warnings, correction UI.
+- [x] **M5 CV upload & parsing:** magic-byte validation, 5 MB limit, store original, sections + passages, parse warnings, correction UI.
   ✅ Tests: fake PDF (wrong bytes) rejected; DOCX and PDF fixtures produce expected sections; unparseable/empty text → `parse_status=failed` with message.
+  *Done 2026-10-25.* Pure parser in `app/analysis/cv_parser.py` (pypdf, python-docx; dictionary of
+  ~100 headings plus Word heading styles; bullets and wrapped lines joined; every passage offset
+  slices `raw_text` exactly). Migration 0004: cv_documents, cv_versions, cv_sections, cv_passages,
+  `job_applications.cv_version_id` (RESTRICT), offset CHECKs, and a hand-written replacement of the
+  event-type CHECK for the new `application_cv_changed` (autogenerate can't see it); downgrade tested.
+  Upload size enforced twice: Content-Length middleware before the body is read, and the real byte
+  count in the route. 38 new tests (100 total), files built in memory, no real CVs in the repo.
+  Browser-verified: upload through the form, section correction, mark reviewed, byte-identical
+  download, link to an application (history entry), fake-PDF / duplicate / in-use errors.
+  Known limits: no OCR; a PDF heading outside the dictionary is merged into the section above
+  (sections can be retyped but not split); multi-column PDFs may come out in the wrong order.
 - [ ] **M6 Requirement extraction + evidence matching (rule engine):**
   ✅ Tests: fixture JD yields expected required/preferred split; skill in project bullet → `demonstrated`; only in skills list → `partially_demonstrated`; absent → `not_found_in_cv` and **no capability gap created**; vague soft skill → `needs_verification`; evidence links point to real passage offsets.
   ✅ Re-opening the application shows the stored analysis without re-running; changed CV version flags it stale.

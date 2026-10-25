@@ -161,6 +161,18 @@ function Facts({ application }: { application: Detail }) {
         </dd>
         <dt className="text-muted-foreground">Applied</dt>
         <dd className="tabular-nums">{application.applied_on ? formatDate(application.applied_on) : "Not yet"}</dd>
+        <dt className="text-muted-foreground">CV used</dt>
+        <dd className="truncate">
+          {application.cv_version ? (
+            <Link href={`/cvs/${application.cv_version.id}`} className="text-primary underline underline-offset-4">
+              v{application.cv_version.version_number} · {application.cv_version.label}
+            </Link>
+          ) : (
+            <Link href={`/applications/${application.id}/edit`} className="text-muted-foreground underline underline-offset-4">
+              Choose a CV
+            </Link>
+          )}
+        </dd>
         <dt className="text-muted-foreground">Source</dt>
         <dd>{application.source ?? "—"}</dd>
         <dt className="text-muted-foreground">Posting</dt>

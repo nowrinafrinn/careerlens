@@ -10,6 +10,7 @@
 """
 
 from collections.abc import Iterator
+from pathlib import Path
 
 import pytest
 from alembic import command
@@ -41,6 +42,14 @@ def engine() -> Iterator[Engine]:
     engine = create_engine(url)
     yield engine
     engine.dispose()
+
+
+@pytest.fixture(autouse=True)
+def storage_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Uploaded files go to a fresh temporary folder per test, never the real storage."""
+    directory = tmp_path / "storage"
+    monkeypatch.setattr(get_settings(), "storage_dir", directory)
+    return directory
 
 
 @pytest.fixture

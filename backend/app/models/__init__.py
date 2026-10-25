@@ -6,6 +6,18 @@ through `Base.metadata`.
 
 from app.models.application import JobApplication, RecruitmentEvent, RecruitmentRound
 from app.models.base import Base
+from app.models.cv import CVDocument, CVPassage, CVSection, CVVersion
 from app.models.user import User, UserSession
 
-__all__ = ["Base", "JobApplication", "RecruitmentEvent", "RecruitmentRound", "User", "UserSession"]
+__all__ = [
+    "Base",
+    "CVDocument",
+    "CVPassage",
+    "CVSection",
+    "CVVersion",
+    "JobApplication",
+    "RecruitmentEvent",
+    "RecruitmentRound",
+    "User",
+    "UserSession",
+]

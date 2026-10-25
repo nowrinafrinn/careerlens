@@ -5,8 +5,8 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–4 of 14 (foundation, accounts, applications and recruitment rounds, and
-> their screens) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
+> **Status:** Milestones 1–5 of 14 (foundation, accounts, applications and recruitment rounds, their
+> screens, and CV upload with section extraction) are complete. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -56,6 +56,22 @@ Not yet implemented: login rate limiting, password reset, email verification.
   `GET /applications/{id}/timeline` returns it. Date-times in the history are stored in UTC.
 - Applications are archived, never deleted. A round created by mistake can be deleted; the deletion
   is itself recorded with a snapshot of the round.
+
+## CVs
+
+- Upload a PDF or DOCX (up to 5 MB) on the CVs page. The file type is decided from the file's
+  content, not its name. The original is stored unchanged under `backend/storage/` (git-ignored)
+  and can be downloaded again.
+- `backend/app/analysis/cv_parser.py` extracts the text and splits it into sections (education,
+  skills, experience, projects…) and passages (bullets or lines). Each passage records its
+  character offsets in the extracted text, so later features can point at the exact CV text.
+- What the parser can't place is shown as **Unrecognized**, never guessed. A section it didn't find
+  produces a warning that says so, not a claim that the CV lacks it. You can retype any section and
+  mark the version as reviewed.
+- Each upload is a numbered version; an application records which version you used.
+- Limits: no OCR, so scanned PDFs are saved but marked as unreadable; multi-column layouts may be
+  read in the wrong order; sections can be retyped but not split or merged.
+- Nothing is sent to an external AI service.
 
 ## Prerequisites
 

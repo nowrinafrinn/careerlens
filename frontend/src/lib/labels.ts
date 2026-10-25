@@ -1,6 +1,7 @@
 // Human-readable labels and badge colours for the API's enum values.
 
 import type { ApplicationStatus, RoundResult, RoundStatus, RoundType } from "@/lib/applications";
+import type { ParseStatus, SectionType } from "@/lib/cvs";
 
 type Tone = "neutral" | "info" | "progress" | "positive" | "negative" | "muted";
 
@@ -45,6 +46,31 @@ export const ROUND_STATUS: Record<RoundStatus, { label: string; tone: Tone }> = 
   awaiting_result: { label: "Awaiting result", tone: "progress" },
   rescheduled: { label: "Rescheduled", tone: "progress" },
   cancelled: { label: "Cancelled", tone: "muted" },
+};
+
+export const SECTION_TYPE: Record<SectionType, string> = {
+  header: "Name and contact",
+  summary: "Summary",
+  education: "Education",
+  skills: "Skills",
+  experience: "Work experience",
+  internship: "Internships",
+  projects: "Projects",
+  certifications: "Certifications and courses",
+  achievements: "Achievements",
+  other_experience: "Other relevant experience",
+  other: "Other",
+  unrecognized: "Unrecognized",
+};
+
+export const PARSE_STATUS: Record<ParseStatus, { label: string; tone: Tone; description: string }> = {
+  ok: { label: "Read successfully", tone: "positive", description: "Sections were recognized. Check them anyway." },
+  partial: {
+    label: "Partly recognized",
+    tone: "progress",
+    description: "Some text couldn't be placed in a section. Review the blocks below.",
+  },
+  failed: { label: "Couldn't be read", tone: "negative", description: "Almost no text could be extracted." },
 };
 
 export const ROUND_RESULT: Record<RoundResult, { label: string; tone: Tone }> = {
