@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -31,9 +32,20 @@ class Settings(BaseSettings):
     # Set false on a public deployment once your own account exists.
     allow_registration: bool = True
 
+    # Serverless hosting (e.g. Vercel + Supabase's transaction pooler): open a
+    # fresh connection per request and never use prepared statements, which
+    # transaction-mode poolers don't support.
+    db_serverless: bool = False
+
     # Uploaded files (original CVs). Never committed: see .gitignore.
+    # "local" keeps them in storage_dir; "supabase" uses a private Supabase Storage bucket.
+    storage_backend: Literal["local", "supabase"] = "local"
     storage_dir: Path = BACKEND_DIR / "storage"
-    cv_max_bytes: int = 5 * 1024 * 1024
+    supabase_url: str | None = None  # https://<project>.supabase.co
+    supabase_service_role_key: str | None = None  # server-side only; never sent to the browser
+    supabase_bucket: str = "cv-files"
+    # 4 MB, so an upload plus its form overhead fits Vercel's 4.5 MB request limit everywhere.
+    cv_max_bytes: int = 4 * 1024 * 1024
 
     # Optional AI (Google Gemini). Without a key the app runs on the rule
     # engine only. The key stays on the server; the browser never sees it.

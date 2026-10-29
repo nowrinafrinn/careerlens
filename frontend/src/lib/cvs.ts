@@ -11,7 +11,9 @@ export type CVSection = Schemas["SectionRead"];
 export type SectionType = Schemas["SectionType"];
 export type ParseStatus = Schemas["ParseStatus"];
 
-export const MAX_CV_BYTES = 5 * 1024 * 1024; // keep in step with CV_MAX_BYTES on the backend
+// Keep in step with CV_MAX_BYTES on the backend. 4 MB fits Vercel's 4.5 MB request limit.
+export const MAX_CV_BYTES = 4 * 1024 * 1024;
+export const MAX_CV_MB = MAX_CV_BYTES / (1024 * 1024);
 
 export const cvKeys = {
   all: ["cvs"] as const,

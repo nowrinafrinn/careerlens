@@ -59,8 +59,9 @@ def list_versions(db: Session, user: User) -> list[tuple[CVVersion, int]]:
 def upload_cv(db: Session, user: User, filename: str | None, data: bytes, label: str | None) -> CVVersion:
     if not data:
         raise AppError(422, "empty_file", "The file is empty.")
-    if len(data) > get_settings().cv_max_bytes:
-        raise AppError(413, "file_too_large", "The file is larger than the 5 MB limit.")
+    limit = get_settings().cv_max_bytes
+    if len(data) > limit:
+        raise AppError(413, "file_too_large", f"The file is larger than the {limit // (1024 * 1024)} MB limit.")
     try:
         kind, parsed = parse_cv(data)
     except UnsupportedFile as error:
@@ -83,7 +84,7 @@ def upload_cv(db: Session, user: User, filename: str | None, data: bytes, label:
     display_name = _display_filename(filename)
     version_number = (db.scalar(select(func.max(CVVersion.version_number)).where(CVVersion.user_id == user.id)) or 0) + 1
     key = storage.new_key("cvs", user.id, kind.value)
-    storage.save(key, data)
+    storage.save(key, data, MIME_TYPES[kind])
 
     try:
         document = CVDocument(

@@ -306,7 +306,7 @@ export interface paths {
         };
         /**
          * Download Original
-         * @description The original uploaded file, byte for byte.
+         * @description The original uploaded file, byte for byte, always as a download (never shown inline).
          */
         get: operations["download_original_api_v1_cv_versions__version_id__file_get"];
         put?: never;
@@ -1180,7 +1180,7 @@ export interface components {
         Body_upload_cv_api_v1_cv_versions_post: {
             /**
              * File
-             * @description PDF or DOCX, up to 5 MB.
+             * @description PDF or DOCX, up to 4 MB.
              */
             file: string;
             /** Label */

@@ -30,7 +30,7 @@ confirmed, and what is only an inference.
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui |
 | Tests | pytest + FastAPI TestClient against a real Postgres test database |
 | AI (optional) | Google Gemini (`google-genai`) behind a replaceable provider interface |
-| Deployment | Docker Compose: Postgres, API, web app and Caddy (automatic HTTPS) |
+| Deployment | Docker Compose (Postgres, API, web app, Caddy for HTTPS), or free on Vercel + Supabase |
 
 ## How the pieces talk
 
@@ -72,7 +72,7 @@ Not yet implemented: login rate limiting, password reset, email verification.
 
 ## CVs
 
-- Upload a PDF or DOCX (up to 5 MB) on the CVs page. The file type is decided from the file's
+- Upload a PDF or DOCX (up to 4 MB) on the CVs page. The file type is decided from the file's
   content, not its name. The original is stored unchanged under `backend/storage/` (git-ignored)
   and can be downloaded again.
 - `backend/app/analysis/cv_parser.py` extracts the text and splits it into sections (education,

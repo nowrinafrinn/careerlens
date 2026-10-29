@@ -10,7 +10,7 @@ import { FormField } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
-import { cvKeys, formatFileSize, listCVs, MAX_CV_BYTES, uploadCV, type CVSummary } from "@/lib/cvs";
+import { cvKeys, formatFileSize, listCVs, MAX_CV_BYTES, MAX_CV_MB, uploadCV, type CVSummary } from "@/lib/cvs";
 import { formatDateTime } from "@/lib/format";
 import { PARSE_STATUS } from "@/lib/labels";
 
@@ -119,7 +119,7 @@ function UploadCard() {
       return;
     }
     if (file.size > MAX_CV_BYTES) {
-      setError({ message: "The file is larger than the 5 MB limit." });
+      setError({ message: `The file is larger than the ${MAX_CV_MB} MB limit.` });
       return;
     }
     mutation.mutate({ file, label: label || undefined });
@@ -131,7 +131,7 @@ function UploadCard() {
         Upload a CV
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        PDF or DOCX, up to 5 MB. The file is stored as-is and only you can see it. CareerLens reads the text and
+        PDF or DOCX, up to {MAX_CV_MB} MB. The file is stored as-is and only you can see it. CareerLens reads the text and
         splits it into sections for you to check. Nothing is sent to an AI service.
       </p>
       <form ref={formRef} onSubmit={onSubmit} className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">

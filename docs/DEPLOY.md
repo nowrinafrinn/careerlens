@@ -17,8 +17,132 @@ stack's private network.
 - **A server** with Docker. A small VPS is enough: 2 GB RAM, 1–2 vCPUs, 20 GB disk, Ubuntu 24.04
   (for example Hetzner CX22, DigitalOcean Basic or similar, a few dollars a month). Building the
   frontend image needs most of the memory; with 1 GB add swap first.
-- **A domain name** (or a subdomain) whose DNS **A record points at the server's IP**.
+- **A domain name** (or a subdomain) whose DNS **A record points at the server's IP**, or a free
+  `<your-ip>.sslip.io` address (see the free option below).
 - **Ports 80 and 443 open** to the internet (Caddy needs 80 to prove it owns the domain).
+
+## Free option: Oracle Cloud Always Free
+
+Oracle's Always Free tier includes an Arm virtual machine big enough for the whole stack (as of
+mid-2026: up to 2 OCPUs and 12 GB RAM, 200 GB of disk in total), with no time limit. All the images
+CareerLens uses run on Arm. Other free tiers don't fit as well: Render's free web services sleep and
+its free Postgres is deleted after 30 days; Google Cloud's free e2-micro has only 1 GB of RAM.
+
+Limits change, so check Oracle's current Always Free page before you start. Things to know:
+
+- **Sign-up needs a credit or debit card** for identity verification. Always Free resources aren't
+  charged, but choose shapes marked "Always Free eligible" and stay within the limits.
+- **Pick your home region carefully:** Always Free Arm capacity is only in your home region, and
+  popular regions sometimes report "out of capacity". Retrying later or another availability domain
+  usually works.
+- **Idle instances can be reclaimed** on free-only accounts (very low CPU, network and memory use
+  over 7 days). A small personal app can look idle. Oracle documents this for free-tier accounts;
+  upgrading the account to pay-as-you-go keeps Always Free resources free while removing that risk.
+
+### Step by step
+
+1. **Create the account** at <https://www.oracle.com/cloud/free/> and choose a home region near you.
+
+2. **Create the VM:** Compute → Instances → Create instance.
+   - Image: **Ubuntu 24.04** (Canonical).
+   - Shape: **VM.Standard.A1.Flex** (Ampere), 2 OCPUs and 12 GB memory (or less).
+   - Networking: keep the default virtual cloud network and **assign a public IPv4 address**.
+   - SSH keys: upload your public key (or let Oracle generate one and save it).
+
+3. **Open ports 80 and 443 in Oracle's network:** open the instance's subnet → Security list →
+   Add ingress rules: source `0.0.0.0/0`, TCP, destination ports `80` and `443`.
+
+4. **Open them on the VM too.** Oracle's Ubuntu images ship with a firewall that only allows SSH, so
+   this step is easy to miss. SSH in (`ssh ubuntu@YOUR_IP`) and run:
+
+   ```bash
+   sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+   ```
+
+   ```bash
+   sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+   ```
+
+   ```bash
+   sudo netfilter-persistent save
+   ```
+
+5. **Get a free address with HTTPS.** No domain needed: `sslip.io` turns your IP into a hostname.
+   For the IP `203.0.113.10` the hostname is `203-0-113-10.sslip.io`. Caddy gets a real HTTPS
+   certificate for it. (If you'd rather have a name, a free DuckDNS subdomain works the same way.)
+
+6. **Install Docker and start CareerLens:** follow [First deployment](#first-deployment) below on the
+   VM, with `DOMAIN=203-0-113-10.sslip.io` (your IP, dashes instead of dots) in `deploy/.env`.
+
+7. **Open `https://203-0-113-10.sslip.io`**, create your account, then set
+   `ALLOW_REGISTRATION=false` (step 6 of First deployment).
+
+## Free option: Vercel + Supabase (no server to manage)
+
+The frontend and the API run as two Vercel projects (Hobby plan, free for non-commercial use), and
+Supabase provides the database and the storage for uploaded CVs (free plan). Things to know first:
+
+- **A free Supabase project pauses after 7 days without database activity.** Your data is kept, but
+  the site stops working until you click **Restore** in the Supabase dashboard.
+- **CV uploads are limited to 4 MB** (Vercel accepts at most 4.5 MB per request).
+- The first request after a quiet period is slower while the API starts up.
+- Free plan sizes (500 MB database, 1 GB file storage on Supabase) are far more than CareerLens needs.
+
+### 1. Supabase: database and storage
+
+1. Create a project at <https://supabase.com> (pick a region near you; save the database password).
+2. **Storage → New bucket** named `cv-files`. Keep it **private** (not public).
+3. **Project Settings → API keys:** copy the **secret** key (`sb_secret_…`, or the legacy
+   `service_role` key). It is a password for your whole project: it only ever goes into Vercel's
+   environment variables, never into the frontend or a commit.
+4. Click **Connect** (top of the dashboard) and copy two connection strings:
+   - **Transaction pooler** (port `6543`): for the API on Vercel.
+   - **Session pooler** (port `5432`): for running migrations from your computer.
+
+   In both, change the start from `postgresql://` to `postgresql+psycopg://` and put your database
+   password in place of `[YOUR-PASSWORD]`.
+
+### 2. Create the tables
+
+From `backend/` on your computer, run the migrations against Supabase using the **session pooler**
+string (PowerShell shown; on macOS/Linux use `DATABASE_URL=... alembic upgrade head`):
+
+```powershell
+$env:DATABASE_URL="postgresql+psycopg://postgres.YOUR-REF:YOUR-PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres"; .venv\Scripts\alembic.exe upgrade head
+```
+
+Run it again whenever a new version adds migrations, before deploying the new API.
+
+### 3. Vercel: the API
+
+1. At <https://vercel.com>, **Add New → Project**, import the GitHub repository, set **Root
+   Directory** to `backend`. Vercel detects FastAPI from `app/main.py` and installs
+   `requirements.txt` (Python 3.13 from `.python-version`).
+2. Add these **Environment Variables**, then deploy:
+
+   | Name | Value |
+   |---|---|
+   | `DATABASE_URL` | the **transaction pooler** string (port 6543), with `postgresql+psycopg://` |
+   | `DB_SERVERLESS` | `true` |
+   | `STORAGE_BACKEND` | `supabase` |
+   | `SUPABASE_URL` | `https://YOUR-REF.supabase.co` |
+   | `SUPABASE_SERVICE_ROLE_KEY` | the secret key from step 1.3 |
+   | `COOKIE_SECURE` | `true` |
+   | `APP_ENV` | `production` |
+   | `GEMINI_API_KEY` | optional |
+
+3. Check `https://YOUR-API.vercel.app/api/v1/health` shows `"database":"ok"`.
+
+### 4. Vercel: the web app
+
+1. **Add New → Project** again with the same repository, **Root Directory** `frontend`.
+2. Add the environment variable `API_URL` = `https://YOUR-API.vercel.app` (no trailing slash).
+   It's read at build time, so redeploy the frontend if you change it.
+3. Deploy, open the frontend's address, create your account, then set `ALLOW_REGISTRATION=false`
+   on the **API** project and redeploy it.
+
+The browser only ever talks to the frontend's address; the frontend forwards `/api/*` to the API
+project, so the login cookie works without any cross-site setup.
 
 ## First deployment
 

@@ -11,4 +11,5 @@ email-validator==2.3.0
 python-multipart==0.0.32
 pypdf==6.21.2
 python-docx==1.2.0
+httpx==0.28.1  # Supabase Storage REST calls (also used by google-genai)
 google-genai==2.34.0  # optional AI provider (Gemini); the app works without a key

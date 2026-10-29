@@ -1,14 +1,55 @@
-"""Files on local disk, addressed by keys the app generates (never by user input).
+"""Uploaded files, addressed by keys the app generates (never by user input).
 
-Kept behind these three functions so a cloud bucket can replace the disk later
-without touching the services.
+Two backends behind the same three functions, chosen by STORAGE_BACKEND:
+
+- "local" (default): files under STORAGE_DIR. Development, tests, and the
+  Docker deployment (where STORAGE_DIR is a volume).
+- "supabase": a private Supabase Storage bucket, for serverless hosting
+  (e.g. Vercel) where the local disk doesn't persist. The backend talks to
+  Supabase's Storage REST API with the service-role key; the bucket is never
+  public and the browser never gets a direct link.
 """
 
 import os
 import uuid
 from pathlib import Path
+from urllib.parse import quote
+
+import httpx
 
 from app.config import get_settings
+from app.errors import AppError
+
+
+def new_key(prefix: str, user_id: uuid.UUID, extension: str) -> str:
+    return f"{prefix}/{user_id}/{uuid.uuid4().hex}.{extension}"
+
+
+def save(key: str, data: bytes, content_type: str = "application/octet-stream") -> None:
+    if _supabase():
+        _request("POST", key, content=data, headers={"Content-Type": content_type, "x-upsert": "false"})
+        return
+    path = _path_for(key)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".part")
+    temporary.write_bytes(data)
+    os.replace(temporary, path)  # appears all at once, never half-written
+
+
+def read(key: str) -> bytes:
+    if _supabase():
+        return _request("GET", key).content
+    return _path_for(key).read_bytes()
+
+
+def delete(key: str) -> None:
+    if _supabase():
+        _request("DELETE", key, missing_ok=True)
+        return
+    _path_for(key).unlink(missing_ok=True)
+
+
+# --- local disk ----------------------------------------------------------------------
 
 
 def _path_for(key: str) -> Path:
@@ -20,21 +61,32 @@ def _path_for(key: str) -> Path:
     return path
 
 
-def new_key(prefix: str, user_id: uuid.UUID, extension: str) -> str:
-    return f"{prefix}/{user_id}/{uuid.uuid4().hex}.{extension}"
+# --- Supabase Storage ------------------------------------------------------------------
 
 
-def save(key: str, data: bytes) -> None:
-    path = _path_for(key)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".part")
-    temporary.write_bytes(data)
-    os.replace(temporary, path)  # appears all at once, never half-written
+def _supabase() -> bool:
+    return get_settings().storage_backend == "supabase"
 
 
-def path_of(key: str) -> Path:
-    return _path_for(key)
-
-
-def delete(key: str) -> None:
-    _path_for(key).unlink(missing_ok=True)
+def _request(method: str, key: str, *, missing_ok: bool = False, **kwargs) -> httpx.Response:
+    settings = get_settings()
+    if not settings.supabase_url or not settings.supabase_service_role_key:
+        raise AppError(503, "storage_unavailable", "File storage isn't configured on this server.")
+    if ".." in key.split("/"):
+        raise ValueError("Invalid storage key")
+    url = f"{settings.supabase_url.rstrip('/')}/storage/v1/object/{settings.supabase_bucket}/{quote(key)}"
+    secret = settings.supabase_service_role_key
+    headers = {"apikey": secret, **kwargs.pop("headers", {})}
+    if not secret.startswith("sb_secret_"):
+        # A legacy service_role key is a JWT and also goes in Authorization. New
+        # sb_secret_ keys aren't JWTs: Supabase says to send them on apikey only.
+        headers["Authorization"] = f"Bearer {secret}"
+    try:
+        response = httpx.request(method, url, headers=headers, timeout=30, **kwargs)
+    except httpx.HTTPError as exc:
+        raise AppError(503, "storage_unavailable", "File storage couldn't be reached. Try again.") from exc
+    if missing_ok and response.status_code in (400, 404):
+        return response  # already gone
+    if response.status_code >= 400:
+        raise AppError(503, "storage_unavailable", "File storage refused the request. Try again later.")
+    return response

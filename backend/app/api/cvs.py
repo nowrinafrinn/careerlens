@@ -1,8 +1,8 @@
 import uuid
 from typing import Annotated
+from urllib.parse import quote
 
-from fastapi import APIRouter, File, Form, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, File, Form, Response, UploadFile, status
 
 from app import storage
 from app.api.deps import CurrentUser, DbSession
@@ -34,7 +34,7 @@ def list_versions(user: CurrentUser, db: DbSession) -> list[CVVersionSummary]:
 def upload_cv(
     user: CurrentUser,
     db: DbSession,
-    file: Annotated[UploadFile, File(description="PDF or DOCX, up to 5 MB.")],
+    file: Annotated[UploadFile, File(description="PDF or DOCX, up to 4 MB.")],
     label: Annotated[str | None, Form(max_length=100)] = None,
 ) -> CVVersionDetail:
     """Uploads a CV, keeps the original file, and extracts its sections.
@@ -71,13 +71,16 @@ def delete_version(version_id: uuid.UUID, user: CurrentUser, db: DbSession) -> N
     service.delete_version(db, user, version_id)
 
 
-@router.get("/{version_id}/file", response_class=FileResponse)
-def download_original(version_id: uuid.UUID, user: CurrentUser, db: DbSession) -> FileResponse:
-    """The original uploaded file, byte for byte."""
+@router.get("/{version_id}/file", response_class=Response)
+def download_original(version_id: uuid.UUID, user: CurrentUser, db: DbSession) -> Response:
+    """The original uploaded file, byte for byte, always as a download (never shown inline)."""
     document = service.get_version(db, user, version_id).document
-    return FileResponse(
-        storage.path_of(document.storage_key),
+    return Response(
+        storage.read(document.storage_key),
         media_type=document.mime_type,
-        filename=document.original_filename,  # sent as Content-Disposition: attachment
-        headers={"X-Content-Type-Options": "nosniff"},
+        headers={
+            # RFC 5987 form, so any filename (spaces, non-ASCII) survives.
+            "Content-Disposition": f"attachment; filename*=utf-8''{quote(document.original_filename)}",
+            "X-Content-Type-Options": "nosniff",
+        },
     )

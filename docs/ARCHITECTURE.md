@@ -52,7 +52,9 @@ to Next.js. Postgres and the backend are not reachable from outside. See [DEPLOY
 | Contracts | `schemas/` | Pydantic v2 request/response models. The frontend's TypeScript types are generated from them. |
 
 Other files: `errors.py` (every error is `{"error": {"code", "message", "details"}}`; validation
-details never echo submitted personal data), `storage.py` (uploaded files under `STORAGE_DIR`),
+details never echo submitted personal data), `storage.py` (uploaded files: on local disk under
+`STORAGE_DIR`, or in a private Supabase Storage bucket for serverless hosting, behind the same
+`save`/`read`/`delete` functions),
 `upload_limit.py` (rejects oversized uploads before reading them), `journal_templates.py` (the
 journal prompts per event type), `config.py` (settings from environment variables).
 
@@ -140,7 +142,13 @@ version; hashes of both make it "stale" when either changes.
 
 ## Deployment
 
-One Docker Compose stack (`docker-compose.prod.yml`): `db` (Postgres 16, named volume), `backend`
-(runs `alembic upgrade head`, then uvicorn; CV uploads on a named volume), `frontend` (Next.js
-standalone server) and `caddy` (automatic HTTPS). Configuration comes from `deploy/.env`. Step-by-step
-instructions, backups and updates: [DEPLOY.md](DEPLOY.md).
+Two supported shapes, both described step by step in [DEPLOY.md](DEPLOY.md):
+
+- **One server, Docker Compose** (`docker-compose.prod.yml`): `db` (Postgres 16, named volume),
+  `backend` (runs `alembic upgrade head`, then uvicorn; CV uploads on a named volume), `frontend`
+  (Next.js standalone server) and `caddy` (automatic HTTPS). Configuration comes from `deploy/.env`.
+- **Serverless: Vercel + Supabase.** The API and the web app are two Vercel projects; Supabase hosts
+  the database and a private bucket for CVs. `DB_SERVERLESS=true` makes each request open its own
+  connection through Supabase's pooler without prepared statements; `STORAGE_BACKEND=supabase` moves
+  CV files to the bucket; migrations are run from a developer machine. CVs are capped at 4 MB to fit
+  Vercel's request size limit.
