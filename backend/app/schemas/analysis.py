@@ -41,7 +41,8 @@ class RequirementRead(BaseModel):
     missing_details: str | None
     suggested_action: str
     self_report: SelfReport
-    origin: Origin
+    origin: Origin  # who extracted the line from the job description
+    assessed_by: AnalysisMethod  # who judged the CV evidence (AI verdicts passed validation)
     user_edited: bool
     dismissed: bool
     evidence: list[EvidenceRead]
@@ -70,6 +71,7 @@ class AnalysisSummary(BaseModel):
 class AnalysisRead(AnalysisSummary):
     is_stale: bool
     stale_reasons: list[str]
+    notes: list[str]  # how it was made, e.g. where the AI's verdict wasn't used and why
     requirements: list[RequirementRead]
 
 

@@ -1,10 +1,13 @@
 import uuid
 from dataclasses import asdict
+from typing import Annotated
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 
+from app.ai.provider import AIProvider, get_ai_provider
 from app.api.deps import CurrentUser, DbSession
 from app.models import JobRequirement, RequirementAnalysis
+from app.models.analysis import AnalysisMethod
 from app.schemas.analysis import (
     AnalysisRead,
     AnalysisSummary,
@@ -60,17 +63,27 @@ def _read(db: DbSession, user: CurrentUser, analysis: RequirementAnalysis) -> An
         **_summary(analysis),
         is_stale=bool(reasons),
         stale_reasons=reasons,
+        notes=list(analysis.notes or []),
         requirements=[_requirement(r, gaps.get(r.id)) for r in analysis.requirements],
     )
 
 
 @router.post("/applications/{application_id}/analyses", response_model=AnalysisRead, status_code=status.HTTP_201_CREATED)
-def run_analysis(application_id: uuid.UUID, user: CurrentUser, db: DbSession) -> AnalysisRead:
+def run_analysis(
+    application_id: uuid.UUID,
+    user: CurrentUser,
+    db: DbSession,
+    provider: Annotated[AIProvider | None, Depends(get_ai_provider)],
+    method: AnalysisMethod = AnalysisMethod.RULE_ENGINE,
+) -> AnalysisRead:
     """Extracts the job's requirements and checks each against the application's CV version.
 
-    Rule-based; nothing is sent to an external service. Earlier analyses are kept.
+    `rule_engine` (default): nothing leaves the server. `ai`: the job's requirements and the
+    CV's passages (not its contact header) go to the configured AI provider; needs the user's
+    consent. AI verdicts are validated and any that fail fall back to the rule engine, with a
+    note saying why. Earlier analyses are kept.
     """
-    return _read(db, user, service.run_analysis(db, user, application_id))
+    return _read(db, user, service.run_analysis(db, user, application_id, method, provider))
 
 
 @router.get("/applications/{application_id}/analyses", response_model=list[AnalysisSummary])

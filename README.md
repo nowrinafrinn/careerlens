@@ -5,11 +5,12 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–12 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–13 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
 > CV improvement suggestions, recruitment journals with a personal question bank, an evidence-based
-> learning plan, position-specific preparation, the dashboard with insights, and a full end-to-end
-> run-through with fixes, error states and phone layout. See [docs/PLAN.md](docs/PLAN.md) for the
+> learning plan, position-specific preparation, the dashboard with insights, a full end-to-end
+> run-through with fixes, error states and phone layout, and optional AI-assisted analysis with
+> Google Gemini. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -185,6 +186,34 @@ that come up in several applications, and gaps you've reassessed.
 - Below **3 observations** an insight is marked **Not enough data yet**: one event isn't a pattern.
 - Things that happened together aren't presented as cause and effect, and rejections aren't used to
   judge your ability.
+
+## Optional AI assistance (Google Gemini)
+
+Everything works without AI. If the server has a Gemini API key, the analysis page also offers
+**Analyse with AI**, which asks Gemini to judge the CV evidence for each requirement.
+
+- **Consent first.** The first time, a dialog says exactly what is sent: the job's requirement lines
+  and the text of your CV's sections. The top of the CV (name and contact details) is never sent.
+  Consent is stored on your account and can be turned off at any time from the same page.
+- **Every AI verdict is checked** (`backend/app/ai/evidence.py`). It is used only if each citation
+  points at a real passage of this CV and quotes it exactly, its status is backed by its citations
+  ("demonstrated" needs a passage showing the skill in use), and it mentions no figures that aren't in
+  the requirement or the cited passages. Otherwise that requirement keeps the rule engine's verdict.
+- **Nothing silent.** Each AI-judged requirement is marked "AI verdict", and the analysis lists how it
+  was made, including every fallback and why. If Gemini is unavailable or rate-limited (retried with
+  backoff), the whole analysis uses the rule engine and says so.
+- Requirements are still picked out by the rule engine, so their positions in the job description
+  stay exact; only the evidence verdicts come from the AI. CV suggestions are built from those verdicts.
+
+To turn it on, get a key at <https://aistudio.google.com/apikey>, add it to `backend/.env` and restart
+the backend:
+
+```bash
+GEMINI_API_KEY=your-key
+```
+
+`GEMINI_MODEL` (default `gemini-2.5-flash`) picks the model. The key stays on the server. On the free
+tier Google may use what it receives to improve its products, so test with made-up CVs.
 
 ## Prerequisites
 

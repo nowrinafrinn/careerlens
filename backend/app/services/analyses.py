@@ -13,7 +13,9 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.analysis.evidence import EvidenceStatus, PassageInput, assess
+from app.ai import evidence as ai_evidence
+from app.ai.provider import AIProvider, AIProviderError
+from app.analysis.evidence import Assessment, EvidenceStatus, PassageInput, assess
 from app.analysis.jd_extractor import Category, Importance, extract_requirements
 from app.errors import AppError
 from app.models import CVVersion, JobApplication, JobRequirement, RequirementAnalysis, RequirementEvidence, User
@@ -48,7 +50,13 @@ def _passages(version: CVVersion) -> list[PassageInput]:
 
 
 def _apply_assessment(requirement: JobRequirement, passages: list[PassageInput]) -> None:
+    """The rule engine's verdict for one requirement."""
     result = assess(requirement.text, requirement.category, requirement.terms, requirement.match_mode, passages)
+    _set_assessment(requirement, result)
+    requirement.assessed_by = AnalysisMethod.RULE_ENGINE
+
+
+def _set_assessment(requirement: JobRequirement, result: Assessment) -> None:
     requirement.evidence_status = result.status
     requirement.evidence_rationale = result.rationale
     requirement.missing_details = result.missing_details
@@ -100,8 +108,56 @@ def latest_analysis(db: Session, user: User, application_id: uuid.UUID) -> Requi
     return analyses[0]
 
 
-def run_analysis(db: Session, user: User, application_id: uuid.UUID) -> RequirementAnalysis:
+def _apply_ai(requirements: list[JobRequirement], passages: list[PassageInput], provider: AIProvider) -> list[str]:
+    """Replaces rule-engine verdicts with AI verdicts that pass validation.
+
+    Returns plain-language notes for the candidate: what judged the evidence,
+    and every place the rule engine's verdict was kept instead.
+    """
+    inputs = [
+        ai_evidence.RequirementInput(f"r{i}", r.text, r.category.value, r.importance.value, list(r.terms))
+        for i, r in enumerate(requirements, start=1)
+    ]
+    request = ai_evidence.build_request(inputs, passages)
+    try:
+        raw = provider.generate_json(ai_evidence.SYSTEM, request.prompt, ai_evidence.SCHEMA)
+        result = ai_evidence.validate(raw, request)
+    except AIProviderError as exc:
+        return [f"{exc.reason} This analysis used the rule engine instead."]
+    except ai_evidence.AIOutputError:
+        return ["The AI's answer couldn't be used (it wasn't in the expected format), so this analysis used the rule engine instead."]
+
+    notes = [
+        f"CV evidence was judged by {provider.name} ({provider.model}). Every citation was checked: it must "
+        "point at a passage in your CV and quote it exactly."
+    ]
+    for item, requirement in zip(inputs, requirements, strict=True):
+        if item.key in result.assessments:
+            _set_assessment(requirement, result.assessments[item.key])
+            requirement.assessed_by = AnalysisMethod.AI
+        elif item.key in result.rejected:
+            short = requirement.text if len(requirement.text) <= 70 else requirement.text[:69].rstrip() + "…"
+            notes.append(f"“{short}”: the rule engine's verdict was kept because {result.rejected[item.key]}.")
+    return notes
+
+
+def run_analysis(
+    db: Session,
+    user: User,
+    application_id: uuid.UUID,
+    method: AnalysisMethod = AnalysisMethod.RULE_ENGINE,
+    provider: AIProvider | None = None,
+) -> RequirementAnalysis:
     application = get_application(db, user, application_id)
+    if method == AnalysisMethod.AI:
+        if user.ai_processing_consent_at is None:
+            raise AppError(
+                403,
+                "ai_consent_required",
+                "Turn on AI assistance first. It sends the job description and parts of your CV to Google.",
+            )
+        if provider is None:
+            raise AppError(503, "ai_unavailable", "AI assistance isn't set up on this server.")
     job_description = application.job_description or ""
     if not job_description.strip():
         raise AppError(422, "missing_job_description", "Add the job description to this application first.")
@@ -137,8 +193,12 @@ def run_analysis(db: Session, user: User, application_id: uuid.UUID) -> Requirem
             self_report=prior.self_report if prior else SelfReport.UNKNOWN,
             dismissed=prior.dismissed if prior else False,
         )
-        _apply_assessment(requirement, passages)
+        _apply_assessment(requirement, passages)  # the rule engine is always the baseline
         analysis.requirements.append(requirement)
+    if method == AnalysisMethod.AI and provider is not None and analysis.requirements:
+        analysis.notes = _apply_ai(analysis.requirements, passages, provider)
+        if any(r.assessed_by == AnalysisMethod.AI for r in analysis.requirements):
+            analysis.method = AnalysisMethod.AI
     recommendations.generate_for_analysis(analysis, passages, previous[0] if previous else None)
     db.add(analysis)
     db.commit()

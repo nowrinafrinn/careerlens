@@ -44,6 +44,11 @@ export function RequirementCard({ requirement, applicationId }: { requirement: R
             <p className="text-sm">{requirement.text}</p>
             <div className="flex flex-wrap items-center gap-1.5">
               <Pill tone={status.tone}>{status.label}</Pill>
+              {requirement.assessed_by === "ai" && (
+                <Pill tone="neutral" className="gap-1">
+                  AI verdict
+                </Pill>
+              )}
               <span className="text-xs text-muted-foreground">{CATEGORY[requirement.category]}</span>
               {requirement.self_report !== "unknown" && (
                 <span className="text-xs text-muted-foreground">· You: {SELF_REPORT[requirement.self_report]}</span>

@@ -31,8 +31,11 @@ export async function getLatestAnalysis(applicationId: string): Promise<Analysis
   }
 }
 
-export const runAnalysis = (applicationId: string) =>
-  apiFetch<Analysis>(`/applications/${applicationId}/analyses`, { method: "POST" });
+export type AnalysisMethod = Schemas["AnalysisMethod"];
+
+/** "rule_engine" sends nothing anywhere; "ai" needs the user's consent and a configured provider. */
+export const runAnalysis = (applicationId: string, method: AnalysisMethod = "rule_engine") =>
+  apiFetch<Analysis>(`/applications/${applicationId}/analyses?${new URLSearchParams({ method })}`, { method: "POST" });
 
 export const updateRequirement = (id: string, body: RequirementUpdate) =>
   apiFetch<Requirement>(`/requirements/${id}`, {

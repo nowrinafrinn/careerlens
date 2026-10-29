@@ -331,7 +331,10 @@ export interface paths {
          * Run Analysis
          * @description Extracts the job's requirements and checks each against the application's CV version.
          *
-         *     Rule-based; nothing is sent to an external service. Earlier analyses are kept.
+         *     `rule_engine` (default): nothing leaves the server. `ai`: the job's requirements and the
+         *     CV's passages (not its contact header) go to the configured AI provider; needs the user's
+         *     consent. AI verdicts are validated and any that fail fall back to the rule engine, with a
+         *     note saying why. Earlier analyses are kept.
          */
         post: operations["run_analysis_api_v1_applications__application_id__analyses_post"];
         delete?: never;
@@ -397,6 +400,43 @@ export interface paths {
          *     The self-report is stored next to the CV verdict and never replaces it.
          */
         patch: operations["update_requirement_api_v1_requirements__requirement_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/ai/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ai Status */
+        get: operations["ai_status_api_v1_ai_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/me/ai-consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Set Ai Consent
+         * @description Give or withdraw consent to send CV text to the AI provider. Withdrawing takes effect at once.
+         */
+        patch: operations["set_ai_consent_api_v1_users_me_ai_consent_patch"];
         trace?: never;
     };
     "/api/v1/analyses/{analysis_id}/recommendations": {
@@ -824,6 +864,21 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AIStatus */
+        AIStatus: {
+            /** Available */
+            available: boolean;
+            /** Provider */
+            provider: string | null;
+            /** Model */
+            model: string | null;
+            /** Consented */
+            consented: boolean;
+            /** Consent Given At */
+            consent_given_at: string | null;
+            /** Data Sent */
+            data_sent: string;
+        };
         /** AnalysisItem */
         AnalysisItem: {
             /**
@@ -885,6 +940,8 @@ export interface components {
             is_stale: boolean;
             /** Stale Reasons */
             stale_reasons: string[];
+            /** Notes */
+            notes: string[];
             /** Requirements */
             requirements: components["schemas"]["RequirementRead"][];
         };
@@ -1253,6 +1310,11 @@ export interface components {
              */
             attempted_at: string;
             response_quality: components["schemas"]["ResponseQuality"];
+        };
+        /** ConsentUpdate */
+        ConsentUpdate: {
+            /** Consent */
+            consent: boolean;
         };
         /** CoverageRead */
         CoverageRead: {
@@ -2318,6 +2380,7 @@ export interface components {
             suggested_action: string;
             self_report: components["schemas"]["SelfReport"];
             origin: components["schemas"]["Origin"];
+            assessed_by: components["schemas"]["AnalysisMethod"];
             /** User Edited */
             user_edited: boolean;
             /** Dismissed */
@@ -3598,7 +3661,9 @@ export interface operations {
     };
     run_analysis_api_v1_applications__application_id__analyses_post: {
         parameters: {
-            query?: never;
+            query?: {
+                method?: components["schemas"]["AnalysisMethod"];
+            };
             header?: never;
             path: {
                 application_id: string;
@@ -3719,6 +3784,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RequirementRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ai_status_api_v1_ai_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_ai_consent_api_v1_users_me_ai_consent_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                careerlens_session?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConsentUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserRead"];
                 };
             };
             /** @description Validation Error */

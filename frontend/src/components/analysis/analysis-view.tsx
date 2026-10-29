@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import { AnalyseWithAI } from "@/components/analysis/analyse-with-ai";
 import { CoverageBar } from "@/components/analysis/coverage";
 import { RequirementCard } from "@/components/analysis/requirement-card";
 import { Button } from "@/components/ui/button";
@@ -79,12 +80,15 @@ export function AnalysisView() {
             {result && (
               <p className="text-sm text-muted-foreground">
                 Compared with CV v{result.cv_version.version_number} · {result.cv_version.label} · analysed{" "}
-                {formatDateTime(result.created_at)} · rule-based, nothing sent to an AI service
+                {formatDateTime(result.created_at)} ·{" "}
+                {result.method === "ai"
+                  ? "AI-assisted, every citation checked against your CV"
+                  : "rule-based, nothing sent to an AI service"}
               </p>
             )}
           </div>
           {result && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-start gap-2">
               <Link href={`/applications/${id}/cv-suggestions`} className={buttonClass({ size: "sm" })}>
                 CV suggestions
               </Link>
@@ -96,6 +100,7 @@ export function AnalysisView() {
               >
                 {run.isPending ? "Analysing…" : "Run again"}
               </Button>
+              <AnalyseWithAI applicationId={id} />
             </div>
           )}
         </div>
@@ -114,9 +119,12 @@ export function AnalysisView() {
             CareerLens will pick out the job&apos;s requirements and look for evidence of each one in the CV version
             this application uses. Your input on the results is kept if you run it again later.
           </p>
-          <Button onClick={() => run.mutate()} disabled={run.isPending}>
-            {run.isPending ? "Analysing…" : "Analyse requirements"}
-          </Button>
+          <div className="flex flex-wrap items-start gap-2">
+            <Button onClick={() => run.mutate()} disabled={run.isPending}>
+              {run.isPending ? "Analysing…" : "Analyse requirements"}
+            </Button>
+            <AnalyseWithAI applicationId={id} />
+          </div>
         </div>
       ) : (
         <>
@@ -130,6 +138,19 @@ export function AnalysisView() {
               </ul>
               <p className="mt-1">Run it again to see current results. Your own assessments will be carried over.</p>
             </div>
+          )}
+
+          {result.notes.length > 0 && (
+            <section aria-labelledby="notes-heading" className="flex flex-col gap-1.5 surface rounded-xl border p-4 text-sm">
+              <h2 id="notes-heading" className="font-medium">
+                How this analysis was made
+              </h2>
+              <ul className="flex list-disc flex-col gap-1 pl-5 text-muted-foreground">
+                {result.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </section>
           )}
 
           <section aria-labelledby="coverage-heading" className="flex flex-col gap-4 surface rounded-xl border p-5">

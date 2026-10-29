@@ -35,6 +35,14 @@ class Settings(BaseSettings):
     storage_dir: Path = BACKEND_DIR / "storage"
     cv_max_bytes: int = 5 * 1024 * 1024
 
+    # Optional AI (Google Gemini). Without a key the app runs on the rule
+    # engine only. The key stays on the server; the browser never sees it.
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.5-flash"
+    gemini_base_url: str | None = None  # only for a proxy or a local stand-in; normally unset
+    ai_timeout_seconds: int = 60
+    ai_max_attempts: int = 3  # rate limits and server errors are retried with backoff
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -53,6 +53,9 @@ class RequirementAnalysis(UUIDPrimaryKey, Base):
     method: Mapped[AnalysisMethod] = mapped_column(db_enum(AnalysisMethod, "analysis_method"))
     jd_sha256: Mapped[str] = mapped_column(String(64))
     cv_signature: Mapped[str] = mapped_column(String(64))  # text + section types of the CV version
+    # Plain-language notes about how this analysis was made, e.g. why the AI
+    # was skipped for some requirements and the rule engine used instead.
+    notes: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default="[]")
     # Set in Python (not now()) so two analyses in one transaction still have an order.
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.now(UTC)
@@ -90,7 +93,12 @@ class JobRequirement(UUIDPrimaryKey, Timestamps, Base):
     suggested_action: Mapped[str] = mapped_column(Text)
     # ... and, separately, what the candidate says.
     self_report: Mapped[SelfReport] = mapped_column(db_enum(SelfReport, "self_report"), default=SelfReport.UNKNOWN)
+    # Who extracted this line from the job description ...
     origin: Mapped[Origin] = mapped_column(db_enum(Origin, "origin"), default=Origin.RULE_ENGINE)
+    # ... and who judged the CV evidence for it (AI verdicts passed validation).
+    assessed_by: Mapped[AnalysisMethod] = mapped_column(
+        db_enum(AnalysisMethod, "assessed_by"), default=AnalysisMethod.RULE_ENGINE, server_default="rule_engine"
+    )
     # True once the user changed category or importance.
     user_edited: Mapped[bool] = mapped_column(Boolean, default=False)
     # Not a real requirement (bad extraction): hidden and excluded from coverage, not deleted.

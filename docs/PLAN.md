@@ -545,7 +545,23 @@ cd frontend && npm install && npm run dev
   pane stops `requestAnimationFrame`, so React never reveals streamed content there (not an app bug);
   the dev server can serve stale CSS/JS after a production build or after files are written outside
   the editor (fix: delete `frontend/.next/dev` and restart).
-- [ ] **M13** Gemini provider (`ai/gemini.py`; free-tier rate limits → retry with backoff, fall back to rule engine): consent gate, structured output, Pydantic validation, citations must be existing passage IDs whose text contains the quote. Tests for malformed output.
+- [x] **M13** Gemini provider (`ai/gemini.py`; free-tier rate limits → retry with backoff, fall back to rule engine): consent gate, structured output, Pydantic validation, citations must be existing passage IDs whose text contains the quote. Tests for malformed output.
+  *Done 2026-10-29.* Scope: the AI judges CV **evidence** per requirement; extraction stays rule-based
+  (exact offsets). `ai/provider.py` (`AIProvider` protocol, `get_ai_provider` FastAPI dependency, None
+  without `GEMINI_API_KEY`), `ai/gemini.py` (google-genai 2.34.0, JSON schema output at temperature 0,
+  429/5xx/timeouts retried 1 s/2 s/4 s, user-safe error reasons), `ai/evidence.py` (prompt with short
+  ids r1/p1, header section never sent, hand-written schema, validator: passage must exist, quote must
+  be in it ignoring case/spacing/quote marks, status backed by citations, no figures absent from the
+  requirement and cited passages; failing verdicts fall back per requirement, non-schema output falls
+  back entirely). Migration 0009: `job_requirements.assessed_by` (explicit CHECK) and
+  `requirement_analyses.notes`. API: `POST …/analyses?method=ai` (403 `ai_consent_required`, 503
+  `ai_unavailable`), `GET /ai/status` (incl. the exact data-sent text), `PATCH /users/me/ai-consent`.
+  UI: "Analyse with AI" (hidden without a provider), consent dialog with an "I understand" tick, turn
+  off, "AI verdict" pills, "How this analysis was made" notes. 20 new tests (246 total); mutation
+  checks on the quote and consent rules. Browser-verified through the real SDK against a local
+  stand-in for the Gemini endpoint (`GEMINI_BASE_URL`): a deliberately invented citation was caught
+  and explained, and the captured request contained no name or contact details. Not yet run against
+  real Gemini (no key in this environment).
 - [ ] **M14** README, ARCHITECTURE.md, LEARNING_GUIDE.md; deploy the single Compose stack (frontend + backend + Postgres) if time allows.
 
 ### Final acceptance (from the brief)

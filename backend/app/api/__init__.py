@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api import (
+    ai,
     analyses,
     applications,
     auth,
@@ -22,6 +23,7 @@ api_router.include_router(applications.router)
 api_router.include_router(rounds.router)
 api_router.include_router(cvs.router)
 api_router.include_router(analyses.router)
+api_router.include_router(ai.router)
 api_router.include_router(recommendations.router)
 api_router.include_router(journals.router)
 api_router.include_router(questions.router)
