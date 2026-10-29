@@ -315,6 +315,11 @@ cd backend
 ```
 
 ```bash
+cd backend
+.venv\Scripts\python.exe -m ruff check .
+```
+
+```bash
 cd frontend
 npm run lint
 npx tsc --noEmit
@@ -322,6 +327,12 @@ npx tsc --noEmit
 
 Backend tests run the real Alembic migrations against `careerlens_test` (created automatically the
 first time the database container starts) and roll back every test, so they never touch your data.
+Ruff checks for unused imports and variables and similar mistakes.
+
+**On GitHub** the same checks run automatically on every push to `main` and every pull request
+(`.github/workflows/ci.yml`): backend Ruff and pytest against a PostgreSQL service, frontend lint,
+build and typecheck, and a build of both production Docker images. Results show on the repository's
+**Actions** tab and as a tick or cross next to each commit.
 
 ## Database migrations
 
