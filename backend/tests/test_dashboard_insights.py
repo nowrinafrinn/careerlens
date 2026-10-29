@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from tests.conftest import act_as, sign_up
 from tests.test_analyses import run, upload_cv
-from tests.test_journals_questions import add_round, application, journal
+from tests.test_journals_questions import application, journal
 from tests.test_requirement_analysis import SAMPLE_JD
 
 

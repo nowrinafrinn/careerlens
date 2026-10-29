@@ -3,7 +3,7 @@
 import pytest
 
 from app.analysis.cv_parser import SectionType
-from app.analysis.evidence import PassageInput, Relevance, assess
+from app.analysis.evidence import PassageInput, assess
 from app.analysis.jd_extractor import extract_requirements
 from app.analysis.recommendations import (
     ChangeType,

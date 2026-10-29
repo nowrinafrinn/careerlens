@@ -40,7 +40,7 @@ function describeDateChanges(old: Values, next: Values): string[] {
 }
 
 /** One or more plain-language lines describing what an event recorded. */
-export function describeEvent(event: RecruitmentEvent): string[] {
+function describeEvent(event: RecruitmentEvent): string[] {
   const old = event.old_value as Values;
   const next = event.new_value as Values;
   const round = asString(next?.round_name) ?? asString(old?.round_name) ?? "Round";

@@ -13,7 +13,7 @@ const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
 });
 
 /** A calendar date ("2026-11-30") as a local Date at midnight. */
-export function parseCalendarDate(value: string): Date {
+function parseCalendarDate(value: string): Date {
   const [year, month, day] = value.split("-").map(Number);
   return new Date(year, month - 1, day);
 }

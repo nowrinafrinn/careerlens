@@ -19,7 +19,6 @@ from app.models import (
     JobApplication,
     Journal,
     Question,
-    RecruitmentRound,
     SkillGap,
     Task,
     User,
@@ -27,7 +26,7 @@ from app.models import (
 from app.models.analysis import SelfReport
 from app.models.enums import ApplicationStatus, RoundResult, RoundStatus
 from app.models.journal import PracticeStatus
-from app.models.learning import GapStatus, TaskStatus
+from app.models.learning import TaskStatus
 from app.services import analyses as analyses_service
 
 CLOSED_APPLICATION = {

@@ -8,3 +8,12 @@ filterwarnings = [
     # revisit when FastAPI's own TestClient switches over.
     "ignore:Using `httpx` with `starlette.testclient` is deprecated",
 ]
+
+# `ruff check .` finds unused imports and variables, undefined names and similar
+# mistakes (the Pyflakes "F" rules). Style is left to the code's own conventions.
+[tool.ruff]
+line-length = 120
+extend-exclude = [".venv", "storage"]
+
+[tool.ruff.lint]
+select = ["F"]
