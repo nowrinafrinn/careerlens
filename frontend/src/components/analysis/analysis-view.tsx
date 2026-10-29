@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { CoverageBar } from "@/components/analysis/coverage";
 import { RequirementCard } from "@/components/analysis/requirement-card";
 import { Button } from "@/components/ui/button";
+import { LoadError } from "@/components/load-error";
 import { ApiError } from "@/lib/api";
 import { analysisKeys, getLatestAnalysis, runAnalysis, type Requirement } from "@/lib/analysis";
 import { applicationKeys, getApplication } from "@/lib/applications";
@@ -55,12 +56,11 @@ export function AnalysisView() {
   if (application.isPending || analysis.isPending) {
     return <div aria-hidden className="h-64 animate-pulse rounded-xl bg-muted" />;
   }
-  if (application.isError || analysis.isError) {
-    return (
-      <p role="alert" className="text-sm text-destructive">
-        This analysis couldn&apos;t be loaded. Check that the backend is running, then refresh.
-      </p>
-    );
+  if (application.isError) {
+    return <LoadError error={application.error} thing="Application" backHref="/applications" backLabel="Back to applications" />;
+  }
+  if (analysis.isError) {
+    return <LoadError error={analysis.error} thing="Analysis" backHref={`/applications/${id}`} backLabel="Back to the application" />;
   }
 
   const app = application.data;
@@ -70,7 +70,7 @@ export function AnalysisView() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href={`/applications/${id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/applications/${id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← {app.position_title}, {app.company_name}
         </Link>
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -138,7 +138,7 @@ export function AnalysisView() {
             </h2>
             <CoverageBar coverage={result.coverage} />
             <details className="text-sm text-muted-foreground">
-              <summary className="cursor-pointer text-foreground">How to read this</summary>
+              <summary className="tap cursor-pointer text-foreground">How to read this</summary>
               <p className="mt-2">{result.coverage.explanation}</p>
               <dl className="mt-3 grid gap-x-4 gap-y-1.5 sm:grid-cols-[auto_1fr]">
                 {Object.values(EVIDENCE_STATUS).map((status) => (

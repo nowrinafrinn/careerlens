@@ -1230,6 +1230,30 @@ export interface components {
          * @enum {string}
          */
         ChangeType: "rewrite_passage" | "add_bullet" | "remove_or_verify" | "no_cv_change";
+        /**
+         * CitableQuestionAttempt
+         * @description A re-attempt of one of the gap's questions, which a reassessment can cite.
+         */
+        CitableQuestionAttempt: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Question Id
+             * Format: uuid
+             */
+            question_id: string;
+            /** Question Text */
+            question_text: string;
+            /**
+             * Attempted At
+             * Format: date-time
+             */
+            attempted_at: string;
+            response_quality: components["schemas"]["ResponseQuality"];
+        };
         /** CoverageRead */
         CoverageRead: {
             /** Required Total */
@@ -1460,6 +1484,8 @@ export interface components {
             reassessments: components["schemas"]["ReassessmentRead"][];
             /** Tasks */
             tasks: components["schemas"]["TaskRead"][];
+            /** Question Attempts */
+            question_attempts: components["schemas"]["CitableQuestionAttempt"][];
         };
         /** GapEvidenceRead */
         GapEvidenceRead: {

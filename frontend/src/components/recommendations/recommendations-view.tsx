@@ -45,7 +45,7 @@ export function RecommendationsView() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href={`/applications/${id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/applications/${id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← {app.position_title}, {app.company_name}
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">CV suggestions</h1>

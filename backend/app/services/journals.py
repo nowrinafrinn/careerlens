@@ -65,7 +65,9 @@ def create_journal(db: Session, user: User, data: dict[str, Any]) -> Journal:
     db.add(journal)
     db.flush()
     for question in data.get("questions") or []:
-        journal.questions.append(questions_service.build(user, question, application.id, journal.round_id, journal.id))
+        journal.questions.append(
+            questions_service.build(user, question, application.id, journal.round_id, journal.id, journal.occurred_on)
+        )
 
     record_event(
         db,
@@ -102,7 +104,9 @@ def add_questions(db: Session, user: User, journal_id: uuid.UUID, items: list[di
     journal = get_journal(db, user, journal_id)
     for question in items:
         journal.questions.append(
-            questions_service.build(user, question, journal.application_id, journal.round_id, journal.id)
+            questions_service.build(
+                user, question, journal.application_id, journal.round_id, journal.id, journal.occurred_on
+            )
         )
     db.commit()
     return journal

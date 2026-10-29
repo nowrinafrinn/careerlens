@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { buttonClass } from "@/lib/button-class";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatDayOf } from "@/lib/format";
 import { createQuestion, getFacets, questionKeys, searchQuestions, type Question } from "@/lib/journals";
 import { DIFFICULTY, PRACTICE_STATUS, RESPONSE_QUALITY, ROUND_TYPE } from "@/lib/labels";
 import { useCloseOnHide } from "@/lib/use-close-on-hide";
@@ -174,7 +174,7 @@ function QuestionRow({ question }: { question: Question }) {
           <Pill tone={practice.tone}>{practice.label}</Pill>
           {question.topic && <span>{question.topic}</span>}
           {context && <span>· {context}</span>}
-          <span className="tabular-nums">· {formatDate(question.asked_on ?? question.created_at.slice(0, 10))}</span>
+          <span className="tabular-nums">· {(question.asked_on ? formatDate(question.asked_on) : formatDayOf(question.created_at))}</span>
           {question.attempt_count > 0 && (
             <span className="tabular-nums">
               · {question.attempt_count} later attempt{question.attempt_count === 1 ? "" : "s"}

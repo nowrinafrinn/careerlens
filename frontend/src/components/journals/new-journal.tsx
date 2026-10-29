@@ -15,7 +15,7 @@ export function NewJournal() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <Link href={`/applications/${id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/applications/${id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← {application.data ? `${application.data.position_title}, ${application.data.company_name}` : "Application"}
         </Link>
         <h1 className="text-xl font-semibold tracking-tight">Write a journal</h1>

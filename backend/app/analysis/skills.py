@@ -1,6 +1,7 @@
 """A small, hand-maintained dictionary of skills and tools.
 
-Each skill has a canonical name, the ways people write it, whether it's a
+Each skill has a canonical name (in the project's own casing, e.g. "pytest",
+"gRPC"), the ways people write it, whether it's a
 language/concept ("technical_skill") or a product ("tool"), and an optional
 family. Two skills in the same family count as *related* (e.g. MySQL is
 related experience for a PostgreSQL requirement), never as the same thing.
@@ -71,7 +72,7 @@ SKILLS: list[Skill] = [
     _s("REST APIs", "rest api", "restful", "rest", "restful apis", "rest apis", family="api_style"),
     _s("gRPC", kind="tool", family="api_style"),
     # Data and ML
-    _s("Pandas", kind="tool", family="python_data"),
+    _s("pandas", kind="tool", family="python_data"),
     _s("NumPy", kind="tool", family="python_data"),
     _s("scikit-learn", "sklearn", "scikit learn", kind="tool", family="ml_library"),
     _s("TensorFlow", kind="tool", family="ml_library"),
@@ -120,7 +121,7 @@ SKILLS: list[Skill] = [
     # Testing and quality
     _s("Unit testing", "unit tests", family="testing"),
     _s("Test automation", "automated testing", "automation testing", family="testing"),
-    _s("Pytest", kind="tool", family="test_framework"),
+    _s("pytest", kind="tool", family="test_framework"),
     _s("Jest", kind="tool", family="test_framework"),
     _s("JUnit", kind="tool", family="test_framework"),
     _s("Selenium", kind="tool", family="ui_test"),

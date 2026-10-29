@@ -45,8 +45,13 @@ def build(
     application_id: uuid.UUID | None,
     round_id: uuid.UUID | None,
     journal_id: uuid.UUID | None = None,
+    asked_on_default: date | None = None,
 ) -> Question:
     data = dict(data)
+    # A question recorded in a journal was asked on the day of that event,
+    # not the day it was typed in.
+    if data.get("asked_on") is None and asked_on_default is not None:
+        data["asked_on"] = asked_on_default
     if data.get("practice_status") is None:
         data["practice_status"] = default_practice_status(data["response_quality"])
     return Question(user_id=user.id, application_id=application_id, round_id=round_id, journal_id=journal_id, **data)

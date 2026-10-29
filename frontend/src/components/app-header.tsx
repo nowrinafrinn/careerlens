@@ -61,7 +61,7 @@ export function AppHeader() {
     <>
       <header className="sticky top-3 z-40 mx-3 mt-3 sm:mx-4">
         <div className="surface no-lift mx-auto flex h-14 w-full max-w-6xl items-center gap-6 rounded-2xl border pr-2 pl-4 sm:pr-3">
-          <Link href="/" className="flex shrink-0 items-center gap-2 text-sm font-bold tracking-tight">
+          <Link href="/" className="flex shrink-0 items-center gap-2 text-sm font-bold tracking-tight pointer-coarse:min-h-11">
             <BrandMark />
             CareerLens
           </Link>

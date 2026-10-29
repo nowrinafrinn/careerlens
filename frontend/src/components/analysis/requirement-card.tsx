@@ -130,8 +130,10 @@ export function RequirementCard({ requirement, applicationId }: { requirement: R
           {(requirement.self_report === "do_not_have" || requirement.self_report === "learning") && (
             <div className="flex flex-col gap-1.5 rounded-lg bg-muted/60 px-3 py-2">
               <p className="text-sm">
-                You said {requirement.self_report === "learning" ? "you're learning this" : "you don't have this yet"}. Add it
-                to your learning plan to track practice and progress.
+                You said {requirement.self_report === "learning" ? "you're learning this" : "you don't have this yet"}.{" "}
+                {requirement.skill_gap_id
+                  ? "It's in your learning plan, where you can track practice and progress."
+                  : "Add it to your learning plan to track practice and progress."}
               </p>
               <AddToPlan
                 existingGapId={requirement.skill_gap_id}

@@ -138,6 +138,22 @@ def test_partial_and_unanswered_questions_default_to_to_practice(ada: TestClient
     assert statuses["Design a REST API for orders"] == "new"
 
 
+def test_journal_questions_are_dated_by_the_event_unless_given_their_own_date(ada: TestClient) -> None:
+    entry = journal(ada, application(ada), questions=[
+        {"text": "Explain ACID", "response_quality": "partial"},
+        {"text": "What is a deadlock?", "response_quality": "partial", "asked_on": "2026-10-19"},
+    ])
+    added = ada.post(
+        f"/api/v1/journals/{entry['id']}/questions", json=[{"text": "Normalise this schema", "response_quality": "confident"}]
+    )
+    assert added.status_code == 201, added.text
+
+    dates = {q["text"]: q["asked_on"] for q in added.json()["questions"]}
+
+    # The journal's occurred_on (2026-10-20), not the day the question was typed in.
+    assert dates == {"Explain ACID": "2026-10-20", "What is a deadlock?": "2026-10-19", "Normalise this schema": "2026-10-20"}
+
+
 def test_search_and_filters(ada: TestClient) -> None:
     acme = application(ada, "Acme", "Backend Engineer")
     globex = application(ada, "Globex", "Data Analyst")

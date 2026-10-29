@@ -22,6 +22,12 @@ export function formatDate(value: string | null | undefined): string {
   return value ? dateFormat.format(parseCalendarDate(value)) : "—";
 }
 
+/** The calendar day of a timestamp in the viewer's timezone (slicing the ISO
+ *  string would give the UTC day, which is off by one near midnight). */
+export function formatDayOf(timestamp: string): string {
+  return dateFormat.format(new Date(timestamp));
+}
+
 export function formatDateTime(value: string | null | undefined): string {
   return value ? dateTimeFormat.format(new Date(value)) : "—";
 }

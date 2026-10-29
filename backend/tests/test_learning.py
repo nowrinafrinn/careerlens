@@ -180,13 +180,19 @@ def test_reassessment_can_cite_a_question_reattempt(ada: TestClient) -> None:
     gap = ada.post(f"/api/v1/questions/{question['id']}/skill-gap", json={}).json()
     retry = ada.post(f"/api/v1/questions/{question['id']}/attempts", json={"response_quality": "confident"}).json()
 
+    # The gap lists the re-attempt so the reassessment form can offer it as a citation.
+    citable = ada.get(f"/api/v1/skill-gaps/{gap['id']}").json()["question_attempts"]
+    assert [(a["id"], a["question_text"], a["response_quality"]) for a in citable] == [
+        (retry["attempts"][-1]["id"], question["text"], "confident")
+    ]
+
     final = ada.post(
         f"/api/v1/skill-gaps/{gap['id']}/reassessments",
         json={"new_status": "improving", "confidence": "medium", "summary": "Answered it this time.",
               "question_attempt_id": retry["attempts"][-1]["id"]},
     ).json()
 
-    assert final["reassessments"][0]["cited"].startswith("Question “How does a B-tree")
+    assert final["reassessments"][0]["cited"] == "Question “How does a B-tree index speed up queries?”: answered confidently"
 
 
 # --- tasks ---------------------------------------------------------------------------

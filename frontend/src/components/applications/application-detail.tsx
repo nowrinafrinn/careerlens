@@ -97,7 +97,7 @@ function Header({ application }: { application: Detail }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Link href="/applications" className="text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/applications" className="tap self-start text-sm text-muted-foreground hover:text-foreground">
         ← Applications
       </Link>
       <div className="flex flex-wrap items-start justify-between gap-4">

@@ -58,7 +58,7 @@ export function CVReview() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <Link href="/cvs" className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href="/cvs" className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← CVs
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-4">

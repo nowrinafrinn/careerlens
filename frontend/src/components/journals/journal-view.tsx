@@ -9,7 +9,7 @@ import { Pill } from "@/components/applications/status-badge";
 import { emptyQuestion, QuestionEditor, toQuestionFields, type QuestionDraft } from "@/components/questions/question-editor";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ApiError } from "@/lib/api";
+import { LoadError } from "@/components/load-error";
 import { applicationKeys } from "@/lib/applications";
 import { buttonClass } from "@/lib/button-class";
 import { formatDate } from "@/lib/format";
@@ -32,8 +32,7 @@ export function JournalView() {
 
   if (journal.isPending || templates.isPending) return <div aria-hidden className="h-64 animate-pulse rounded-xl bg-muted" />;
   if (journal.isError || templates.isError) {
-    const notFound = journal.error instanceof ApiError && journal.error.status === 404;
-    return <p role="alert" className="text-sm text-destructive">{notFound ? "Journal not found." : "This journal couldn't be loaded."}</p>;
+    return <LoadError error={journal.error ?? templates.error} thing="Journal" backHref="/applications" backLabel="Back to applications" />;
   }
 
   const j = journal.data;
@@ -43,7 +42,7 @@ export function JournalView() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href={`/applications/${j.application_id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/applications/${j.application_id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← {j.position_title}, {j.company_name}
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-3">

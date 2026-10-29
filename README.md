@@ -5,10 +5,11 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–11 of 14 are complete: foundation, accounts, applications and recruitment
+> **Status:** Milestones 1–12 of 14 are complete: foundation, accounts, applications and recruitment
 > rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
 > CV improvement suggestions, recruitment journals with a personal question bank, an evidence-based
-> learning plan, position-specific preparation, and the dashboard with insights. See [docs/PLAN.md](docs/PLAN.md) for the
+> learning plan, position-specific preparation, the dashboard with insights, and a full end-to-end
+> run-through with fixes, error states and phone layout. See [docs/PLAN.md](docs/PLAN.md) for the
 > specification, schema, API plan and checklist.
 
 ## Stack
@@ -233,6 +234,26 @@ Then open:
 - http://localhost:3000: the app (create an account on first visit)
 - http://localhost:3000/api/docs: interactive API documentation
 - http://localhost:3000/status: API and database status
+
+If the app suddenly looks unstyled or out of date after a `npm run build`, or edits stop showing up,
+the dev server's cache is stale. Stop `npm run dev`, delete the cache in `frontend/`, and start it
+again:
+
+```bash
+rm -rf .next/dev
+```
+
+## Look, phones and accessibility
+
+- Light or dark follows the device setting. Panels are frosted glass (`surface` in `globals.css`);
+  content cards lift toward you on hover, each page rises into view on navigation, and a 3D grid
+  floor drifts behind everything. All motion stops when the device asks for reduced motion.
+- Below 1024px wide the header's links move to a floating tab bar at the bottom (CVs becomes an
+  icon in the header).
+- On touch screens every button, input and select is at least 44px tall, and small text links get
+  a 44px tap area (`tap` in `globals.css`) without changing their look with a mouse.
+- A missing record shows "not found" with a way back; an unreachable backend shows a "couldn't be
+  loaded" message instead of an empty page.
 
 ## Frontend structure
 

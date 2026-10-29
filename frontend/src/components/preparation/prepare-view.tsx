@@ -31,7 +31,7 @@ export function PrepareView() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href={`/applications/${id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/applications/${id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← {app ? `${app.position_title}, ${app.company_name}` : "Application"}
         </Link>
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -250,7 +250,7 @@ function Checklist({ applicationId, roundId }: { applicationId: string; roundId:
               <button
                 type="button"
                 onClick={() => remove.mutate(task)}
-                className="text-xs text-muted-foreground hover:text-destructive"
+                className="tap text-xs text-muted-foreground hover:text-destructive"
                 aria-label={`Remove “${task.title}” from the checklist`}
               >
                 Remove

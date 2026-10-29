@@ -12,8 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { ApiError } from "@/lib/api";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { LoadError } from "@/components/load-error";
+import { formatDate, formatDateTime, formatDayOf } from "@/lib/format";
 import {
   addAttempt,
   getQuestion,
@@ -43,8 +43,7 @@ export function QuestionDetail() {
 
   if (question.isPending) return <div aria-hidden className="h-64 animate-pulse rounded-xl bg-muted" />;
   if (question.isError) {
-    const notFound = question.error instanceof ApiError && question.error.status === 404;
-    return <p role="alert" className="text-sm text-destructive">{notFound ? "Question not found." : "This question couldn't be loaded."}</p>;
+    return <LoadError error={question.error} thing="Question" backHref="/questions" backLabel="Back to the question bank" />;
   }
 
   const q = question.data;
@@ -53,7 +52,7 @@ export function QuestionDetail() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href="/questions" className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href="/questions" className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← Question bank
         </Link>
         <h1 className="text-xl font-semibold tracking-tight text-balance">{q.text}</h1>
@@ -74,7 +73,7 @@ export function QuestionDetail() {
               </Link>
             </>
           )}
-          {` · ${formatDate(q.asked_on ?? q.created_at.slice(0, 10))}`}
+          {` · ${(q.asked_on ? formatDate(q.asked_on) : formatDayOf(q.created_at))}`}
         </p>
       </div>
 

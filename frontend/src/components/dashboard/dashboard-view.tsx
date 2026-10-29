@@ -72,7 +72,7 @@ export function DashboardView() {
             <ul className="flex flex-col gap-2 text-sm">
               {d.upcoming_rounds.map((r) => (
                 <li key={r.round_id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <Link href={`/applications/${r.application_id}`} className="min-w-0 hover:underline">
+                  <Link href={`/applications/${r.application_id}`} className="tap min-w-0 hover:underline">
                     <span className="font-medium">{r.round_name}</span>
                     <span className="text-muted-foreground"> · {r.company_name}</span>
                   </Link>
@@ -86,7 +86,7 @@ export function DashboardView() {
               ))}
               {d.upcoming_deadlines.map((a) => (
                 <li key={`deadline-${a.application_id}`} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <Link href={`/applications/${a.application_id}`} className="min-w-0 hover:underline">
+                  <Link href={`/applications/${a.application_id}`} className="tap min-w-0 hover:underline">
                     <span className="font-medium">Apply: {a.position_title}</span>
                     <span className="text-muted-foreground"> · {a.company_name}</span>
                   </Link>
@@ -106,7 +106,7 @@ export function DashboardView() {
             <ul className="flex flex-col gap-2 text-sm">
               {d.pending_results.map((p) => (
                 <li key={`pending-${p.round_id}`} className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <Link href={`/applications/${p.application_id}`} className="min-w-0 hover:underline">
+                  <Link href={`/applications/${p.application_id}`} className="tap min-w-0 hover:underline">
                     <span className="font-medium">{p.round_name}</span>
                     <span className="text-muted-foreground"> · {p.company_name}</span>
                   </Link>
@@ -115,7 +115,7 @@ export function DashboardView() {
               ))}
               {d.follow_ups.map((f) => (
                 <li key={`follow-${f.round_id}`} className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <Link href={`/applications/${f.application_id}`} className="min-w-0 hover:underline">
+                  <Link href={`/applications/${f.application_id}`} className="tap min-w-0 hover:underline">
                     Follow up: <span className="font-medium">{f.round_name}</span>
                     <span className="text-muted-foreground"> · {f.company_name}</span>
                   </Link>
@@ -128,7 +128,7 @@ export function DashboardView() {
           )}
         </Card>
 
-        <Card title="Applications" action={<Link href="/applications" className="text-xs underline underline-offset-4">All</Link>}>
+        <Card title="Applications" action={<Link href="/applications" className="tap text-xs underline underline-offset-4">All</Link>}>
           <div className="flex flex-wrap gap-1.5">
             {APPLICATION_STATUS_ORDER.filter((s) => d.application_counts[s]).map((s: ApplicationStatus) => (
               <Pill key={s} tone={APPLICATION_STATUS[s].tone}>{`${APPLICATION_STATUS[s].label}: ${d.application_counts[s]}`}</Pill>
@@ -138,7 +138,7 @@ export function DashboardView() {
             <ul className="flex flex-col gap-2 text-sm">
               {d.analyses.slice(0, 4).map((a) => (
                 <li key={a.analysis_id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <Link href={`/applications/${a.application_id}/analysis`} className="min-w-0 hover:underline">
+                  <Link href={`/applications/${a.application_id}/analysis`} className="tap min-w-0 hover:underline">
                     <span className="font-medium">{a.position_title}</span>
                     <span className="text-muted-foreground"> · {a.company_name}</span>
                   </Link>
@@ -157,7 +157,7 @@ export function DashboardView() {
 
         <LearningCard d={d} />
 
-        <Card title="Insights" action={<Link href="/insights" className="text-xs underline underline-offset-4">All insights</Link>} className="lg:col-span-2">
+        <Card title="Insights" action={<Link href="/insights" className="tap text-xs underline underline-offset-4">All insights</Link>} className="lg:col-span-2">
           {insights.isPending ? (
             <div aria-hidden className="h-16 animate-pulse rounded bg-muted" />
           ) : shownInsights.length === 0 ? (
@@ -181,7 +181,7 @@ export function DashboardView() {
             <ul className="flex flex-col gap-2 text-sm">
               {d.recent_journals.map((j) => (
                 <li key={j.journal_id} className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <Link href={`/journals/${j.journal_id}`} className="min-w-0 hover:underline">
+                  <Link href={`/journals/${j.journal_id}`} className="tap min-w-0 hover:underline">
                     <span className="font-medium">{j.round_name ?? "Journal"}</span>
                     <span className="text-muted-foreground"> · {j.company_name}</span>
                   </Link>
@@ -223,7 +223,7 @@ function NeedsAttention({ items }: { items: Dashboard["needs_attention"] }) {
             <li key={`${item.kind}-${index}`} className="flex flex-wrap items-baseline gap-x-2">
               <span className="text-xs text-muted-foreground tabular-nums">{formatDate(item.date)}</span>
               {href ? (
-                <Link href={href} className="font-medium hover:underline">
+                <Link href={href} className="tap font-medium hover:underline">
                   {label || item.position_title}
                 </Link>
               ) : (
@@ -241,7 +241,7 @@ function NeedsAttention({ items }: { items: Dashboard["needs_attention"] }) {
 function LearningCard({ d }: { d: Dashboard }) {
   const gapStatuses = (["open", "improving", "resolved"] as GapStatus[]).filter((s) => d.gap_counts[s]);
   return (
-    <Card title="Learning" action={<Link href="/learning" className="text-xs underline underline-offset-4">Learning plan</Link>}>
+    <Card title="Learning" action={<Link href="/learning" className="tap text-xs underline underline-offset-4">Learning plan</Link>}>
       {gapStatuses.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {gapStatuses.map((s) => (
@@ -262,7 +262,7 @@ function LearningCard({ d }: { d: Dashboard }) {
             return (
               <li key={t.task_id} className="flex flex-wrap items-baseline justify-between gap-x-3">
                 {href ? (
-                  <Link href={href} className="min-w-0 hover:underline">
+                  <Link href={href} className="tap min-w-0 hover:underline">
                     {t.title}
                   </Link>
                 ) : (
@@ -285,13 +285,13 @@ function LearningCard({ d }: { d: Dashboard }) {
       )}
       {d.questions_to_practice_total > 0 && (
         <div className="border-t pt-2 text-sm">
-          <Link href="/questions?practice_status=to_practice" className="font-medium hover:underline">
+          <Link href="/questions?practice_status=to_practice" className="tap font-medium hover:underline">
             {d.questions_to_practice_total} question{d.questions_to_practice_total === 1 ? "" : "s"} waiting for practice
           </Link>
           <ul className="mt-1 flex flex-col gap-1 text-muted-foreground">
             {d.questions_to_practice.map((q) => (
               <li key={q.question_id} className="truncate">
-                <Link href={`/questions/${q.question_id}`} className="hover:underline">
+                <Link href={`/questions/${q.question_id}`} className="tap hover:underline">
                   {q.text}
                 </Link>{" "}
                 <span className="text-xs">({PRACTICE_STATUS[q.practice_status].label.toLowerCase()})</span>

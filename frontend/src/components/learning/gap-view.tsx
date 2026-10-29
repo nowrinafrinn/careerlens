@@ -13,9 +13,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { ApiError } from "@/lib/api";
-import { formatDate, formatDateTime } from "@/lib/format";
-import { ATTEMPT_OUTCOME, EVIDENCE_BASIS, GAP_STATUS, GAP_TYPE, LEVEL, TASK_STATUS } from "@/lib/labels";
+import { LoadError } from "@/components/load-error";
+import { formatDate, formatDateTime, formatDayOf } from "@/lib/format";
+import { ATTEMPT_OUTCOME, EVIDENCE_BASIS, GAP_STATUS, GAP_TYPE, LEVEL, RESPONSE_QUALITY, TASK_STATUS } from "@/lib/labels";
+
+const truncate = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
 import {
   addTaskAttempt,
   createTask,
@@ -52,16 +54,13 @@ export function GapView() {
   const update = useGapMutation(id, (body: GapUpdate) => updateGap(id, body));
 
   if (gap.isPending) return <div aria-hidden className="h-64 animate-pulse rounded-xl bg-muted" />;
-  if (gap.isError) {
-    const notFound = gap.error instanceof ApiError && gap.error.status === 404;
-    return <p role="alert" className="text-sm text-destructive">{notFound ? "Skill gap not found." : "This gap couldn't be loaded."}</p>;
-  }
+  if (gap.isError) return <LoadError error={gap.error} thing="Skill gap" backHref="/learning" backLabel="Back to the learning plan" />;
   const g = gap.data;
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <Link href="/learning" className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href="/learning" className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← Learning plan
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -249,7 +248,7 @@ function TasksSection({ gap }: { gap: GapDetail }) {
       )}
       <form onSubmit={onSubmit} className="grid gap-3 surface rounded-xl border border-dashed p-4 sm:grid-cols-[minmax(0,1fr)_10rem_auto] sm:items-end">
         <FormField id="new-task" label="New task">
-          <Input id="new-task" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} placeholder="Solve 5 timed window-function problems" />
+          <Input id="new-task" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} placeholder={`One concrete step to practise ${gap.skill_name}`} />
         </FormField>
         <FormField id="new-task-due" label="Due" optional>
           <Input id="new-task-due" type="date" value={due} onChange={(e) => setDue(e.target.value)} />
@@ -380,13 +379,15 @@ function ReassessButton({ gap }: { gap: GapDetail }) {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const cited = String(data.get("cited") ?? "");
+    // Options are "task:<id>" (a practice session) or "question:<id>" (a re-attempt).
+    const [kind, id] = String(data.get("cited") ?? "").split(":");
     mutation.mutate(
       {
         new_status: String(data.get("status")) as GapStatus,
         confidence: String(data.get("confidence")) as Level,
         summary: String(data.get("summary")).trim(),
-        task_attempt_id: cited || null,
+        task_attempt_id: kind === "task" ? id : null,
+        question_attempt_id: kind === "question" ? id : null,
       },
       { onSuccess: () => setOpen(false) },
     );
@@ -429,14 +430,28 @@ function ReassessButton({ gap }: { gap: GapDetail }) {
             <FormField id="reassess-summary" label="What you based it on">
               <Textarea id="reassess-summary" name="summary" required rows={3} maxLength={5000} placeholder="Solved 4 of 5 timed problems without hints." />
             </FormField>
-            <FormField id="reassess-cited" label="Practice session that shows it" optional>
+            <FormField id="reassess-cited" label="Attempt that shows it" optional>
               <NativeSelect id="reassess-cited" name="cited" defaultValue="">
                 <option value="">None</option>
-                {attempts.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.title}: {ATTEMPT_OUTCOME[a.outcome].toLowerCase()}, {formatDate(a.attempted_at.slice(0, 10))}
-                  </option>
-                ))}
+                {attempts.length > 0 && (
+                  <optgroup label="Practice sessions">
+                    {attempts.map((a) => (
+                      <option key={a.id} value={`task:${a.id}`}>
+                        {a.title}: {ATTEMPT_OUTCOME[a.outcome].toLowerCase()}, {formatDayOf(a.attempted_at)}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+                {gap.question_attempts.length > 0 && (
+                  <optgroup label="Question re-attempts">
+                    {gap.question_attempts.map((a) => (
+                      <option key={a.id} value={`question:${a.id}`}>
+                        {truncate(a.question_text, 60)}: {RESPONSE_QUALITY[a.response_quality].label.toLowerCase()},{" "}
+                        {formatDayOf(a.attempted_at)}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
               </NativeSelect>
             </FormField>
             {mutation.isError && <p role="alert" className="text-sm text-destructive">The reassessment couldn&apos;t be saved.</p>}

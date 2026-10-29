@@ -6,8 +6,10 @@ from fastapi import APIRouter, Query, status
 
 from app.api.deps import CurrentUser, DbSession
 from app.models import GapReassessment, SkillGap, Task
+from app.models.journal import ResponseQuality
 from app.models.learning import GapStatus, TaskKind, TaskStatus
 from app.schemas.learning import (
+    CitableQuestionAttempt,
     GapCreate,
     GapDetail,
     GapEvidenceRead,
@@ -60,8 +62,17 @@ def _cited(r: GapReassessment) -> str | None:
         return f"Task “{a.task.title}”: {a.outcome.value}{minutes}"
     if r.question_attempt is not None:
         a = r.question_attempt
-        return f"Question “{a.question.text[:80]}”: {a.response_quality.value.replace('_', ' ')}"
+        text = a.question.text if len(a.question.text) <= 80 else a.question.text[:79].rstrip() + "…"
+        return f"Question “{text}”: {_QUALITY_WORDS[a.response_quality]}"
     return None
+
+
+_QUALITY_WORDS = {
+    ResponseQuality.CONFIDENT: "answered confidently",
+    ResponseQuality.PARTIAL: "partly answered",
+    ResponseQuality.COULD_NOT_ANSWER: "couldn't answer",
+    ResponseQuality.NOT_ATTEMPTED: "not attempted",
+}
 
 
 def _summary_fields(gap: SkillGap) -> dict:
@@ -130,7 +141,26 @@ def gap_detail(gap: SkillGap) -> GapDetail:
             for r in gap.reassessments
         ],
         tasks=[task_read(t) for t in gap.tasks],
+        question_attempts=_question_attempts(gap),
     )
+
+
+def _question_attempts(gap: SkillGap) -> list[CitableQuestionAttempt]:
+    """Re-attempts of the questions behind this gap (its evidence and its tasks)."""
+    questions = {e.question.id: e.question for e in gap.evidence if e.question is not None}
+    questions |= {t.question.id: t.question for t in gap.tasks if t.question is not None}
+    attempts = [
+        CitableQuestionAttempt(
+            id=a.id,
+            question_id=q.id,
+            question_text=q.text,
+            attempted_at=a.attempted_at,
+            response_quality=a.response_quality,
+        )
+        for q in questions.values()
+        for a in q.attempts
+    ]
+    return sorted(attempts, key=lambda a: a.attempted_at, reverse=True)
 
 
 # --- gaps ----------------------------------------------------------------------------

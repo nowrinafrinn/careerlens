@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { readApiError } from "@/components/form-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,14 @@ const COPY: Record<Mode, { title: string; description: string; submit: string; b
 function messageFor(error: unknown): string {
   if (!(error instanceof ApiError)) return "Something went wrong. Please try again.";
   if (error.code === "validation_error") {
+    // Say which field failed instead of a generic "check everything".
+    const { fields } = readApiError(error);
+    if (fields.email) {
+      return fields.email.includes("special-use or reserved")
+        ? "That email domain is reserved and can't receive email. Use a real address."
+        : "That doesn't look like a valid email address.";
+    }
+    if (fields.password) return "Use a password of 8 to 128 characters.";
     return "Check the email address, and use a password of 8 to 128 characters.";
   }
   return error.message;

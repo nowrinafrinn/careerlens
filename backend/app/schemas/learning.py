@@ -4,6 +4,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.models.journal import ResponseQuality
 from app.models.learning import (
     AttemptOutcome,
     EvidenceBasis,
@@ -104,11 +105,22 @@ class GapSummary(BaseModel):
     completed_task_count: int
 
 
+class CitableQuestionAttempt(BaseModel):
+    """A re-attempt of one of the gap's questions, which a reassessment can cite."""
+
+    id: uuid.UUID
+    question_id: uuid.UUID
+    question_text: str
+    attempted_at: datetime
+    response_quality: ResponseQuality
+
+
 class GapDetail(GapSummary):
     notes: str | None
     evidence: list[GapEvidenceRead]
     reassessments: list[ReassessmentRead]
     tasks: list[TaskRead]
+    question_attempts: list[CitableQuestionAttempt]  # newest first
 
 
 class GapCreate(BaseModel):

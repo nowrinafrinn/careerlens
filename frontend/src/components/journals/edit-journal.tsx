@@ -21,7 +21,7 @@ export function EditJournal() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <Link href={`/journals/${id}`} className="text-sm text-muted-foreground hover:text-foreground">
+        <Link href={`/journals/${id}`} className="tap self-start text-sm text-muted-foreground hover:text-foreground">
           ← Back to the journal
         </Link>
         <h1 className="text-xl font-semibold tracking-tight">Edit journal</h1>
