@@ -1,7 +1,6 @@
-# Local development services.
-# Day 1: only PostgreSQL runs in Docker; backend and frontend run on the host
-# so they reload instantly while you edit. On Day 4 the same file gains
-# backend + frontend services for deployment.
+# Local development services: only PostgreSQL runs in Docker. The backend and
+# frontend run on the host so they reload instantly while you edit.
+# For deployment use docker-compose.prod.yml (see docs/DEPLOY.md).
 
 # Fixed project name, so the data volume is "careerlens_careerlens-pgdata"
 # no matter which folder the repo is cloned into.

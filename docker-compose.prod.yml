@@ -1,0 +1,76 @@
+# Production stack: everything in one place, for a single server (VPS).
+#
+#   cp deploy/.env.example deploy/.env      # then edit it
+#   docker compose -f docker-compose.prod.yml --env-file deploy/.env up -d --build
+#
+# Only Caddy is reachable from outside (ports 80/443). It gets an HTTPS
+# certificate for DOMAIN automatically and forwards to the Next.js app, which
+# in turn forwards /api/* to the backend. The database is never exposed.
+# See docs/DEPLOY.md for the full guide.
+
+# Separate from the dev stack's "careerlens" project, so the volumes never mix.
+name: careerlens-prod
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-careerlens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/.env}
+      POSTGRES_DB: ${POSTGRES_DB:-careerlens}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-careerlens} -d ${POSTGRES_DB:-careerlens}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerlens}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-careerlens}
+      # HTTPS-only session cookie. Only set false for a plain-http local test.
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+    volumes:
+      - cv-storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://backend:8000
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in deploy/.env (e.g. careerlens.example.com)}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data  # certificates; keep it so they aren't re-issued on every restart
+      - caddy-config:/config
+    depends_on:
+      - frontend
+
+volumes:
+  pgdata:
+  cv-storage:
+  caddy-data:
+  caddy-config:

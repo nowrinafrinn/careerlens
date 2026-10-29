@@ -562,7 +562,19 @@ cd frontend && npm install && npm run dev
   stand-in for the Gemini endpoint (`GEMINI_BASE_URL`): a deliberately invented citation was caught
   and explained, and the captured request contained no name or contact details. Not yet run against
   real Gemini (no key in this environment).
-- [ ] **M14** README, ARCHITECTURE.md, LEARNING_GUIDE.md; deploy the single Compose stack (frontend + backend + Postgres) if time allows.
+- [x] **M14** README, ARCHITECTURE.md, LEARNING_GUIDE.md; deploy the single Compose stack (frontend + backend + Postgres) if time allows.
+  *Done 2026-10-29.* Docs: `docs/ARCHITECTURE.md` (pieces, principles, layers, data model, analysis
+  and AI pipeline, testing), `docs/LEARNING_GUIDE.md` (a reading path that follows one request end to
+  end, with exercises, including a mutation test), `docs/DEPLOY.md` (VPS guide, backups, updates,
+  troubleshooting, other hosts); README gains a documentation index and a deployment section.
+  Deployment: `backend/Dockerfile` (Python 3.13 slim, non-root, healthcheck, `alembic upgrade head`
+  then uvicorn, CV uploads on a volume), `frontend/Dockerfile` (multi-stage, Next.js `output:
+  "standalone"`, `API_URL` baked in at build), `docker-compose.prod.yml` (project `careerlens-prod`:
+  db, backend, frontend, Caddy with automatic HTTPS and security headers; only Caddy is exposed),
+  `deploy/Caddyfile`, `deploy/.env.example`. Verified locally on plain HTTP: fresh database migrated
+  0001→0009, health through Caddy → Next → FastAPI → Postgres, register / upload CV / analyse /
+  download the original, then `down` + `up` with data and the uploaded file intact; the production UI
+  renders with no console errors. Not yet deployed to a real server: the host is still to be chosen.
 
 ### Final acceptance (from the brief)
 1 create application · 2 upload CV + JD · 3 inspect requirements & evidence · 4 see 4 evidence states ·

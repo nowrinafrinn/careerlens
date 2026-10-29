@@ -1,0 +1,13 @@
+# Caddy obtains and renews an HTTPS certificate for {$DOMAIN} on its own
+# (the domain's DNS must point at this server, with ports 80 and 443 open).
+# For a local test without HTTPS, set DOMAIN=:80 in deploy/.env.
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy frontend:3000
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}

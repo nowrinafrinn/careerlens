@@ -5,13 +5,21 @@ evidence, skill gaps, targeted preparation, recruitment tracking, interview jour
 question bank into one feedback loop, and is careful to separate what your CV shows, what you have
 confirmed, and what is only an inference.
 
-> **Status:** Milestones 1–13 of 14 are complete: foundation, accounts, applications and recruitment
-> rounds with their screens, CV upload with section extraction, requirement-to-CV evidence analysis,
-> CV improvement suggestions, recruitment journals with a personal question bank, an evidence-based
-> learning plan, position-specific preparation, the dashboard with insights, a full end-to-end
-> run-through with fixes, error states and phone layout, and optional AI-assisted analysis with
-> Google Gemini. See [docs/PLAN.md](docs/PLAN.md) for the
-> specification, schema, API plan and checklist.
+> **Status:** all 14 milestones of the MVP are complete: accounts, applications and recruitment
+> rounds, CV upload with section extraction, requirement-to-CV evidence analysis, CV improvement
+> suggestions, recruitment journals with a personal question bank, an evidence-based learning plan,
+> position-specific preparation, a dashboard with insights, optional AI-assisted analysis with
+> Google Gemini, and a production Docker Compose stack.
+
+## Documentation
+
+| Read this | For |
+|---|---|
+| This README | What the app does, how to run it locally, tests and migrations |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the pieces fit together and the rules they follow |
+| [docs/LEARNING_GUIDE.md](docs/LEARNING_GUIDE.md) | A guided path through the code, with exercises |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Putting it on a server with HTTPS, backups and updates |
+| [docs/PLAN.md](docs/PLAN.md) | The original specification and a log of every milestone |
 
 ## Stack
 
@@ -21,7 +29,8 @@ confirmed, and what is only an inference.
 | Database | PostgreSQL 16 (Docker) |
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui |
 | Tests | pytest + FastAPI TestClient against a real Postgres test database |
-| AI (later, optional) | Google Gemini behind a replaceable provider interface |
+| AI (optional) | Google Gemini (`google-genai`) behind a replaceable provider interface |
+| Deployment | Docker Compose: Postgres, API, web app and Caddy (automatic HTTPS) |
 
 ## How the pieces talk
 
@@ -330,6 +339,21 @@ migration before applying it.
 Postgres data lives in the Docker volume `careerlens_careerlens-pgdata`. It survives container
 restarts, `docker compose stop` and `docker compose down`. Only `docker compose down -v` deletes it.
 
+## Deployment
+
+The production stack is `docker-compose.prod.yml`: PostgreSQL, the API, the web app and Caddy for
+automatic HTTPS, configured from `deploy/.env`. On a server with Docker and a domain pointing at it:
+
+```bash
+cp deploy/.env.example deploy/.env
+```
+
+```bash
+docker compose -f docker-compose.prod.yml --env-file deploy/.env up -d --build
+```
+
+Full guide, including backups, updates and a local trial run: [docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Repository layout
 
 ```
@@ -340,14 +364,22 @@ backend/
     db.py            engine and per-request session
     errors.py        the single {"error": {...}} response format
     api/             thin route handlers
+    services/        business rules and transactions, one module per area
+    analysis/        pure logic: CV parsing, requirement extraction, evidence, suggestions
+    ai/              optional AI: provider interface, Gemini, output validation
     schemas/         Pydantic request/response models
     models/          SQLAlchemy models (Base with constraint naming conventions)
   alembic/           migrations
   tests/
+  Dockerfile         production API image
 frontend/
   src/app/           routes (App Router)
   src/components/    UI; components/ui holds shadcn components
-  src/lib/api.ts     fetch wrapper that understands the API error format
+  src/lib/           API calls and query keys per area; api-types.ts is generated
+  Dockerfile         production web image (Next.js standalone)
+deploy/              Caddyfile and the production .env example
 docker/postgres/init SQL run on first database start (creates the test DB)
-docs/PLAN.md         specification, schema, API plan, checklist
+docker-compose.yml       development: PostgreSQL only
+docker-compose.prod.yml  production: the whole stack
+docs/                architecture, learning guide, deployment, plan
 ```
