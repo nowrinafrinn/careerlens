@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from app.analysis.evidence import EvidenceStatus
 from app.analysis.jd_extractor import Category, Importance
 from app.models import (
+    CVVersion,
     GapReassessment,
     JobApplication,
     Journal,
@@ -44,6 +45,8 @@ HORIZON_DAYS = 14
 class Dashboard:
     today: date
     application_counts: dict[str, int]
+    outcome_counts: dict[str, int] = field(default_factory=dict)
+    latest_cv: dict[str, Any] | None = None
     needs_attention: list[dict[str, Any]] = field(default_factory=list)
     upcoming_rounds: list[dict[str, Any]] = field(default_factory=list)
     upcoming_deadlines: list[dict[str, Any]] = field(default_factory=list)
@@ -76,7 +79,20 @@ def build(db: Session, user: User, today: date) -> Dashboard:
         ).all()
     )
     active = [a for a in applications if a.status not in CLOSED_APPLICATION]
-    dashboard = Dashboard(today=today, application_counts=dict(Counter(a.status.value for a in active)))
+    dashboard = Dashboard(
+        today=today,
+        application_counts=dict(Counter(a.status.value for a in active)),
+        outcome_counts=dict(Counter(a.status.value for a in applications if a.status in CLOSED_APPLICATION)),
+    )
+
+    latest_cv = db.scalars(
+        select(CVVersion).where(CVVersion.user_id == user.id).order_by(CVVersion.version_number.desc()).limit(1)
+    ).first()
+    if latest_cv:
+        dashboard.latest_cv = {
+            "cv_version_id": latest_cv.id, "label": latest_cv.label, "version_number": latest_cv.version_number,
+            "section_count": len(latest_cv.sections), "is_confirmed": latest_cv.is_confirmed,
+        }
 
     prep = Counter()
     prep_done = Counter()

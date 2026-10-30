@@ -98,6 +98,28 @@ def test_closed_and_archived_applications_stay_off_the_dashboard(ada: TestClient
     assert rejected["status"] == "rejected"
 
 
+def test_closed_outcomes_are_counted_apart_from_active_applications(ada: TestClient) -> None:
+    for company, status in [("Offer Co", "offer"), ("No Co", "rejected"), ("Live Co", "applied")]:
+        ada.post("/api/v1/applications", json={"company_name": company, "position_title": "Engineer", "status": status})
+
+    body = dashboard(ada)
+
+    assert body["application_counts"] == {"applied": 1}
+    assert body["outcome_counts"] == {"offer": 1, "rejected": 1}
+
+
+def test_latest_cv_is_summarised_once_one_exists(ada: TestClient) -> None:
+    assert dashboard(ada)["latest_cv"] is None
+
+    cv = upload_cv(ada)
+    latest = dashboard(ada)["latest_cv"]
+
+    assert latest["cv_version_id"] == cv["id"]
+    assert latest["version_number"] == 1
+    assert latest["section_count"] > 0
+    assert latest["is_confirmed"] is False
+
+
 def test_analyses_show_coverage_and_what_needs_your_input(ada: TestClient) -> None:
     cv = upload_cv(ada)
     app = analysed_app(ada, cv["id"], "PayFlow")

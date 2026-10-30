@@ -104,9 +104,19 @@ class AnalysisItem(AppRef):
     is_stale: bool
 
 
+class LatestCV(BaseModel):
+    cv_version_id: uuid.UUID
+    label: str
+    version_number: int
+    section_count: int
+    is_confirmed: bool
+
+
 class DashboardRead(BaseModel):
     today: date
     application_counts: dict[str, int]
+    outcome_counts: dict[str, int]  # offer, rejected, withdrawn, closed_unknown
+    latest_cv: LatestCV | None
     needs_attention: list[AttentionItem]
     upcoming_rounds: list[UpcomingRound]
     upcoming_deadlines: list[UpcomingDeadline]

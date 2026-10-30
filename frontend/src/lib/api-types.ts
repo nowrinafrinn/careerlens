@@ -1344,6 +1344,11 @@ export interface components {
             application_counts: {
                 [key: string]: number;
             };
+            /** Outcome Counts */
+            outcome_counts: {
+                [key: string]: number;
+            };
+            latest_cv: components["schemas"]["LatestCV"] | null;
             /** Needs Attention */
             needs_attention: components["schemas"]["AttentionItem"][];
             /** Upcoming Rounds */
@@ -1876,6 +1881,22 @@ export interface components {
          * @enum {string}
          */
         Kind: "presentation" | "evidence_gap" | "potential_capability_gap" | "unverified_claim";
+        /** LatestCV */
+        LatestCV: {
+            /**
+             * Cv Version Id
+             * Format: uuid
+             */
+            cv_version_id: string;
+            /** Label */
+            label: string;
+            /** Version Number */
+            version_number: number;
+            /** Section Count */
+            section_count: number;
+            /** Is Confirmed */
+            is_confirmed: boolean;
+        };
         /**
          * Level
          * @enum {string}

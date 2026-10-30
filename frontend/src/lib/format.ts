@@ -32,6 +32,20 @@ export function formatDateTime(value: string | null | undefined): string {
   return value ? dateTimeFormat.format(new Date(value)) : "—";
 }
 
+export function formatLongDate(value: string): string {
+  return new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long" }).format(parseCalendarDate(value));
+}
+
+/** "3 Nov" for a calendar date. */
+export function formatDayMonth(value: string): string {
+  return new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" }).format(parseCalendarDate(value));
+}
+
+/** The calendar date ("2026-11-03") of a timestamp in the viewer's timezone. */
+export function formatLocalDate(timestamp: string): string {
+  return new Date(timestamp).toLocaleDateString("en-CA");
+}
+
 /** Whole days from today to a calendar date: 0 today, negative if past. */
 export function daysUntil(value: string): number {
   const today = new Date();
