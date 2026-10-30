@@ -68,6 +68,9 @@ def test_rejects_zip_that_is_not_a_word_document() -> None:
         ("Work Experience", SectionType.EXPERIENCE),
         ("Licenses & Certifications", SectionType.CERTIFICATIONS),
         ("Internships", SectionType.INTERNSHIP),
+        ("Honors & Achievements", SectionType.ACHIEVEMENTS),
+        ("HONOURS AND AWARDS", SectionType.ACHIEVEMENTS),
+        ("Scholarships & Awards", SectionType.ACHIEVEMENTS),
         ("Built tools that improved developer experience", None),  # a sentence, not a heading
         ("Experience with Docker and Kubernetes in production", None),
     ],

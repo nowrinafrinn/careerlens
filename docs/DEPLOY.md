@@ -91,6 +91,9 @@ Supabase provides the database and the storage for uploaded CVs (free plan). Thi
 ### 1. Supabase: database and storage
 
 1. Create a project at <https://supabase.com> (pick a region near you; save the database password).
+   `backend/vercel.json` and `frontend/vercel.json` run the app in Singapore (`sin1`). If your database
+   is elsewhere, change `regions` in both files to the closest Vercel region: every page makes several
+   database calls, so a distant database makes the whole app slow.
 2. **Storage → New bucket** named `cv-files`. Keep it **private** (not public).
 3. **Project Settings → API keys:** copy the **secret** key (`sb_secret_…`, or the legacy
    `service_role` key). It is a password for your whole project: it only ever goes into Vercel's
