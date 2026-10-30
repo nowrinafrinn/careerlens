@@ -10,6 +10,7 @@ Two backends behind the same three functions, chosen by STORAGE_BACKEND:
   public and the browser never gets a direct link.
 """
 
+import logging
 import os
 import uuid
 from pathlib import Path
@@ -19,6 +20,8 @@ import httpx
 
 from app.config import get_settings
 from app.errors import AppError
+
+logger = logging.getLogger(__name__)
 
 
 def new_key(prefix: str, user_id: uuid.UUID, extension: str) -> str:
@@ -88,5 +91,7 @@ def _request(method: str, key: str, *, missing_ok: bool = False, **kwargs) -> ht
     if missing_ok and response.status_code in (400, 404):
         return response  # already gone
     if response.status_code >= 400:
+        # Supabase's reply (never the key) so a misconfigured bucket or key shows in the server logs.
+        logger.error("Supabase Storage %s %s/%s -> %s %s", method, settings.supabase_bucket, key.split("/")[0], response.status_code, response.text[:300])
         raise AppError(503, "storage_unavailable", "File storage refused the request. Try again later.")
     return response
