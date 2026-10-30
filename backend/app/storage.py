@@ -14,7 +14,7 @@ import logging
 import os
 import uuid
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 import httpx
 
@@ -77,7 +77,9 @@ def _request(method: str, key: str, *, missing_ok: bool = False, **kwargs) -> ht
         raise AppError(503, "storage_unavailable", "File storage isn't configured on this server.")
     if ".." in key.split("/"):
         raise ValueError("Invalid storage key")
-    url = f"{settings.supabase_url.rstrip('/')}/storage/v1/object/{settings.supabase_bucket}/{quote(key)}"
+    # Only scheme and host: a pasted Data API address (".../rest/v1/") would otherwise break the path.
+    origin = urlsplit(settings.supabase_url.strip())
+    url = f"{origin.scheme}://{origin.netloc}/storage/v1/object/{settings.supabase_bucket}/{quote(key)}"
     secret = settings.supabase_service_role_key
     headers = {"apikey": secret, **kwargs.pop("headers", {})}
     if not secret.startswith("sb_secret_"):
