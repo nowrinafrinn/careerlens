@@ -1,0 +1,7 @@
+# `ruff check .` finds unused imports and variables, undefined names and similar
+# mistakes (the Pyflakes "F" rules). Style is left to the code's own conventions.
+line-length = 120
+extend-exclude = [".venv", "storage"]
+
+[lint]
+select = ["F"]

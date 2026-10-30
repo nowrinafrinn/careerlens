@@ -328,7 +328,7 @@ careerlens/
 ├── README.md                 LEARNING_GUIDE.md          docker-compose.yml   .env.example
 ├── docs/PLAN.md              docs/ARCHITECTURE.md
 ├── backend/
-│   ├── pyproject.toml        alembic.ini
+│   ├── pytest.ini ruff.toml    alembic.ini
 │   ├── alembic/versions/
 │   ├── app/
 │   │   ├── main.py           # FastAPI app, routers, error handlers
